@@ -981,6 +981,13 @@ const PAGE_META = Object.freeze({
     imageAlt:
       "Contemporary dining space with concrete walls, timber screening and garden views",
   },
+  "reviews/": {
+    title: "Customer Reviews",
+    description:
+      "Read customer reviews and share your experience with VRF Home Interiors in Gurugram.",
+    image: "media/home/living-1800.webp",
+    imageAlt: "Considered interior spaces by VRF Home Interiors",
+  },
   /* The error page. Its data-route is "404", and without an entry here the
      lookup in content.js falls back to the home page, so a visitor who hits a
      dead link saw "Considered Spaces. Extraordinary Living." in the browser

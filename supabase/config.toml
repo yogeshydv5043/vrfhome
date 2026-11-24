@@ -1,0 +1,4 @@
+project_id = "vrfhome-reviews"
+
+[functions.submit-review]
+verify_jwt = false

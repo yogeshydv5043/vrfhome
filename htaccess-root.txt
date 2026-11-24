@@ -139,7 +139,7 @@ RewriteRule ^projects/index\.html$ /projects/ [R=301,L,NE]
 </Files>
 
 # Block whole internal directories.
-RedirectMatch 404 ^/(qa|server|\.git|node_modules)(/|$)
+RedirectMatch 404 ^/(qa|server|supabase|\.git|node_modules)(/|$)
 
 # Serve the branded 404 page instead of the bare server error.
 #

@@ -38,4 +38,8 @@ window.VRF_REVIEWS_CONFIG = {
      shown as a verifiable aggregate on the Home page instead. Add real,
      permission-cleared feedback here using the template above. */
   reviews: [],
+
+  /* Optional seed content for reviews/index.html while Supabase is not set up.
+     Keep this empty unless entries are genuine, permission-cleared reviews. */
+  pageReviews: [],
 };

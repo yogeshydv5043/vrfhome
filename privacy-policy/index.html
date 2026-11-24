@@ -42,8 +42,8 @@
       }
     </script>
 <script defer="" src="js/routes.js?v=b60"></script><script defer="" src="js/config.js?v=b109"></script>
-<script defer="True" src="js/data.js?v=b116"></script>
-<script defer="True" src="js/content.js?v=b111"></script>
+<script defer="True" src="js/data.js?v=b117"></script>
+<script defer="True" src="js/content.js?v=b113"></script>
 <script defer="" src="js/main.js?v=b90"></script>
 <script defer="" src="js/navigation.js?v=b117"></script>
 <script defer="" src="js/gallery.js?v=b60"></script>
@@ -172,6 +172,7 @@
 <section id="section-2">
 <h2>Information you provide</h2>
 <p>An enquiry requests your name, email, project city, service type and message. Phone and the full site address are optional. There is no separate consultation booking form. Clicking Send submits these details to the website’s PHP endpoint and, when SMTP is configured, to the studio’s Gmail inbox through its authenticated mail provider. Failed submissions remain in the form; uncertain network outcomes may still have reached the server. These details are used only to reply to your enquiry and to discuss the project you describe.</p>
+<p>If online review submission is enabled, the Reviews page collects the name you choose to display, a 1–5 rating, your review text and your location. Submitted reviews are published publicly and stored by the configured Supabase project. Cloudflare Turnstile is used to reduce spam; it may process technical information such as your IP address when you complete the challenge. Do not include private, financial or sensitive personal information in a public review. The page shows an offline/configuration notice and does not send the form when its review service is not configured.</p>
 </section>
 <section id="section-3">
 <h2>How information is used</h2>
@@ -194,7 +195,7 @@
 </section>
 <section id="section-6">
 <h2>Third-party services</h2>
-<p>Fonts and reference images are served locally. Email, phone, WhatsApp and configured social links open services with their own policies. WhatsApp enquiry links include a message template and the selected service or reference study, where applicable; your name, email, phone, address and message typed in the form are not copied into those links. The Contact page automatically loads an embedded Google Map. Opening that page connects to Google and may share technical information such as your IP address, subject to Google’s privacy policy. The map points to the studio’s Sector 93 address in Gurugram. Email enquiries are processed by MilesWeb hosting, the configured SMTP provider and the studio’s Gmail recipient mailbox. The bundled optional Cloudflare/Resend receiver is not the selected endpoint for this version.</p>
+<p>Fonts and reference images are served locally. Email, phone, WhatsApp and configured social links open services with their own policies. WhatsApp enquiry links include a message template and the selected service or reference study, where applicable; your name, email, phone, address and message typed in the form are not copied into those links. The Contact page automatically loads an embedded Google Map. Opening that page connects to Google and may share technical information such as your IP address, subject to Google’s privacy policy. The map points to the studio’s Sector 93 address in Gurugram. Email enquiries are processed by MilesWeb hosting, the configured SMTP provider and the studio’s Gmail recipient mailbox. If the Reviews service is enabled, Supabase hosts review records and Cloudflare Turnstile verifies the spam challenge. The service is not active until the public project settings and server-side secrets are configured.</p>
 </section>
 <section id="section-7">
 <h2>Data security</h2>
@@ -202,7 +203,7 @@
 </section>
 <section id="section-8">
 <h2>Data retention</h2>
-<p>Successful enquiries may be retained in the studio mailbox and by its email provider according to their settings. The PHP application stores session security/receipt hashes and keyed IP hashes with attempt timestamps for abuse prevention, not full enquiry bodies. Session and rate-limit files are eligible for expiry cleanup, but hosting backups and logs follow the hosting provider’s policies. Enquiries that do not lead to a project are kept for up to 24 months in the studio mailbox and then deleted. Records for commissioned projects are retained for up to 8 years after handover to support warranty, service and statutory requirements. You can ask for earlier deletion by writing to the privacy contact below.</p>
+<p>Successful enquiries may be retained in the studio mailbox and by its email provider according to their settings. The PHP application stores session security/receipt hashes and keyed IP hashes with attempt timestamps for abuse prevention, not full enquiry bodies. Session and rate-limit files are eligible for expiry cleanup, but hosting backups and logs follow the hosting provider’s policies. If the review feature is enabled, published review records remain in the Supabase project until an authorized operator removes them. The review rate limiter stores a salted hash of a client address and the last-submission time, not the raw address; expired limiter rows should be removed by the configured cleanup schedule. Enquiries that do not lead to a project are kept for up to 24 months in the studio mailbox and then deleted. Records for commissioned projects are retained for up to 8 years after handover to support warranty, service and statutory requirements. You can ask for earlier deletion by writing to the privacy contact below.</p>
 </section>
 <section id="section-9">
 <h2>Your rights</h2>

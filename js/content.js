@@ -140,6 +140,13 @@
     container.replaceChildren();
     if (heading) container.append(heading);
     NAVIGATION.forEach((item) => {
+      if (item.href === "contact-us/") {
+        const reviewsLink = document.createElement("a");
+        reviewsLink.href = "reviews/";
+        reviewsLink.textContent = "Reviews";
+        if (currentPage === "reviews/") reviewsLink.setAttribute("aria-current", "page");
+        container.append(reviewsLink);
+      }
       const a = document.createElement("a");
       a.href = item.href;
       a.textContent = item.label;
