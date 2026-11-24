@@ -1,0 +1,12 @@
+# Static public media only. There is no browser-upload endpoint.
+Options -Indexes
+<FilesMatch "\.(php[0-9]?|phtml|phar|cgi|pl|py|sh|shtml)(\.|$)">
+  Require all denied
+</FilesMatch>
+<IfModule mod_mime.c>
+  AddType video/mp4 .mp4
+  AddType video/webm .webm
+  AddType text/vtt .vtt
+  AddType image/webp .webp
+  AddType image/avif .avif
+</IfModule>

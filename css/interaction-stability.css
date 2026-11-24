@@ -1,0 +1,203 @@
+/* Original button colours, stable silhouettes, and a light hover shadow.
+   Loaded last; no sizing scripts, colour inversion, scaling or hover movement. */
+html[data-site-theme="ivory"] body .button,
+html[data-site-theme="ivory"] body .button:is(:hover,:active,:focus-visible) {
+  border-radius:999px;
+  transform:none;
+  scale:none;
+}
+html[data-site-theme="ivory"] body :is(.glass-link,.hero-actions .text-link),
+html[data-site-theme="ivory"] body :is(.glass-link,.hero-actions .text-link):is(:hover,:active,:focus-visible) {
+  border-radius:999px;
+  transform:none;
+  scale:none;
+}
+/* Mirror each existing resting face for hover/focus; do not alter its resting CSS. */
+body :where(.button,.icon-button,.filter-button,.round-arrow,.project-select-trigger,
+  .whatsapp-float,.glass-link,.hero-actions .text-link,.media-filters button,.mobile-contact-bar a) {
+  --rest-background:transparent;
+  --rest-image:none;
+  --rest-ink:var(--text);
+  --rest-border:var(--border);
+  --hover-base:var(--control-base);
+  --hover-shadow:var(--raised-shadow);
+  transition-property:box-shadow;
+  transition-duration:220ms;
+  transition-timing-function:ease;
+}
+body .button:not([data-whatsapp]),
+body :is(.filter-button.active,.filter-button[aria-pressed="true"],.media-filters button[aria-pressed="true"]),
+body .mobile-contact-bar a:last-child:not([data-whatsapp]) {
+  --rest-image:var(--button-face);
+  --rest-ink:var(--button-ink);
+  --rest-border:var(--button-edge);
+}
+body .filter-button:not(.active):not([aria-pressed="true"]) {
+  --rest-image:linear-gradient(145deg,var(--depth-glass-strong),var(--surface));
+  --rest-border:var(--depth-rim);
+}
+body .media-filters button:not([aria-pressed="true"]) { --rest-background:var(--surface); --rest-border:var(--depth-rim); }
+body .project-select-trigger { --rest-background:var(--background); }
+body .project-select-trigger.is-placeholder { --rest-ink:var(--text-secondary-readable); }
+body .glass-link { --rest-background:rgba(49,35,20,.78); --rest-ink:#fff4df; --rest-border:rgba(219,184,128,.55); }
+body.home-page .hero-actions .text-link { --rest-background:rgba(35,26,18,.78); --rest-ink:#fff8ec; --rest-border:rgba(240,216,168,.65); }
+body a[data-whatsapp]:not(.text-link) {
+  --rest-background:#a8e8be;
+  --rest-image:linear-gradient(145deg,#cef5db,#a8e8be 80%);
+  --rest-ink:#063b23;
+  --rest-border:#70b98a;
+  --hover-base:rgba(57,99,74,.18);
+  --hover-shadow:rgba(8,65,35,.12);
+}
+/* Colours stay unchanged for pointer and keyboard interaction. */
+html[data-site-theme="ivory"] body :is(.button,.icon-button,.filter-button,.round-arrow,
+  .project-select-trigger,.whatsapp-float,.glass-link,.hero-actions .text-link,
+  .media-filters button,.mobile-contact-bar a):not([data-social]):not([data-share]):not(.lightbox-prev):not(.lightbox-next):not(.media-prev):not(.media-next):not(:disabled):not([aria-disabled="true"]):is(:hover,:focus-visible) {
+  background-color:var(--rest-background);
+  background-image:var(--rest-image);
+  color:var(--rest-ink);
+  border-color:var(--rest-border);
+  filter:none;
+  transform:none;
+  scale:none;
+}
+html[data-site-theme="ivory"] body .project-open:hover .round-arrow { background:transparent; color:var(--text); }
+/* Preserve the raised underside; add only a soft ambient shadow on real hover. */
+@media (hover:hover) {
+  html[data-site-theme="ivory"] body :is(.button,.icon-button,.filter-button,.round-arrow,
+    .project-select-trigger,.whatsapp-float,.glass-link,.hero-actions .text-link,
+    .media-filters button):not([data-social]):not([data-share]):not(.lightbox-prev):not(.lightbox-next):not(.media-prev):not(.media-next):not(:disabled):not([aria-disabled="true"]):hover {
+    box-shadow:inset 0 1px 0 var(--raised-highlight),inset 0 -2px 0 rgba(0,0,0,.06),
+      0 6px 4px var(--hover-base),0 18px 32px -4px var(--hover-shadow);
+  }
+}
+/* Existing keyboard outlines and fixed mobile-bar geometry remain untouched. */
+html[data-site-theme="ivory"] body :is(.button,.icon-button,.round-arrow,.glass-link,.hero-actions .text-link):not(.lightbox-prev):not(.lightbox-next):not(.media-prev):not(.media-next):is(:hover,:active,:focus-visible) .icon {
+  transform:none;
+  scale:none;
+}
+@media (prefers-reduced-motion:reduce) {
+  body :is(.button,.icon-button,.filter-button,.round-arrow,.project-select-trigger,
+    .whatsapp-float,.glass-link,.hero-actions .text-link,.media-filters button,.mobile-contact-bar a) { transition:none; }
+}
+
+/* ==========================================================================
+   Project Lightbox Modal: Previous & Next Buttons
+   - No hover effect: background, border, and shadow stay resting
+   - No position jump: transform: translateY(-50%) strictly preserved
+   - No icon rotation: prev icon stays rotated 180deg (pointing left)
+   ========================================================================== */
+.lightbox-prev,
+.lightbox-next,
+.lightbox-prev:hover,
+.lightbox-next:hover,
+.lightbox-prev:active,
+.lightbox-next:active,
+.lightbox-prev:focus,
+.lightbox-next:focus,
+.lightbox-prev:focus-visible,
+.lightbox-next:focus-visible {
+  position: absolute !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  scale: 1 !important;
+  z-index: 10 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 44px !important;
+  height: 44px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  background: var(--surface, #ffffff) !important;
+  background-color: var(--surface, #ffffff) !important;
+  background-image: none !important;
+  border: 1px solid var(--border, rgba(0, 0, 0, 0.12)) !important;
+  border-color: var(--border, rgba(0, 0, 0, 0.12)) !important;
+  color: var(--text, #10273b) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16) !important;
+  cursor: pointer !important;
+  filter: none !important;
+  transition: none !important;
+}
+
+.lightbox-prev,
+.lightbox-prev:hover,
+.lightbox-prev:active,
+.lightbox-prev:focus,
+.lightbox-prev:focus-visible {
+  left: 14px !important;
+  right: auto !important;
+}
+
+.lightbox-next,
+.lightbox-next:hover,
+.lightbox-next:active,
+.lightbox-next:focus,
+.lightbox-next:focus-visible {
+  right: 14px !important;
+  left: auto !important;
+}
+
+.lightbox-prev .icon,
+.lightbox-prev:hover .icon,
+.lightbox-prev:active .icon,
+.lightbox-prev:focus .icon,
+.lightbox-prev:focus-visible .icon {
+  transform: rotate(180deg) !important;
+  scale: 1 !important;
+  width: 20px !important;
+  height: 20px !important;
+  display: block !important;
+  margin: 0 !important;
+  flex-shrink: 0 !important;
+  transition: none !important;
+}
+
+.lightbox-next .icon,
+.lightbox-next:hover .icon,
+.lightbox-next:active .icon,
+.lightbox-next:focus .icon,
+.lightbox-next:focus-visible .icon {
+  transform: none !important;
+  scale: 1 !important;
+  width: 20px !important;
+  height: 20px !important;
+  display: block !important;
+  margin: 0 !important;
+  flex-shrink: 0 !important;
+  transition: none !important;
+}
+
+.lightbox-prev:disabled,
+.lightbox-next:disabled {
+  opacity: 0.3 !important;
+  cursor: default !important;
+  pointer-events: none !important;
+}
+
+@media (max-width: 639px) {
+  .lightbox-prev,
+  .lightbox-next,
+  .lightbox-prev:hover,
+  .lightbox-next:hover {
+    width: 38px !important;
+    height: 38px !important;
+  }
+  .lightbox-prev,
+  .lightbox-prev:hover {
+    left: 8px !important;
+  }
+  .lightbox-next,
+  .lightbox-next:hover {
+    right: 8px !important;
+  }
+  .lightbox-prev .icon,
+  .lightbox-prev:hover .icon,
+  .lightbox-next .icon,
+  .lightbox-next:hover .icon {
+    width: 18px !important;
+    height: 18px !important;
+  }
+}
+

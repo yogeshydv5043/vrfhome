@@ -1,0 +1,190 @@
+/* Original navy/brass layout, refined glass and dimensional controls.
+   No grid, section-spacing, logo-size, card-padding or heading-size changes here. */
+/* ==========================================================================
+   Design tokens
+   Colour, spacing and typography custom properties, plus the dark theme overrides.
+   ========================================================================== */
+:root {
+  --depth-glass:rgba(255,254,250,.78);
+  --depth-glass-strong:rgba(250,248,243,.94);
+  --depth-edge:rgba(255,255,255,.78);
+  --depth-rim:rgba(137,116,79,.2);
+  --depth-shadow:rgba(13,34,55,.10);
+  --button-face:linear-gradient(145deg,#294963,#172e46 70%);
+  --button-ink:#faf7f1;
+  --button-edge:#3e566c;
+  --button-base:#0c1e30;
+}
+[data-theme="dark"] {
+  --depth-glass:rgba(22,42,62,.80);
+  --depth-glass-strong:rgba(16,32,49,.96);
+  --depth-edge:rgba(188,211,232,.16);
+  --depth-rim:rgba(208,180,119,.25);
+  --depth-shadow:rgba(0,0,0,.24);
+  --button-face:linear-gradient(145deg,#e0cfa9,#c0a571 75%);
+  --button-ink:#152a3f;
+  --button-edge:#dcc79e;
+  --button-base:#7b6742;
+}
+/* ==========================================================================
+   Header and navigation
+   Site header, brand lockup, desktop links and the mobile drawer.
+   ========================================================================== */
+.site-header,.site-header.scrolled {
+  background:var(--surface);
+  border-bottom-color:var(--depth-rim);
+  box-shadow:inset 0 1px 0 var(--depth-edge),0 7px 25px var(--depth-shadow);
+}
+.site-header.scrolled { box-shadow:inset 0 1px 0 var(--depth-edge),0 9px 30px var(--depth-shadow); }
+/* Preserve the transparent, cardless studio logo and existing header geometry. */
+.site-header .vrf-brand,.mobile-menu-logo,.brand-logo { background:transparent; box-shadow:none; }
+.form-panel,.lightbox,.mobile-menu {
+  background:var(--surface);
+  border-color:var(--depth-rim);
+  box-shadow:inset 0 1px 0 var(--depth-edge),0 22px 55px -20px var(--depth-shadow),0 2px 0 var(--depth-rim);
+}
+.form-panel,.lightbox { border-radius:16px; }
+.mobile-menu { border-radius:18px 0 0 18px; }
+@supports ((backdrop-filter:blur(16px)) or (-webkit-backdrop-filter:blur(16px))) {
+  .site-header,.site-header.scrolled { background:var(--depth-glass-strong); backdrop-filter:blur(25px) saturate(125%); -webkit-backdrop-filter:blur(25px) saturate(125%); }
+  .form-panel,.lightbox,.mobile-menu { background:var(--depth-glass-strong); backdrop-filter:blur(22px) saturate(112%); -webkit-backdrop-filter:blur(22px) saturate(112%); }
+}
+/* A fixed silhouette: depth comes from bevels, highlights and shadow, not scale. */
+/* ==========================================================================
+   Buttons, links and icons
+   Shared action styling. The inline-link underline is finalised in layout-fixes.css.
+   ========================================================================== */
+.button,.button:hover,.button:active {
+  border-radius:9px;
+  background:var(--button-face);
+  color:var(--button-ink);
+  border-color:var(--button-edge);
+  transform:none;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.24),inset 0 -1px 0 rgba(0,0,0,.09),0 3px 0 var(--button-base),0 9px 19px rgba(11,31,49,.16);
+  transition:box-shadow 280ms ease,filter 280ms ease,border-color 280ms ease;
+}
+.button:hover { filter:brightness(1.07); box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 3px 0 var(--button-base),0 11px 25px rgba(11,31,49,.22); }
+.button:active { filter:brightness(.99); box-shadow:inset 0 1px 3px rgba(0,0,0,.17),0 1px 0 var(--button-base),0 4px 11px rgba(11,31,49,.13); }
+.button.light,.button.light:hover {
+  background:linear-gradient(145deg,#fff9ec,#dfcda7 80%);
+  color:#152a3f;
+  border-color:#e9d9b8;
+  --button-base:#887148;
+}
+.button.secondary,.button.secondary:hover {
+  background:var(--depth-glass-strong);
+  color:var(--text);
+  border-color:var(--border);
+  --button-base:var(--border);
+}
+.button:disabled,.button:disabled:hover { filter:none; transform:none; box-shadow:inset 0 1px 0 var(--depth-edge),0 1px 0 var(--border); }
+.button:focus-visible,.glass-link:focus-visible,.icon-button:focus-visible { outline:2px solid var(--accent-ink); outline-offset:5px; }
+/* ==========================================================================
+   Hero
+   Home and page hero blocks.
+   ========================================================================== */
+.hero-actions .text-link,.glass-link {
+  border-radius:9px;
+  background:rgba(13,31,49,.61);
+  border-color:rgba(255,255,255,.37);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 2px 0 rgba(3,14,26,.43),0 8px 20px rgba(3,14,26,.14);
+  backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
+  transition:background-color 300ms ease,box-shadow 300ms ease,border-color 300ms ease;
+}
+.hero-actions .text-link:hover,.glass-link:hover { transform:none; background:rgba(18,42,65,.79); border-color:rgba(231,214,178,.7); box-shadow:inset 0 1px 0 rgba(255,255,255,.32),0 2px 0 rgba(3,14,26,.43),0 10px 26px rgba(3,14,26,.21); }
+.hero-bottom {
+  border-radius:12px;
+  background:rgba(11,29,47,.39);
+  border-color:rgba(230,235,244,.28);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.15),0 8px 25px rgba(4,16,28,.16);
+  backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
+}
+.hero-shade {
+  background:linear-gradient(90deg,rgba(7,23,44,.80),rgba(7,23,44,.26) 65%,rgba(7,23,44,.12)),linear-gradient(0deg,rgba(5,16,33,.51),transparent 48%);
+}
+/* ==========================================================================
+   Services
+   Service cards, the service index and the detail sections.
+   ========================================================================== */
+.service-picture,.project-image,.intro-visual,.service-image,.story-gallery figure > img {
+  border-radius:12px;
+  box-shadow:0 0 0 1px var(--depth-rim),0 13px 26px -17px rgba(10,30,48,.35);
+}
+.service-picture,.project-image { position:relative; }
+.service-picture::after,.project-image::after {
+  content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+  border:1px solid rgba(255,255,255,.27);
+  background:linear-gradient(135deg,rgba(255,255,255,.11),transparent 38%);
+}
+.project-hover,.image-badge,.service-image-caption,.intro-visual > span {
+  border-radius:7px;
+  border:1px solid rgba(255,255,255,.18);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 5px 12px rgba(6,20,35,.1);
+  background:rgba(10,28,47,.82);
+}
+.round-arrow,.icon-button {
+  border-radius:10px;
+  box-shadow:inset 0 1px 0 var(--depth-edge),0 2px 0 var(--depth-rim),0 4px 9px rgba(10,30,48,.04);
+  transition:background-color 250ms ease,color 250ms ease,box-shadow 250ms ease;
+}
+.icon-button:hover { background:var(--surface-soft); box-shadow:inset 0 1px 0 var(--depth-edge),0 2px 0 var(--depth-rim),0 6px 14px var(--depth-shadow); }
+.process-grid article,.values-grid article,.philosophy-grid article {
+  background:linear-gradient(135deg,var(--depth-glass),transparent 77%);
+  border-top-color:var(--depth-rim);
+  box-shadow:inset 0 1px 0 var(--depth-edge);
+  transition:box-shadow 350ms ease,border-color 350ms ease;
+}
+.philosophy-grid article:hover { border-top-color:var(--accent); box-shadow:inset 0 1px 0 var(--depth-edge),0 13px 25px -24px rgba(12,31,50,.4); }
+/* Override image zoom */
+/* ==========================================================================
+   Projects
+   Project cards, the collection grid and the project story pages.
+   ========================================================================== */
+.project-open:hover img,.service-preview a:hover img {
+  scale:none;
+}
+.service-picture img,.project-image img { transform:none; }
+/* No saturation bump on hover — photographs are shown exactly as supplied. */
+.form-field input,.form-field select,.form-field textarea,.project-select-trigger {
+  border-radius:8px;
+  background:var(--background);
+  box-shadow:inset 0 2px 4px rgba(12,32,51,.045);
+}
+.form-field input:focus,.form-field select:focus,.form-field textarea:focus { box-shadow:inset 0 1px 2px rgba(12,32,51,.03),0 0 0 3px rgba(185,155,99,.15); }
+.project-select-options {
+  border-radius:10px;
+  background:var(--depth-glass-strong);
+  border-color:var(--depth-rim);
+  box-shadow:inset 0 1px 0 var(--depth-edge),0 14px 34px var(--depth-shadow);
+  backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
+}
+.faq-list details { background:linear-gradient(90deg,var(--depth-glass),transparent); }
+.faq-list details[open] { border-color:var(--depth-rim); }
+/* ==========================================================================
+   Header and navigation
+   Site header, brand lockup, desktop links and the mobile drawer.
+   ========================================================================== */
+.mobile-contact-bar {
+  background:var(--depth-glass-strong);
+  border-color:var(--depth-rim);
+  box-shadow:inset 0 1px 0 var(--depth-edge),0 7px 26px var(--depth-shadow);
+  backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
+}
+.mobile-contact-bar a:last-child {
+  background:var(--button-face); color:var(--button-ink);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.24),inset 0 -3px 0 var(--button-base);
+}
+.whatsapp-float,.whatsapp-float:hover {
+  background:linear-gradient(140deg,#284d67,#142f48);
+  color:#f8f5ed; border-color:rgba(212,183,122,.55); border-radius:14px; transform:none;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 3px 0 #0b2033,0 10px 25px rgba(7,26,44,.22);
+}
+.whatsapp-float:hover { box-shadow:inset 0 1px 0 rgba(255,255,255,.32),0 3px 0 #0b2033,0 13px 30px rgba(7,26,44,.3); }
+.site-footer { background:var(--footer-bg, #f6f1e8); border-top:1px solid var(--border); box-shadow:none; }
+.site-footer .socials a { border-radius:8px; box-shadow:inset 0 1px 0 var(--depth-edge),0 2px 0 var(--depth-rim); }
+.toast { border-radius:10px; background:var(--depth-glass-strong); box-shadow:inset 0 1px 0 var(--depth-edge),0 10px 30px var(--depth-shadow); }
+@media (max-width:767px) {
+  .service-picture,.project-image,.intro-visual,.service-image { border-radius:9px; }
+  .form-panel,.lightbox { border-radius:12px; }
+  /* Keep mobile compositing light: no per-card backdrop-filter or hover tilt. */
+}

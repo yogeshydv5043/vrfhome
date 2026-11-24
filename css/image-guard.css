@@ -1,0 +1,93 @@
+/* Discourage selecting, dragging and the touch "save" sheet on photographs
+   and films. Paired with js/image-guard.js, which explains at the bottom
+   exactly what this can and cannot achieve. Public files stay downloadable
+   by anyone who looks past the right-click. No promise of DRM. */
+img,
+picture,
+svg[role="img"],
+video {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+}
+
+/* Safari and Chrome on iOS draw their own poster overlay and long-press
+   target; this keeps the long-press from resolving to the file itself. */
+video {
+  -webkit-user-modify: read-only;
+}
+
+/* The gallery lightbox is the one place a film is large enough to be worth
+   grabbing, so the stage also refuses the pointer's native affordances.
+   Pointer events themselves stay on -- the player controls must work. */
+.media-stage img,
+.media-stage video {
+  -webkit-touch-callout: none;
+  -webkit-user-drag: none;
+}
+
+/* ======================================================================
+   WATERMARK
+
+   This is the honest answer to "stop screenshots". A web page cannot block
+   a screenshot -- there is no browser API for it, and even if there were,
+   a phone camera pointed at the monitor defeats it. What a page CAN do is
+   make sure that whatever is captured carries the studio's name.
+
+   Rendered as a CSS overlay, not burnt into the files, so it costs nothing
+   in image quality and can be removed by deleting this block. It appears
+   in every screenshot and every screen recording. It does NOT appear in the
+   original .webp if someone reaches the file directly -- only a burnt-in
+   watermark does that, and that is a separate decision. See README §8.
+
+   TO CHANGE THE TEXT      edit --wm-text below.
+   TO MAKE IT FAINTER      lower --wm-opacity (0 hides it completely).
+   TO REMOVE IT ENTIRELY   delete from here to the end of the file.
+   ====================================================================== */
+:root {
+  --wm-text: "VRF HOME INTERIORS";
+  --wm-opacity: 0.42;
+}
+
+.featured-work-figure::after,
+.media-stage::after {
+  content: var(--wm-text);
+  position: absolute;
+  z-index: 3;
+  inset-block-end: 10px;
+  inset-inline-end: 12px;
+  color: rgb(255 255 255 / 92%);
+  font-family: var(--sans, system-ui, sans-serif);
+  font-size: clamp(8px, 1vw, 10px);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  /* A dark halo rather than a panel, so the mark stays legible over a pale
+     marble wall and over a dark bathroom without drawing a box on either. */
+  text-shadow:
+    0 1px 2px rgb(0 0 0 / 55%),
+    0 0 10px rgb(0 0 0 / 45%);
+  opacity: var(--wm-opacity);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* The lightbox stage is the one place an image is shown large enough to be
+   worth taking, so the mark is placed inside the frame there. */
+.media-stage {
+  position: relative;
+}
+
+.media-stage::after {
+  inset-block-end: 16px;
+  inset-inline-end: 20px;
+  font-size: clamp(9px, 1.1vw, 12px);
+}
+
+/* Printing is a quiet way to lift a clean copy of a page. */
+@media print {
+  .featured-work-figure::after,
+  .media-stage::after {
+    opacity: 0.75;
+  }
+}

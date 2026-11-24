@@ -1,0 +1,1456 @@
+/* Midnight & brass. Glass is confined to interactive surfaces; opaque fallbacks remain readable. */
+/* ==========================================================================
+   Design tokens
+   Colour, spacing and typography custom properties, plus the dark theme overrides.
+   ========================================================================== */
+:root {
+  --primary: #14283f;
+  --primary-soft: #213a55;
+  --background: #f5f3ef;
+  --surface: #fffefa;
+  --surface-soft: #eae8e2;
+  --text: #182a40;
+  --text-secondary: #697380;
+  --text-secondary-readable: #5d6670;
+  --border: #d9ddde;
+  --accent: #ba9b63;
+  --accent-ink: #775e36;
+  --secondary: #cdb78f;
+  --navy: #102238;
+  --navy-soft: #1c344e;
+  --brass: #d0b477;
+  --glass-header: rgba(248, 247, 243, 0.86);
+  --glass-panel: rgba(255, 254, 250, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.68);
+  --glass-shadow: 0 12px 40px rgba(12, 30, 50, 0.07);
+  --overlay: rgba(5, 15, 31, 0.72);
+}
+[data-theme="dark"] {
+  --primary: #ebeff4;
+  --primary-soft: #d9e3ed;
+  --background: #0d1727;
+  --surface: #142439;
+  --surface-soft: #172a41;
+  --text: #edf0f4;
+  --text-secondary: #adbac9;
+  --text-secondary-readable: #b7c2ce;
+  --border: #2d4057;
+  --accent: #c9aa70;
+  --accent-ink: #d3b77f;
+  --secondary: #cebb98;
+  --glass-header: rgba(13, 25, 43, 0.88);
+  --glass-panel: rgba(20, 36, 57, 0.91);
+  --glass-border: rgba(178, 200, 225, 0.17);
+  --glass-shadow: 0 12px 40px rgba(0, 0, 0, 0.16);
+  --success: #9ed3b2;
+  --danger: #ffb3ac;
+}
+/* ==========================================================================
+   Base and reset
+   Element defaults that everything else builds on.
+   ========================================================================== */
+body {
+  background: var(--background);
+  color: var(--text);
+}
+.site-header {
+  background: var(--background);
+  border-bottom: 1px solid var(--border);
+}
+.site-header.scrolled {
+  box-shadow: 0 5px 32px rgba(8, 26, 45, 0.08);
+  border-bottom-color: var(--border);
+}
+@supports (
+  (backdrop-filter: blur(16px)) or (-webkit-backdrop-filter: blur(16px))
+) {
+  .site-header {
+    background: var(--glass-header);
+    -webkit-backdrop-filter: blur(24px) saturate(125%);
+    backdrop-filter: blur(24px) saturate(125%);
+  }
+  .form-panel,
+  .mobile-menu,
+  .lightbox,
+  .privacy-dialog {
+    background: var(--glass-panel);
+    -webkit-backdrop-filter: blur(24px) saturate(115%);
+    backdrop-filter: blur(24px) saturate(115%);
+  }
+}
+/* ==========================================================================
+   Forms and contact
+   Enquiry form fields, validation states and the contact page blocks.
+   ========================================================================== */
+.form-panel {
+  border-radius: 10px;
+  box-shadow: var(--glass-shadow);
+  border-color: var(--border);
+}
+.button {
+  border-radius: 4px;
+  transition:
+    background-color 250ms ease,
+    color 250ms ease,
+    box-shadow 250ms ease,
+    transform 250ms ease;
+}
+/* ==========================================================================
+   Buttons, links and icons
+   Shared action styling. The inline-link underline is finalised in layout-fixes.css.
+   ========================================================================== */
+.button:hover {
+  box-shadow: 0 7px 23px rgba(14, 33, 57, 0.12);
+  transform: translateY(-2px);
+  background: #8b7044;
+  border-color: #8b7044;
+  color: #fff;
+}
+.button:active {
+  transform: translateY(0);
+}
+.button:disabled {
+  transform: none;
+  box-shadow: none;
+}
+.button.light {
+  background: #f3ede0;
+  color: #152a42;
+  border-color: #f3ede0;
+}
+.button.light:hover {
+  background: #d7bc85;
+  color: #14283f;
+  border-color: #d7bc85;
+}
+.button.secondary:hover {
+  background: var(--surface-soft);
+  border-color: var(--accent);
+  color: var(--text);
+}
+/* ==========================================================================
+   Hero
+   Home and page hero blocks.
+   ========================================================================== */
+.hero-shade {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(7, 23, 44, 0.73),
+      rgba(7, 23, 44, 0.24) 65%,
+      rgba(7, 23, 44, 0.1)
+    ),
+    linear-gradient(0deg, rgba(5, 16, 33, 0.48), transparent 45%);
+}
+.hero h1 em {
+  color: #e3ce9f;
+}
+.hero-content > .eyebrow {
+  color: #ece7dc;
+}
+.short-line {
+  background: var(--brass);
+}
+.hero-actions .text-link,
+.glass-link {
+  padding: 13px 20px;
+  border: 1px solid rgba(235, 242, 255, 0.35);
+  border-radius: 4px;
+  background: rgba(9, 27, 48, 0.35);
+  color: #fff;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09);
+  transition:
+    background 300ms ease,
+    border-color 300ms ease,
+    transform 300ms ease;
+}
+.hero-actions .text-link::after {
+  display: none;
+}
+.hero-actions .text-link:hover,
+.glass-link:hover {
+  background: rgba(16, 41, 68, 0.65);
+  border-color: rgba(235, 242, 255, 0.6);
+  transform: translateY(-2px);
+}
+.hero-bottom {
+  padding: 17px 20px;
+  background: rgba(12, 29, 48, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.19);
+  border-radius: 5px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+/* ==========================================================================
+   Calls to action
+   Closing CTA blocks and the floating WhatsApp button.
+   ========================================================================== */
+.final-cta {
+  background: var(--background);
+  color: var(--text);
+  position: relative;
+  border-top: 1px solid var(--border);
+}
+.final-cta::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #c7a66a88, transparent);
+}
+.final-cta h2 em {
+  color: #d0b477;
+}
+.final-cta .eyebrow {
+  color: #c8c8c3;
+}
+.cta-actions > p {
+  color: #c3ccd7;
+}
+.cta-actions .text-link {
+  color: #e3e7eb;
+}
+/* ==========================================================================
+   Introduction and values
+   Studio positioning, the highlights strip and the values statements.
+   ========================================================================== */
+.philosophy-copy {
+  background: #142a43;
+}
+.philosophy h2 em {
+  color: var(--brass);
+}
+.whatsapp-float {
+  background: #183652;
+  border-color: #b99b635c;
+  box-shadow: 0 5px 24px #081c3030;
+}
+.whatsapp-float:hover {
+  background: #234f70;
+}
+/* ==========================================================================
+   Calls to action
+   Closing CTA blocks and the floating WhatsApp button.
+   ========================================================================== */
+.whatsapp-float > span {
+  background: var(--navy);
+  color: #fff;
+}
+.toast {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  box-shadow: var(--glass-shadow);
+  border-radius: 6px;
+}
+.mobile-menu {
+  border-left: 1px solid var(--glass-border);
+}
+/* ==========================================================================
+   Header and navigation
+   Site header, brand lockup, desktop links and the mobile drawer.
+   ========================================================================== */
+.mobile-menu::backdrop,
+.lightbox::backdrop,
+.privacy-dialog::backdrop {
+  background: rgba(5, 16, 34, 0.65);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+}
+.lightbox {
+  border-radius: 10px;
+  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.2);
+}
+.lightbox-story-link {
+  display: flex;
+  margin: 8px 0 12px;
+  font-size: 12px;
+  width: fit-content;
+}
+/* ==========================================================================
+   Projects
+   Project cards, the collection grid and the project story pages.
+   ========================================================================== */
+.project-story-link {
+  font-size: 11px;
+  margin-top: 3px;
+  gap: 15px;
+}
+.project-card .project-story-link::after {
+  transform: scaleX(0.55);
+}
+.project-hover,
+.image-badge {
+  background: rgba(12, 30, 51, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+/* ==========================================================================
+   Services
+   Service cards, the service index and the detail sections.
+   ========================================================================== */
+.service-image-caption,
+.intro-visual > span {
+  background: rgba(10, 28, 49, 0.67);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+/* The top border is deliberately absent. This section follows the About page's
+   full-width hero image, so a border-top rendered as a hairline rule pinned
+   directly under that photograph, which read as an artefact rather than a
+   divider -- the image already ends cleanly against the page. The corner ticks
+   of the portrait treatment also step up into this section's padding, and the
+   rule cut straight through them.
+   The bottom border stays: it separates the designer from the story section
+   below, where there is no image to butt against. */
+.founder-section {
+  border-bottom: 1px solid var(--border);
+}
+.portrait-placeholder {
+  background: var(--background);
+}
+/* ==========================================================================
+   Forms and contact
+   Enquiry form fields, validation states and the contact page blocks.
+   ========================================================================== */
+.form-field input,
+.form-field select,
+.form-field textarea {
+  border-radius: 4px;
+  background: var(--background);
+  transition:
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+}
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+  border-color: var(--accent-ink);
+  box-shadow: 0 0 0 3px #b99b6318;
+}
+.address-details {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  margin: 0 0 25px;
+  padding: 0;
+}
+.address-details summary {
+  cursor: pointer;
+  padding: 18px 0;
+  font-size: 12px;
+  font-weight: 500;
+}
+.address-details summary > span {
+  display: block;
+  padding-left: 16px;
+  font-size: 10px;
+  color: var(--text-secondary-readable);
+  font-weight: 400;
+  margin-top: 5px;
+}
+.address-details > .form-grid {
+  padding-top: 16px;
+}
+.form-heading > .text-link {
+  font-size: 11px;
+  margin-bottom: 4px;
+}
+.form-notice {
+  border-radius: 0 4px 4px 0;
+}
+.honeypot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(100%);
+  pointer-events: none;
+}
+/* ==========================================================================
+   Header and navigation
+   Site header, brand lockup, desktop links and the mobile drawer.
+   ========================================================================== */
+.mobile-contact-bar {
+  display: none;
+}
+/* Project stories */
+.story-hero {
+  position: relative;
+  height: 690px;
+  min-height: 550px;
+  max-height: calc(100svh - 92px);
+  overflow: hidden;
+  background: var(--navy);
+  color: #fff;
+}
+/* ==========================================================================
+   Projects
+   Project cards, the collection grid and the project story pages.
+   ========================================================================== */
+.story-hero > img {
+  position: absolute;
+  inset: 0;
+  object-position: center 57%;
+}
+.story-hero-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(5, 22, 43, 0.8), rgba(5, 22, 43, 0.16)),
+    linear-gradient(0deg, rgba(5, 22, 43, 0.55), transparent 65%);
+}
+.story-hero-content {
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-direction: column;
+  padding-top: 45px;
+  padding-bottom: 45px;
+}
+.story-back {
+  position: absolute;
+  top: 35px;
+  font-size: 10px;
+  letter-spacing: 0.6px;
+  color: #e2e5ea;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+.story-category {
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: #e3d5b6;
+  margin: 70px 0 20px;
+}
+.story-hero h1 {
+  
+  max-width: 880px;
+  margin-bottom: 25px;
+}
+.story-subtitle {
+  font-size: 14px;
+  color: #e2e7ef;
+  max-width: 480px;
+  line-height: 1.9;
+}
+.glass-link {
+  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  gap: 38px;
+  margin-top: 12px;
+  min-height: 50px;
+}
+.story-index {
+  position: absolute;
+  bottom: 30px;
+  right: 64px;
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: #e5dcc9;
+}
+.project-facts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 30px;
+  border-bottom: 1px solid var(--border);
+  padding: 35px 0;
+}
+.project-facts > div {
+  border-right: 1px solid var(--border);
+  padding-right: 15px;
+}
+.project-facts > div:last-child {
+  border: 0;
+}
+.project-facts span {
+  display: block;
+  font-size: 8px;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: var(--text-secondary-readable);
+  margin-bottom: 8px;
+}
+.project-facts strong {
+  font-size: 12px;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.story-concept {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 110px;
+}
+
+.story-concept > div:last-child h3 {
+  font-family: var(--serif);
+  
+  margin: 0 0 14px;
+}
+.story-concept > div:last-child p,
+.story-concept ul {
+  font-size: 13px;
+  line-height: 1.95;
+  color: var(--text-secondary-readable);
+  margin-bottom: 30px;
+}
+.story-concept ul {
+  padding-left: 18px;
+}
+.story-concept li {
+  padding-left: 5px;
+  margin-bottom: 9px;
+}
+.reference-disclosure {
+  font-size: 10px;
+  color: var(--text-secondary-readable);
+  max-width: 320px;
+  margin-top: 35px;
+  padding-left: 17px;
+  border-left: 2px solid var(--accent);
+  line-height: 1.9;
+}
+.story-material-section {
+  background: var(--background);
+  padding: 75px 0;
+}
+.story-material-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 80px;
+  align-items: center;
+}
+.story-material-grid > div > p:not(.eyebrow) {
+  font-size: 12px;
+  color: var(--text-secondary-readable);
+  max-width: 340px;
+}
+.material-palette {
+  display: flex;
+  gap: 22px;
+}
+.material-item {
+  flex: 1;
+  min-width: 0;
+}
+.material-swatch {
+  display: block;
+  width: 100%;
+  aspect-ratio: 0.82;
+  background: #bba88c;
+  border: 1px solid #122a4118;
+  border-radius: 90px 90px 2px 2px;
+  box-shadow: inset 0 1px 0 #ffffff55;
+}
+.material-item > span:last-child {
+  display: block;
+  font-size: 11px;
+  margin-top: 15px;
+}
+.story-gallery {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 35px;
+  align-items: start;
+}
+.story-gallery figure {
+  margin: 0;
+  min-width: 0;
+}
+.story-gallery figure:nth-child(even) {
+  margin-top: 90px;
+}
+.story-gallery img {
+  height: 470px;
+  object-fit: cover;
+}
+.story-gallery figure:nth-child(even) img {
+  height: 380px;
+}
+.story-gallery figcaption {
+  font-size: 10px;
+  color: var(--text-secondary-readable);
+  line-height: 1.8;
+  margin-top: 15px;
+}
+.comparison-section {
+  padding-bottom: 35px;
+}
+.comparison-empty {
+  padding: 45px;
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+  text-align: center;
+}
+.comparison-line-icon {
+  font-size: 30px;
+  color: var(--accent-ink);
+}
+.comparison-empty h3 {
+  font-family: var(--serif);
+  
+  margin-top: 15px;
+}
+.comparison-empty p {
+  max-width: 540px;
+  margin: 0 auto;
+  font-size: 12px;
+  color: var(--text-secondary-readable);
+}
+.comparison-stage {
+  --split: 50%;
+  aspect-ratio: 1.8;
+  position: relative;
+  background: var(--surface-soft);
+  overflow: hidden;
+  isolation: isolate;
+}
+.compare-after,
+.compare-before-layer,
+.compare-before {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.compare-before-layer {
+  clip-path: inset(0 calc(100% - var(--split)) 0 0);
+}
+.compare-label {
+  position: absolute;
+  top: 18px;
+  background: rgba(10, 28, 49, 0.8);
+  color: #fff;
+  border: 1px solid #ffffff40;
+  border-radius: 4px;
+  padding: 7px 15px;
+  font-size: 10px;
+  backdrop-filter: blur(10px);
+}
+.before-label {
+  left: 18px;
+}
+.after-label {
+  right: 18px;
+}
+.compare-divider {
+  position: absolute;
+  left: var(--split);
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #fff;
+  transform: translateX(-1px);
+  pointer-events: none;
+  box-shadow: 0 0 8px #0005;
+}
+.compare-divider > span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(17, 42, 68, 0.83);
+  border: 2px solid #fff;
+  color: #fff;
+  text-align: center;
+  line-height: 42px;
+  font-size: 25px;
+  backdrop-filter: blur(12px);
+}
+.compare-range {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: ew-resize;
+  touch-action: pan-y;
+  z-index: 5;
+}
+.comparison-stage:focus-within {
+  outline: 3px solid var(--accent-ink);
+  outline-offset: 5px;
+}
+.compare-tools {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+  margin-top: 20px;
+}
+.compare-tools p,
+.compare-caption {
+  font-size: 11px;
+  color: var(--text-secondary-readable);
+}
+.compare-tools p {
+  margin: 0;
+}
+.compare-tools > div {
+  display: flex;
+  gap: 10px;
+}
+.compare-tools button {
+  border: 1px solid var(--border);
+  padding: 9px 17px;
+  min-height: 44px;
+  font-size: 11px;
+  border-radius: 4px;
+}
+.compare-tools button[aria-pressed="true"] {
+  background: var(--primary);
+  color: var(--background);
+}
+.compare-caption {
+  margin-top: 15px;
+}
+.story-next {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 40px;
+  border-top: 1px solid var(--border);
+  margin-top: 45px;
+}
+.story-next h2 {
+  margin: 0;
+}
+.next-project-link {
+  font-family: var(--serif);
+  font-size: 30px;
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  border-bottom: 1px solid var(--accent);
+  padding-bottom: 10px;
+}
+.next-project-link .icon {
+  width: 26px;
+  height: 26px;
+}
+/* Consultation */
+/* ==========================================================================
+   Forms and contact
+   Enquiry form fields, validation states and the contact page blocks.
+   ========================================================================== */
+.booking-layout {
+  display: grid;
+  grid-template-columns: 0.9fr 1.25fr;
+  gap: 85px;
+  padding: 15px 0 95px;
+  align-items: start;
+}
+.booking-visual {
+  height: 330px;
+  position: relative;
+  margin-bottom: 40px;
+}
+.glass-tag {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  padding: 12px 16px;
+  font-size: 8px;
+  letter-spacing: 1.7px;
+  color: #fff;
+  background: rgba(12, 29, 48, 0.58);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid #ffffff30;
+  border-radius: 4px;
+}
+
+.consultation-expectations {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0 30px;
+}
+.consultation-expectations > li {
+  display: flex;
+  gap: 23px;
+  padding: 20px 0;
+  border-top: 1px solid var(--border);
+}
+.consultation-expectations > li > span {
+  font-family: var(--serif);
+  font-size: 27px;
+  color: var(--accent-ink);
+}
+.consultation-expectations h3 {
+  
+  margin-bottom: 7px;
+}
+.consultation-expectations p {
+  font-size: 12px;
+  color: var(--text-secondary-readable);
+  line-height: 1.8;
+}
+.booking-facts {
+  margin: 30px 0;
+}
+.booking-facts > div {
+  display: grid;
+  grid-template-columns: 0.7fr 1fr;
+  gap: 20px;
+  font-size: 11px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.booking-facts dt {
+  font-weight: 500;
+}
+.booking-facts dd {
+  margin: 0;
+  color: var(--text-secondary-readable);
+}
+
+.booking-panel fieldset {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  min-width: 0;
+}
+.booking-timezone {
+  font-size: 10px;
+  color: var(--text-secondary-readable);
+  line-height: 1.8;
+}
+#scheduler-option {
+  padding: 20px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  margin: 25px 0;
+}
+#scheduler-option > p:first-child {
+  font-size: 12px;
+}
+#scheduler-option .button {
+  font-size: 11px;
+  min-height: 44px;
+  padding: 12px 18px;
+}
+#scheduler-option .small-note {
+  margin: 15px 0 0;
+}
+/* Privacy and consent */
+.privacy-preferences {
+  font-size: 9px;
+  min-height: 40px;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  color: var(--text-secondary-readable);
+}
+/* ==========================================================================
+   Footer
+   Footer grid, link columns and the bottom row.
+   ========================================================================== */
+.footer-bottom > div {
+  flex-wrap: wrap;
+}
+.privacy-dialog {
+  width: min(580px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  padding: 32px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--glass-shadow);
+}
+.privacy-dialog-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.privacy-dialog-top .eyebrow {
+  margin: 0;
+}
+.privacy-close {
+  font-size: 30px;
+  font-weight: 300;
+}
+.privacy-dialog h2 {
+  
+  margin: 20px 0;
+}
+.privacy-dialog > p:not(.small-note) {
+  font-size: 13px;
+}
+.privacy-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 25px;
+}
+.privacy-actions .button {
+  font-size: 11px;
+  padding: 13px 18px;
+}
+.consent-banner {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 70;
+  max-width: 490px;
+  width: calc(100% - 48px);
+  padding: 25px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 10px 60px #081f3430;
+}
+.consent-banner .eyebrow {
+  margin-bottom: 12px;
+}
+.consent-banner > p:not(.eyebrow) {
+  font-size: 12px;
+}
+.consent-banner > div {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.consent-banner .button {
+  font-size: 10px;
+  min-height: 44px;
+  padding: 12px 16px;
+}
+.consent-banner > a {
+  font-size: 10px;
+  text-decoration: underline;
+  display: inline-block;
+  margin-top: 15px;
+}
+/* ==========================================================================
+   Base and reset
+   Element defaults that everything else builds on.
+   ========================================================================== */
+body.modal-open .mobile-contact-bar,
+body.consent-open .mobile-contact-bar,
+body.consent-open .whatsapp-float {
+  display: none;
+}
+@media (max-width: 1200px) {
+  .story-concept {
+    gap: 65px;
+  }
+  .story-material-grid {
+    gap: 55px;
+  }
+  .booking-layout {
+    gap: 45px;
+  }
+  .booking-panel {
+    padding: 30px;
+  }
+  
+  .story-gallery img {
+    height: 410px;
+  }
+  .story-gallery figure:nth-child(even) img {
+    height: 350px;
+  }
+}
+@media (max-width: 1023px) {
+  .story-hero {
+    max-height: none;
+    height: 620px;
+  }
+  .story-concept {
+    gap: 40px;
+  }
+  
+  .project-facts {
+    gap: 20px;
+  }
+  .project-facts strong {
+    font-size: 11px;
+  }
+  .story-material-grid {
+    grid-template-columns: 1fr 1.2fr;
+    gap: 35px;
+  }
+  .material-palette {
+    gap: 14px;
+  }
+  
+  .story-gallery img {
+    height: 360px;
+  }
+  .story-gallery figure:nth-child(even) img {
+    height: 300px;
+  }
+  .booking-layout {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .booking-intro {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 35px;
+  }
+  .booking-visual {
+    grid-column: 1;
+    grid-row: 1/4;
+    height: 430px;
+    margin: 0;
+  }
+  .booking-intro > h2,
+  .consultation-expectations {
+    grid-column: 2;
+  }
+  .consultation-expectations {
+    margin: 0;
+  }
+  .booking-facts {
+    grid-column: 1/-1;
+    margin: 20px 0;
+  }
+  .booking-intro > .small-note {
+    grid-column: 1/-1;
+  }
+  .booking-panel {
+    padding: 40px;
+  }
+  
+  
+  
+  .next-project-link {
+    font-size: 24px;
+    gap: 20px;
+  }
+}
+@media (max-width: 767px) {
+  .site-header {
+    height: 76px;
+  }
+  .hero {
+    height: calc(100svh - 140px);
+    min-height: 590px;
+  }
+  .hero-bottom {
+    padding: 13px 14px;
+    bottom: 20px;
+  }
+  .hero-actions .text-link {
+    padding: 11px 16px;
+  }
+  .hero-actions {
+    gap: 15px;
+  }
+  .hero-index {
+    margin-right: 0;
+  }
+  
+  .whatsapp-float {
+    display: none;
+  }
+  .mobile-contact-bar {
+    display: flex;
+    position: fixed;
+    bottom: calc(10px + env(safe-area-inset-bottom));
+    left: 12px;
+    right: 12px;
+    height: 49.6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow:
+      0 6px 30px rgba(8, 27, 50, 0.17),
+      inset 0 1px 0 #ffffff50;
+    z-index: 45;
+    overflow: hidden;
+  }
+  @supports (
+    (backdrop-filter: blur(16px)) or (-webkit-backdrop-filter: blur(16px))
+  ) {
+    .mobile-contact-bar {
+      background: var(--glass-header);
+      backdrop-filter: blur(22px) saturate(120%);
+      -webkit-backdrop-filter: blur(22px) saturate(120%);
+    }
+  }
+  .mobile-contact-bar > a {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    font-size: 11px;
+    min-width: 0;
+    color: var(--text);
+    position: relative;
+  }
+  .mobile-contact-bar > a:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 12.8px;
+    bottom: 12.8px;
+    width: 1px;
+    background: var(--border);
+  }
+  .mobile-contact-bar .icon {
+    width: 18px;
+    height: 18px;
+  }
+  .mobile-contact-bar > a:last-child {
+    background: var(--navy);
+    color: #f4e8ce;
+  }
+  .site-footer {
+    padding-bottom: calc(92.6px + env(safe-area-inset-bottom));
+  }
+  .toast {
+    bottom: calc(77.6px + env(safe-area-inset-bottom));
+    right: 16px;
+    max-width: calc(100vw - 32px);
+  }
+  .lightbox {
+    border-radius: 0;
+  }
+  .project-story-link {
+    font-size: 11px;
+  }
+  .story-hero {
+    height: 590px;
+    min-height: 520px;
+  }
+  .story-hero-content {
+    padding-top: 40px;
+    padding-bottom: 45px;
+  }
+  .story-back {
+    top: 20px;
+    font-size: 9px;
+  }
+  .story-category {
+    font-size: 8px;
+    margin-top: 55px;
+  }
+  
+  .story-subtitle {
+    font-size: 12px;
+    max-width: 90%;
+  }
+  .story-index {
+    bottom: 20px;
+    right: 24px;
+    font-size: 7px;
+  }
+  .glass-link {
+    font-size: 10px;
+    min-height: 46px;
+  }
+  .project-facts {
+    grid-template-columns: 1fr 1fr;
+    gap: 22px 20px;
+    padding: 30px 0;
+  }
+  .project-facts > div:nth-child(2) {
+    border: 0;
+  }
+  .project-facts strong {
+    font-size: 11px;
+  }
+  .project-facts span {
+    font-size: 7px;
+  }
+  .story-concept {
+    grid-template-columns: 1fr;
+    gap: 35px;
+  }
+  
+  .reference-disclosure {
+    max-width: 100%;
+    margin-top: 25px;
+  }
+  
+  .story-concept > div:last-child p,
+  .story-concept ul {
+    font-size: 12px;
+  }
+  .story-material-section {
+    padding: 50px 0;
+  }
+  .story-material-grid {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+  
+  .material-palette {
+    gap: 15px;
+  }
+  .material-item > span:last-child {
+    font-size: 10px;
+  }
+  .material-swatch {
+    aspect-ratio: 0.8;
+  }
+  .story-gallery {
+    grid-template-columns: 1fr;
+    gap: 35px;
+  }
+  .story-gallery figure:nth-child(even) {
+    margin: 0;
+  }
+  .story-gallery img,
+  .story-gallery figure:nth-child(even) img {
+    height: 330px;
+  }
+  .story-gallery figcaption {
+    font-size: 10px;
+  }
+  .comparison-empty {
+    padding: 30px 22px;
+  }
+  
+  .comparison-empty p {
+    font-size: 11px;
+  }
+  .comparison-stage {
+    aspect-ratio: 1.1;
+  }
+  .compare-label {
+    font-size: 9px;
+    top: 12px;
+  }
+  .before-label {
+    left: 12px;
+  }
+  .after-label {
+    right: 12px;
+  }
+  .compare-tools {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  .compare-tools p {
+    font-size: 10px;
+  }
+  .compare-tools > div {
+    width: 100%;
+    gap: 8px;
+  }
+  .compare-tools button {
+    padding: 9px 12px;
+    flex: 1;
+    font-size: 10px;
+  }
+  .story-next {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 30px;
+    margin-top: 15px;
+  }
+  
+  .next-project-link {
+    font-size: 26px;
+  }
+  .booking-layout {
+    padding-top: 0;
+    padding-bottom: 60px;
+  }
+  .booking-intro {
+    display: block;
+  }
+  .booking-visual {
+    height: 320px;
+    margin-bottom: 30px;
+  }
+  
+  
+  .consultation-expectations p {
+    font-size: 11px;
+  }
+  .booking-facts > div {
+    font-size: 11px;
+  }
+  .booking-panel {
+    padding: 30px 23px;
+  }
+  
+  .booking-panel .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .booking-timezone {
+    font-size: 10px;
+  }
+  .booking-panel .form-notice p {
+    font-size: 11px;
+  }
+  .privacy-dialog {
+    padding: 23px;
+  }
+  
+  .privacy-actions {
+    gap: 10px;
+  }
+  .privacy-actions .button {
+    font-size: 10px;
+    padding: 12px 15px;
+    flex: 1;
+  }
+  .privacy-preferences {
+    font-size: 9px;
+  }
+  .consent-banner {
+    left: 16px;
+    right: 16px;
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    width: auto;
+    padding: 22px;
+  }
+  .consent-banner .button {
+    flex: 1;
+  }
+  .consent-banner .eyebrow {
+    font-size: 8px;
+  }
+}
+@media (max-width: 374px) {
+  
+  .hero-content {
+    padding-bottom: 130px;
+  }
+  .mobile-contact-bar {
+    left: 8px;
+    right: 8px;
+  }
+  .mobile-contact-bar > a {
+    font-size: 10px;
+    gap: 6px;
+  }
+  .mobile-contact-bar .icon {
+    width: 16px;
+  }
+  
+  .story-subtitle {
+    max-width: 100%;
+  }
+  .story-hero {
+    height: 580px;
+  }
+  .story-gallery img,
+  .story-gallery figure:nth-child(even) img {
+    height: 290px;
+  }
+  .booking-panel {
+    padding: 25px 18px;
+  }
+  
+  .material-palette {
+    gap: 10px;
+  }
+  .material-item > span:last-child {
+    font-size: 9px;
+  }
+  .privacy-dialog {
+    padding: 20px;
+  }
+  
+  .privacy-actions {
+    flex-direction: column;
+  }
+  .consent-banner > div {
+    flex-direction: column;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .site-header,
+  .form-panel,
+  .mobile-menu,
+  .lightbox,
+  .privacy-dialog,
+  .mobile-contact-bar,
+  .consent-banner {
+    background: var(--surface);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .hero-actions .text-link,
+  .hero-bottom,
+  .glass-link,
+  .glass-tag {
+    background: #14283f;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .button:hover,
+  .glass-link:hover,
+  .hero-actions .text-link:hover {
+    transform: none;
+  }
+}
+@media print {
+  .mobile-contact-bar,
+  .consent-banner,
+  .privacy-preferences,
+  .privacy-dialog,
+  .booking-panel {
+    display: none;
+  }
+  .story-hero {
+    height: 500px;
+  }
+  .site-footer {
+    padding-bottom: 20px;
+  }
+}
+
+/* Compact, uniform sizing for the five primary links inside the mobile drawer. */
+#mobile-menu nav > a,
+#mobile-menu nav > a[aria-current="page"] {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 44px;
+  padding: 12px 8px;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0;
+  text-transform: none;
+  transform: none;
+}
+
+/* ==========================================================================
+   Project story: concept section
+   The reference-disclosure paragraph was removed from the left column, so on
+   tablet and wider the right column (brief / concept / considerations) now
+   takes the full content width instead of sitting in a narrow 1.15fr track.
+   The left column keeps the eyebrow and headline above it.
+   ========================================================================== */
+@media (min-width: 768px) {
+  .story-concept {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 34px;
+  }
+  .story-concept > div:last-child {
+    width: 100%;
+    max-width: 100%;
+  }
+  .story-concept > div:last-child p,
+  .story-concept > div:last-child ul {
+    max-width: 100%;
+  }
+}

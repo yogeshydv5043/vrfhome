@@ -1,0 +1,21 @@
+/* WhatsApp-only soft light green; leave enquiry/call/email controls unchanged.
+   Dark ink keeps small text readable on the soft light-green background. */
+body a[data-whatsapp][href]:not(.text-link),
+body a[data-share="whatsapp"][href] {
+  background:#a8e8be;
+  background-image:linear-gradient(145deg,#cef5db,#a8e8be 80%);
+  color:#063b23;
+  border-color:#70b98a;
+  --button-base:#599e72;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),inset 0 -1px 0 rgba(0,0,0,.08),0 3px 0 #599e72,0 8px 18px rgba(8,90,43,.18);
+}
+body a[data-whatsapp][href]:not(.text-link):hover,
+body a[data-share="whatsapp"][href]:hover {
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 3px 0 #599e72,0 10px 22px rgba(8,90,43,.24);
+}
+body a[data-whatsapp] .icon,
+body a[data-share="whatsapp"] .icon { color:inherit; }
+body .mobile-contact-bar a[data-whatsapp] { box-shadow:inset 0 1px 0 rgba(255,255,255,.4); }
+body .whatsapp-float[data-whatsapp] > span { background:#a8e8be; color:#063b23; }
+body a.text-link[data-whatsapp] { color:#0d703c; }
+[data-theme="dark"] body a.text-link[data-whatsapp] { color:#50dd88; }

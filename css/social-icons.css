@@ -1,0 +1,35 @@
+/* Locally served, platform-coloured icons. Keep all link handlers and targets. */
+body a[data-social] .social-brand-icon,
+body a[data-share] .social-brand-icon {
+  display:block;
+  width:22px;
+  height:22px;
+  min-width:22px;
+  flex:0 0 22px;
+  object-fit:contain;
+  background:transparent;
+  border:0;
+  box-shadow:none;
+  filter:none;
+  opacity:1;
+  transform:none;
+}
+body a[data-social]:hover .social-brand-icon,
+body a[data-share]:hover .social-brand-icon { filter:none; transform:none; }
+/* Icon-only social/share links: no extra tile behind the platform logo.
+   Narrow exceptions override the shared 3D/WhatsApp button treatments.
+   Keep existing touch-target dimensions and keyboard focus outlines. */
+body a:is([data-social],[data-share]),
+body a:is([data-social],[data-share]):is(:hover,:focus,:active) {
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+}
+body a[data-share="whatsapp"] { color:#0d703c !important; }
+[data-theme="dark"] body a[data-share="whatsapp"] { color:#50dd88 !important; }
+/* The dark-theme invert that used to sit here served the X and Threads
+   glyphs, which are solid black and vanish on a dark background. Both were
+   removed from the site in September 2026, and no other icon needs it --
+   Instagram, Facebook, YouTube, LinkedIn and Pinterest all carry their own
+   brand colour. Restore an invert rule here if a monochrome glyph comes back. */
+

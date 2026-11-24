@@ -1,0 +1,136 @@
+/* Home page — "FROM OUR OWN PROJECTS" strip.
+   Markup is built by js/featured-work.js from js/featured-work-config.js.
+
+   House rule observed here: images never react to hover anywhere on this
+   site — no zoom, crop or scale. Only the caption colour shifts. */
+
+/* Vertical rhythm is deliberately NOT set here. The section carries the
+   `section` class, and css/layout-fixes.css owns that padding with
+   !important (64px, 56px under 1200px). Re-declaring it here would either
+   lose silently or force this one band out of step with its neighbours.
+   The background matches .testimonials, the section directly below. */
+.featured-work {
+  background: var(--background);
+}
+
+/* The heading block stays hard left at every width. margin-inline-end:auto
+   does the work rather than justify-content, so the "See the full gallery"
+   link can sit right on a wide screen and drop below -- still left -- when
+   the row wraps, without the heading ever drifting toward the centre. */
+.featured-work .section-heading {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px 32px;
+  align-items: flex-end;
+}
+
+.featured-work .section-heading > div {
+  margin-inline-end: auto;
+  text-align: left;
+}
+
+.featured-work .section-heading > div > .eyebrow,
+.featured-work .section-heading > div > h2,
+.featured-work-note {
+  text-align: left;
+}
+
+.featured-work-note {
+  max-width: 62ch;
+  margin: 14px 0 0;
+  color: var(--text-secondary);
+}
+
+.featured-work-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(20px, 2.4vw, 32px);
+  margin-top: clamp(28px, 4vw, 48px);
+}
+
+.featured-work-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* Raised 3D frame. This is the site's own image-card recipe, lifted verbatim
+   from css/raised-depth.css so these cards sit at the same depth as the
+   project and service images rather than inventing a second shadow language.
+   Deliberately no :hover variant -- images on this site do not react to
+   hover. */
+.featured-work-figure {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--surface-soft);
+  box-shadow:
+    0 0 0 1px var(--raised-rim),
+    0 4.05px 1.35px var(--raised-base),
+    0 9.45px 4.05px -1.35px var(--raised-base),
+    0 21.6px 35.1px -10.8px var(--raised-shadow);
+}
+
+/* The bevel: a hairline inner rim and a light wash off the top-left corner,
+   matching .project-image::after. ::after is taken by the watermark in
+   css/image-guard.css, so this uses ::before. */
+.featured-work-figure::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border: 1px solid rgb(255 255 255 / 27%);
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgb(255 255 255 / 11%), transparent 38%);
+  pointer-events: none;
+}
+
+.featured-work-figure > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: inherit;
+  object-fit: cover;
+}
+
+/* Marks a card whose thumbnail is a poster frame from a video. */
+.featured-work-kind {
+  position: absolute;
+  z-index: 2;
+  inset-block-start: 12px;
+  inset-inline-start: 12px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: rgb(0 0 0 / 62%);
+  color: #fff;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.featured-work-title {
+  margin: 18px 0 0;
+  font-size: clamp(1.02rem, 1.4vw, 1.18rem);
+  line-height: 1.35;
+}
+
+.featured-work-caption {
+  margin: 8px 0 0;
+  color: var(--text-secondary);
+  font-size: 0.93rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 1023px) {
+  .featured-work-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 599px) {
+  .featured-work-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

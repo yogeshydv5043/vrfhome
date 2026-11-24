@@ -1,0 +1,160 @@
+/* Home revision: full-bleed photograph with all hero copy layered over it.
+   Intrinsic rows allow short screens / enlarged text to grow instead of clipping.
+   Loaded after the ivory theme. Typography and all original content are retained. */
+body.home-page { --home-header-height:92px; }
+/* ==========================================================================
+   Base and reset
+   Element defaults that everything else builds on.
+   ========================================================================== */
+body.home-page .hero {
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  grid-template-rows:1fr auto;
+  grid-template-areas:"copy" "bar";
+  align-items:center;
+  gap:32px;
+  height:auto;
+  min-height:calc(100vh - var(--home-header-height));
+  min-height:calc(100svh - var(--home-header-height));
+  max-height:none;
+  padding:48px max(48px,calc((100vw - 1440px)/2)) 28px;
+  background:#30251b;
+  color:#fff8ec;
+  isolation:isolate;
+}
+body.home-page .hero::before { content:none; }
+body.home-page .home-hero-scene {
+  position:absolute;
+  inset:0;
+  grid-area:auto;
+  width:100%;
+  max-width:none;
+  height:100%;
+  aspect-ratio:auto;
+  margin:0;
+  border:0;
+  border-radius:0;
+  box-shadow:none;
+  z-index:0;
+}
+body.home-page .home-hero-scene .hero-image {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center 56%;
+  border-radius:0;
+}
+body.home-page .hero-shade {
+  display:block;
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  background:linear-gradient(90deg,rgba(29,22,16,.84),rgba(29,22,16,.73) 43%,rgba(29,22,16,.18) 78%),linear-gradient(0deg,rgba(29,22,16,.63),transparent 46%);
+}
+body.home-page .hero-content {
+  position:relative;
+  z-index:2;
+  grid-area:copy;
+  align-self:center;
+  top:auto;
+  transform:none;
+  width:100%;
+  max-width:620px;
+  min-width:0;
+  padding:0;
+  margin:0;
+  overflow-wrap:anywhere;
+}
+body.home-page .hero-content > .eyebrow { color:#f0d8a8; margin-bottom:22px; }
+body.home-page .hero .short-line { flex-shrink:0; background:#e2bf7e; }
+body.home-page .hero h1 { color:#fff8ec; margin-bottom:22px; text-shadow:0 2px 12px rgba(0,0,0,.2); }
+body.home-page .hero h1 em { color:#f0d8a8; }
+body.home-page .hero h1::after { background:#e2bf7e; margin-top:20px; }
+body.home-page .hero-content > p:not(.eyebrow) { color:#f6eddf; margin-bottom:26px; }
+body.home-page .hero-actions { flex-direction:row; flex-wrap:wrap; align-items:center; gap:16px; }
+body.home-page .hero-actions .text-link,
+body.home-page .hero-actions .text-link:hover {
+  color:#fff8ec;
+  background:rgba(35,26,18,.78);
+  border-color:rgba(240,216,168,.65);
+  transform:none;
+}
+body.home-page .hero-bottom {
+  position:relative;
+  grid-area:bar;
+  z-index:2;
+  inset:auto;
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:16px 24px;
+  width:100%;
+  min-width:0;
+  margin:0;
+  padding:18px 24px;
+  background:rgba(35,26,18,.78);
+  color:#fff8ec;
+  border:1px solid rgba(240,216,168,.35);
+  border-radius:14px;
+  box-shadow:inset 0 1px 0 rgba(255,248,236,.15),0 8px 24px rgba(0,0,0,.12);
+}
+body.home-page .hero-caption { display:block; flex:1 1 250px; min-width:0; margin:0; }
+body.home-page .hero-caption small { color:#f2e5d0; overflow-wrap:anywhere; }
+body.home-page .scroll-icon { border-color:#e2bf7e; color:#f0d8a8; flex-shrink:0; }
+body.home-page .hero-index { display:block; margin:0; color:#f0d8a8; }
+body.home-page .hero-index span { color:#f2e5d0; }
+body.home-page .hero :is(a,button):focus-visible { outline:2px solid #f0d8a8; outline-offset:5px; }
+/* Reserve space for the floating control; introduction geometry is independent. */
+@media (min-width:768px) {
+  /* Reserve the right edge for the existing floating WhatsApp control. */
+  body.home-page .hero-bottom { padding-right:88px; }
+}
+/* At tablet/desktop widths, text alone determines the shared grid-row height.
+   An absolutely fitted image cannot force a fixed/square height on the row.
+   CSS automatically follows font loading, resizing and later text updates. */
+@media (min-width:768px) {
+  body.home-page .intro-revised { align-items:start; }
+  body.home-page .intro-text { min-width:0; }
+  body.home-page .intro-text > :last-child { margin-bottom:0; }
+  body.home-page .intro-visual {
+    align-self:stretch;
+    width:100%;
+    height:auto;
+    min-height:0;
+    aspect-ratio:auto;
+    border-radius:12px;
+  }
+  body.home-page .intro-visual > img {
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    border-radius:inherit;
+  }
+}
+@media (max-width:1024px) {
+  body.home-page .hero { padding:40px 32px 28px; gap:28px; }
+  body.home-page .hero-content { max-width:580px; }
+  body.home-page .hero-shade { background:linear-gradient(90deg,rgba(29,22,16,.83),rgba(29,22,16,.72) 65%,rgba(29,22,16,.4)),linear-gradient(0deg,rgba(29,22,16,.5),transparent 50%); }
+}
+@media (max-width:1023px) {
+  body.home-page { --home-header-height:80px; }
+}
+@media (max-width:767px) {
+  body.home-page { --home-header-height:76px; }
+  body.home-page .hero { padding:30px 24px calc(84px + env(safe-area-inset-bottom)); gap:28px; }
+  body.home-page .hero-content { max-width:none; }
+  body.home-page .home-hero-scene .hero-image { object-position:58% center; }
+  body.home-page .hero-shade { background:linear-gradient(90deg,rgba(29,22,16,.8),rgba(29,22,16,.70)),linear-gradient(0deg,rgba(29,22,16,.3),transparent 65%); }
+  body.home-page .hero-content > .eyebrow { margin-bottom:18px; }
+  body.home-page .hero-actions { display:flex; flex-direction:column; align-items:flex-start; gap:12px; width:100%; }
+  body.home-page .hero-actions > a { flex:0 0 auto; width:auto; max-width:100%; min-width:0; min-height:48px; height:48px; justify-content:center; text-align:center; white-space:nowrap; padding-left:18px; padding-right:18px; }
+  body.home-page .hero-bottom { padding:14px 16px; gap:14px; }
+  body.home-page .hero-caption { flex:1 1 100%; order:2; text-align:left; }
+  body.home-page .hero-index { margin-left:auto; }
+}
+@media (max-width:374px) {
+  body.home-page .hero { padding-left:20px; padding-right:20px; }
+}

@@ -1,0 +1,9 @@
+# Applies to all user agents. Contact page and its legacy aliases must not be crawled.
+# /contact also covers /contact-us/, /contact-us/index.html, /contact.html and /contact/.
+User-agent: *
+Disallow: /contact
+Disallow: /api/
+Disallow: /server/
+Allow: /
+
+Sitemap: https://vrfhomeinteriors.com/sitemap.xml

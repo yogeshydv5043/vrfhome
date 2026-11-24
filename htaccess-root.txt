@@ -1,0 +1,233 @@
+DirectoryIndex index.html
+
+# A folder with no index page must not be browsable. Plenty of hosts ship
+# with Options +Indexes on, and then typing /css/ or /js/ returns a listing
+# of every file in it. Turning it off makes Apache answer "forbidden" for
+# those, which the ErrorDocument 403 further down turns into the studio's
+# own page - so a folder name behaves like any other wrong address.
+Options -Indexes
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteCond %{THE_REQUEST} "\s/+index\.html(?:[?\s])" [NC]
+RewriteRule ^index\.html$ / [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+about\.html(?:[?\s])" [NC]
+RewriteRule ^about\.html$ /about/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+services\.html(?:[?\s])" [NC]
+RewriteRule ^services\.html$ /service/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+gallery\.html(?:[?\s])" [NC]
+RewriteRule ^gallery\.html$ /gallery/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+contact\.html(?:[?\s])" [NC]
+RewriteRule ^contact\.html$ /contact-us/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+consultation\.html(?:[?\s])" [NC]
+RewriteRule ^consultation\.html$ /consultation/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+privacy\-policy\.html(?:[?\s])" [NC]
+RewriteRule ^privacy\-policy\.html$ /privacy-policy/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+terms\.html(?:[?\s])" [NC]
+RewriteRule ^terms\.html$ /terms/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+disclaimer\.html(?:[?\s])" [NC]
+RewriteRule ^disclaimer\.html$ /disclaimer/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+project\-0\.html(?:[?\s])" [NC]
+RewriteRule ^project\-0\.html$ /projects/the-quiet-residence/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+project\-1\.html(?:[?\s])" [NC]
+RewriteRule ^project\-1\.html$ /projects/a-study-in-balance/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+project\-2\.html(?:[?\s])" [NC]
+RewriteRule ^project\-2\.html$ /projects/the-gathering-kitchen/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+project\-3\.html(?:[?\s])" [NC]
+RewriteRule ^project\-3\.html$ /projects/a-softer-sanctuary/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+project\-4\.html(?:[?\s])" [NC]
+RewriteRule ^project\-4\.html$ /projects/room-to-connect/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+project\-5\.html(?:[?\s])" [NC]
+RewriteRule ^project\-5\.html$ /projects/the-open-workspace/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+project\-6\.html(?:[?\s])" [NC]
+RewriteRule ^project\-6\.html$ /projects/material-matters/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+project\-7\.html(?:[?\s])" [NC]
+RewriteRule ^project\-7\.html$ /projects/the-everyday-retreat/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+project\-8\.html(?:[?\s])" [NC]
+RewriteRule ^project\-8\.html$ /projects/space-for-ideas/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+project\-9\.html(?:[?\s])" [NC]
+RewriteRule ^project\-9\.html$ /projects/the-light-house/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+home/(?:[?\s])" [NC]
+RewriteRule ^home/$ / [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+services/(?:[?\s])" [NC]
+RewriteRule ^services/$ /service/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+contact/(?:[?\s])" [NC]
+RewriteRule ^contact/$ /contact-us/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+about/index\.html(?:[?\s])" [NC]
+RewriteRule ^about/index\.html$ /about/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+service/index\.html(?:[?\s])" [NC]
+RewriteRule ^service/index\.html$ /service/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+gallery/index\.html(?:[?\s])" [NC]
+RewriteRule ^gallery/index\.html$ /gallery/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+contact\-us/index\.html(?:[?\s])" [NC]
+RewriteRule ^contact\-us/index\.html$ /contact-us/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+consultation/index\.html(?:[?\s])" [NC]
+RewriteRule ^consultation/index\.html$ /consultation/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+privacy\-policy/index\.html(?:[?\s])" [NC]
+RewriteRule ^privacy\-policy/index\.html$ /privacy-policy/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+terms/index\.html(?:[?\s])" [NC]
+RewriteRule ^terms/index\.html$ /terms/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+disclaimer/index\.html(?:[?\s])" [NC]
+RewriteRule ^disclaimer/index\.html$ /disclaimer/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+projects/the\-quiet\-residence/index\.html(?:[?\s])" [NC]
+RewriteRule ^projects/the\-quiet\-residence/index\.html$ /projects/the-quiet-residence/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+projects/a\-study\-in\-balance/index\.html(?:[?\s])" [NC]
+RewriteRule ^projects/a\-study\-in\-balance/index\.html$ /projects/a-study-in-balance/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+projects/the\-gathering\-kitchen/index\.html(?:[?\s])" [NC]
+RewriteRule ^projects/the\-gathering\-kitchen/index\.html$ /projects/the-gathering-kitchen/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+projects/a\-softer\-sanctuary/index\.html(?:[?\s])" [NC]
+RewriteRule ^projects/a\-softer\-sanctuary/index\.html$ /projects/a-softer-sanctuary/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+projects/room\-to\-connect/index\.html(?:[?\s])" [NC]
+RewriteRule ^projects/room\-to\-connect/index\.html$ /projects/room-to-connect/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+projects/the\-open\-workspace/index\.html(?:[?\s])" [NC]
+RewriteRule ^projects/the\-open\-workspace/index\.html$ /projects/the-open-workspace/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+projects/material\-matters/index\.html(?:[?\s])" [NC]
+RewriteRule ^projects/material\-matters/index\.html$ /projects/material-matters/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+projects/the\-everyday\-retreat/index\.html(?:[?\s])" [NC]
+RewriteRule ^projects/the\-everyday\-retreat/index\.html$ /projects/the-everyday-retreat/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+projects/space\-for\-ideas/index\.html(?:[?\s])" [NC]
+RewriteRule ^projects/space\-for\-ideas/index\.html$ /projects/space-for-ideas/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+projects/the\-light\-house/index\.html(?:[?\s])" [NC]
+RewriteRule ^projects/the\-light\-house/index\.html$ /projects/the-light-house/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+projects\.html(?:[?\s])" [NC]
+RewriteRule ^projects\.html$ /projects/ [R=301,L,NE]
+RewriteCond %{THE_REQUEST} "\s/+projects/index\.html(?:[?\s])" [NC]
+RewriteRule ^projects/index\.html$ /projects/ [R=301,L,NE]
+</IfModule>
+
+# Revalidate owner-edited review content without changing the HTML script URL.
+<Files "reviews-config.js">
+  <IfModule mod_headers.c>
+    Header set Cache-Control "no-cache, max-age=0, must-revalidate"
+  </IfModule>
+</Files>
+
+# ==========================================================================
+# Keep internal files out of the public site.
+# Documentation, audit tooling, build config and dotfiles are part of the
+# project but must never be readable from a browser.
+# ==========================================================================
+<IfModule mod_authz_core.c>
+  # Apache 2.4+
+  <FilesMatch "\.(md|markdown|json|lock|yml|yaml|ini|log|bak|old|orig|sql|sh|py|zip|gz|tar)$">
+    Require all denied
+  </FilesMatch>
+  <FilesMatch "^(\.|package|package-lock|composer|Dockerfile|Makefile|serve)">
+    Require all denied
+  </FilesMatch>
+</IfModule>
+<IfModule !mod_authz_core.c>
+  # Apache 2.2 fallback
+  <FilesMatch "\.(md|markdown|json|lock|yml|yaml|ini|log|bak|old|orig|sql|sh|py|zip|gz|tar)$">
+    Order allow,deny
+    Deny from all
+  </FilesMatch>
+  <FilesMatch "^(\.|package|package-lock|composer|Dockerfile|Makefile|serve)">
+    Order allow,deny
+    Deny from all
+  </FilesMatch>
+</IfModule>
+
+# The manifest is JSON but must stay reachable, so re-allow it explicitly.
+<Files "site.webmanifest">
+  <IfModule mod_authz_core.c>
+    Require all granted
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Allow from all
+  </IfModule>
+</Files>
+
+# Block whole internal directories.
+RedirectMatch 404 ^/(qa|server|\.git|node_modules)(/|$)
+
+# Serve the branded 404 page instead of the bare server error.
+#
+# 403 is listed too. A wrong address does not always arrive as "missing":
+# a folder with no index page, and every file denied by the rules above,
+# come back as "forbidden" instead. Sending both to the same page means a
+# visitor who mistypes something sees one consistent result, and anyone
+# probing for files learns nothing about which of them actually exist.
+# Apache keeps the real status code, so 403 stays 403 for crawlers.
+ErrorDocument 404 /404.html
+ErrorDocument 403 /404.html
+
+# Correct MIME types for the circular favicon set and the web app manifest.
+# Without these some hosts serve .webmanifest/.svg as text/plain and browsers
+# fall back to a default icon.
+<IfModule mod_mime.c>
+  AddType application/manifest+json .webmanifest
+  AddType image/svg+xml             .svg
+  AddType image/x-icon              .ico
+</IfModule>
+
+# ==========================================================================
+# Performance: compress text responses.
+# CSS, JS and HTML are plain text and shrink by roughly 75-80% when
+# compressed. Without this every visitor downloads about 500 KB of raw text
+# on their first visit. Both modules are wrapped in <IfModule> so the file
+# stays valid on a host that has neither.
+# ==========================================================================
+<IfModule mod_brotli.c>
+  AddOutputFilterByType BROTLI_COMPRESS text/html text/plain text/css text/xml
+  AddOutputFilterByType BROTLI_COMPRESS text/javascript application/javascript
+  AddOutputFilterByType BROTLI_COMPRESS application/json application/manifest+json
+  AddOutputFilterByType BROTLI_COMPRESS image/svg+xml application/xml
+</IfModule>
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml
+  AddOutputFilterByType DEFLATE text/javascript application/javascript
+  AddOutputFilterByType DEFLATE application/json application/manifest+json
+  AddOutputFilterByType DEFLATE image/svg+xml application/xml
+</IfModule>
+
+# ==========================================================================
+# Performance: tell browsers how long they may keep each kind of file.
+#
+# Stylesheets and scripts are always requested with a ?v=bNNN cache buster,
+# so the URL itself changes whenever the file changes. That makes them safe
+# to cache for a year. Photographs and fonts change rarely, so they get a
+# long life too.
+#
+# HTML is the deliberate exception. Page files carry NO cache buster, so a
+# browser holding an old copy would keep showing outdated content. HTML is
+# therefore revalidated on every visit - that is what stops a visitor from
+# seeing a stale page after the site is updated.
+# ==========================================================================
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault                          "access plus 1 month"
+  ExpiresByType text/html                 "access plus 0 seconds"
+  ExpiresByType text/css                  "access plus 1 year"
+  ExpiresByType text/javascript           "access plus 1 year"
+  ExpiresByType application/javascript    "access plus 1 year"
+  ExpiresByType image/webp                "access plus 6 months"
+  ExpiresByType image/jpeg                "access plus 6 months"
+  ExpiresByType image/png                 "access plus 6 months"
+  ExpiresByType image/svg+xml             "access plus 6 months"
+  ExpiresByType image/x-icon              "access plus 1 year"
+  ExpiresByType font/woff2                "access plus 1 year"
+  ExpiresByType video/webm                "access plus 6 months"
+  ExpiresByType video/mp4                 "access plus 6 months"
+  ExpiresByType application/manifest+json "access plus 1 week"
+</IfModule>
+
+<IfModule mod_headers.c>
+  # Versioned assets may be kept without ever asking the server again.
+  <FilesMatch "\.(css|js|woff2|webp|png|jpe?g|svg|ico|webm|mp4)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  # Pages must always be checked, because their URLs carry no version tag.
+  <FilesMatch "\.(html)$">
+    Header set Cache-Control "public, max-age=0, must-revalidate"
+  </FilesMatch>
+
+  # IMPORTANT - this must stay last.
+  # The two owner-edited config files are plain .js, so the year-long rule
+  # above would otherwise freeze them in visitors' browsers and the owner's
+  # edits would not appear. Apache applies the last matching rule, so these
+  # two are put back to "always check with the server".
+  <FilesMatch "^(reviews-config|featured-work-config)\.js$">
+    Header set Cache-Control "no-cache, max-age=0, must-revalidate"
+  </FilesMatch>
+</IfModule>

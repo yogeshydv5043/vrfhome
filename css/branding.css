@@ -1,0 +1,152 @@
+/* Transparent VRF mark, without a card, border, padding or background. */
+/* ==========================================================================
+   Header and navigation
+   Site header, brand lockup, desktop links and the mobile drawer.
+   ========================================================================== */
+.brand.vrf-brand {
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  max-width: 100%;
+}
+.brand.vrf-brand .brand-logo {
+  display: block;
+  width: 88px;
+  height: 56px;
+  flex: 0 0 auto;
+  padding: 0;
+  object-fit: contain;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.brand.vrf-brand > .brand-lockup {
+  display: block;
+  max-width: 165px;
+  min-width: 0;
+  font: inherit;
+  letter-spacing: 0;
+}
+.vrf-brand .brand-name {
+  display: block;
+  font: 600 14px/1.35 var(--sans);
+  letter-spacing: 0.07em;
+  color: var(--text);
+}
+.brand.vrf-brand small {
+  display: block;
+  margin-top: 5px;
+  font-size: 6px;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 1.35px;
+  color: var(--text-secondary-readable);
+}
+.site-header .vrf-brand {
+  margin-right: auto;
+}
+.site-header .header-actions {
+  flex-shrink: 0;
+}
+/* ==========================================================================
+   Footer
+   Footer grid, link columns and the bottom row.
+   ========================================================================== */
+.footer-brand .vrf-brand {
+  max-width: 310px;
+}
+.project-conversation {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  align-items: center;
+  gap: clamp(28px, 6vw, 90px);
+  padding-bottom: 100px;
+}
+.project-conversation .booking-visual {
+  margin: 0;
+}
+
+/* ==========================================================================
+   Projects
+   Project cards, the collection grid and the project story pages.
+   ========================================================================== */
+.project-conversation p:not(.eyebrow) {
+  margin: 22px 0;
+  color: var(--text-secondary-readable);
+}
+.project-conversation .button {
+  margin-top: 8px;
+}
+/* One size source keeps the closed navbar and open drawer logos identical. */
+:root {
+  --navigation-logo-width: 96px;
+  --navigation-logo-height: 56px;
+}
+/* ==========================================================================
+   Header and navigation
+   Site header, brand lockup, desktop links and the mobile drawer.
+   ========================================================================== */
+.site-header .vrf-brand .brand-logo {
+  width: var(--navigation-logo-width);
+  height: var(--navigation-logo-height);
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  :root { --navigation-logo-width: 88px; --navigation-logo-height: 52px; }
+}
+@media (max-width: 767px) {
+  .site-header { gap: 10px; }
+  :root {
+    --navigation-logo-width: 80px;
+    --navigation-logo-height: 48px;
+  }
+  .project-conversation { grid-template-columns: 1fr; padding-bottom: 65px; }
+}
+@media (max-width: 374px) {
+  :root {
+    --navigation-logo-width: 74px;
+    --navigation-logo-height: 44px;
+  }
+}
+
+/* Owner-requested navigation and contact simplification. */
+#mobile-menu .mobile-menu-logo {
+  display: inline-flex;
+  min-height: 44px;
+  flex-shrink: 0;
+}
+#mobile-menu .mobile-menu-logo .brand-logo {
+  width: var(--navigation-logo-width);
+  height: var(--navigation-logo-height);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+/* ==========================================================================
+   Forms and contact
+   Enquiry form fields, validation states and the contact page blocks.
+   ========================================================================== */
+.contact-layout.contact-form-only {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  max-width: 900px;
+  margin-inline: auto;
+}
+#map-panel .map-consent { gap: 12px; }
+#map-panel .map-consent > p { margin: 0; }
+#map-panel .map-consent .map-location-note {
+  font: 500 10px/1.6 var(--sans);
+  color: var(--accent-ink);
+  letter-spacing: 0.05em;
+}
+#map-panel .map-consent > p:nth-child(2) {
+  font: 400 clamp(22px, 3vw, 28px)/1.3 var(--serif);
+}
+#map-panel .small-note a { text-decoration: underline; text-underline-offset: 3px; }
+#map-panel iframe { display: block; }
+
+/* Keep the logo Home link easy to tap even with the smaller artwork. */
+.site-header .vrf-brand { min-height: 44px; }

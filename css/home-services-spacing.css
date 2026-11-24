@@ -1,0 +1,18 @@
+/* Home services only: compact whitespace, preserve fonts, images and content. */
+.home-services.section { padding-top:72px; padding-bottom:72px; }
+.home-services .section-heading { margin-bottom:28px; gap:22px; }
+.home-services .section-heading .eyebrow { margin-bottom:12px; }
+.home-services .services-preview { row-gap:28px; }
+.home-services .services-preview .service-picture { margin-bottom:16px; }
+.home-services .service-kicker { margin-bottom:6px; }
+.home-services .services-preview .service-title { min-height:0; margin-bottom:8px; }
+.home-services .services-preview p { min-height:0; margin:0 0 12px; }
+.home-services .service-preview > a > .text-link { margin-top:0; }
+@media (max-width:1024px) {
+  .home-services.section { padding-top:56px; padding-bottom:56px; }
+}
+@media (max-width:767px) {
+  .home-services.section { padding-top:40px; padding-bottom:40px; }
+  .home-services .section-heading { margin-bottom:22px; gap:16px; }
+  .home-services .services-preview { row-gap:26px; }
+}

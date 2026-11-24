@@ -1,0 +1,22 @@
+{
+  "index.html": "",
+  "about.html": "about/",
+  "services.html": "service/",
+  "gallery.html": "gallery/",
+  "contact.html": "contact-us/",
+  "consultation.html": "consultation/",
+  "privacy-policy.html": "privacy-policy/",
+  "terms.html": "terms/",
+  "disclaimer.html": "disclaimer/",
+  "project-0.html": "projects/the-quiet-residence/",
+  "project-1.html": "projects/a-study-in-balance/",
+  "project-2.html": "projects/the-gathering-kitchen/",
+  "project-3.html": "projects/a-softer-sanctuary/",
+  "project-4.html": "projects/room-to-connect/",
+  "project-5.html": "projects/the-open-workspace/",
+  "project-6.html": "projects/material-matters/",
+  "project-7.html": "projects/the-everyday-retreat/",
+  "project-8.html": "projects/space-for-ideas/",
+  "project-9.html": "projects/the-light-house/",
+  "projects.html": "projects/"
+}

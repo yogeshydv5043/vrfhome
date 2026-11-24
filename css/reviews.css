@@ -1,0 +1,261 @@
+/* Config-driven reviews: retain existing typography and palette. */
+#client-reviews[hidden], #client-reviews [hidden] { display:none !important; }
+#client-reviews .testimonial-layout > *,
+#client-reviews .testimonial-slider { min-width:0; }
+#client-reviews :is(blockquote,.testimonial-person,.small-note,#review-kind,#review-source) { overflow-wrap:anywhere; }
+#client-reviews blockquote { white-space:pre-line; }
+#client-reviews .rating .review-stars { font-size:inherit; letter-spacing:inherit; margin:0; color:inherit; }
+#client-reviews #review-kind { margin:0 0 20px; font-size:9px; }
+#client-reviews #review-source { margin-top:10px; font-size:11px; white-space:normal; }
+#client-reviews .slider-controls { flex-wrap:wrap; gap:12px 20px; }
+#client-reviews .slider-dots { flex:1 1 160px; flex-wrap:wrap; min-width:0; }
+#client-reviews .review-nav { flex:0 0 auto; align-items:center; }
+#client-reviews #review-position { margin:0 8px 0 0; white-space:nowrap; }
+#client-reviews .slider-dot { flex:0 0 28px; }
+#client-reviews .reviews-empty { margin:0; padding:24px; border:1px solid var(--border); border-radius:12px; }
+
+/* ==========================================================================
+   Verified public rating panel
+   Shown while no written customer review is published. Every figure is the
+   real aggregate from the studio's public business listing and links to it.
+   ========================================================================== */
+#client-reviews .reviews-proof {
+  margin: 0;
+  padding: 34px 34px 30px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface-soft);
+}
+#client-reviews .proof-score {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+}
+#client-reviews .proof-value {
+  font-family: var(--serif);
+  font-size: clamp(38px, 4.6vw, 58px);
+  font-weight: 400;
+  line-height: 1;
+  color: var(--accent-ink);
+  letter-spacing: -0.5px;
+}
+#client-reviews .proof-stars {
+  font-size: clamp(13px, 1.3vw, 17px);
+  letter-spacing: 4px;
+  color: var(--accent);
+  line-height: 1;
+}
+#client-reviews .proof-count {
+  flex: 1 1 100%;
+  font-size: var(--font-caption, 12px);
+  color: var(--text-secondary-readable);
+  letter-spacing: 0.6px;
+  margin-top: 2px;
+}
+#client-reviews .proof-count strong {
+  color: var(--text);
+  font-weight: 500;
+}
+#client-reviews .proof-note {
+  margin: 20px 0 0;
+  font-size: var(--font-body, 16px);
+  line-height: 1.75;
+  color: var(--text);
+}
+#client-reviews .proof-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 18px;
+  font-size: var(--font-button, 13px);
+  letter-spacing: 0.8px;
+}
+#client-reviews .proof-link .icon {
+  width: 13px;
+  height: 13px;
+  flex: 0 0 auto;
+}
+#client-reviews .proof-invite {
+  margin: 20px 0 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+  font-size: var(--font-caption, 12px);
+  line-height: 1.8;
+  color: var(--text-secondary-readable);
+}
+@media (max-width: 767px) {
+  #client-reviews .reviews-proof { padding: 26px 22px 24px; }
+}
+
+
+/* ==========================================================================
+   Review card
+   The review used to sit flat on the page background with no boundary, so it
+   read as loose text rather than as a distinct piece of feedback. It is now a
+   contained card: rating on top, quote in the middle, and the person's
+   identity anchored at the bottom behind a divider.
+   ========================================================================== */
+#client-reviews .review-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: clamp(26px, 3vw, 40px);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow:
+    inset 0 1px 0 var(--depth-edge, transparent),
+    0 2px 3px var(--raised-base, rgba(0, 0, 0, .03)),
+    0 18px 38px -26px var(--raised-shadow, rgba(0, 0, 0, .22));
+  overflow: hidden;
+}
+
+/* Accent rule along the top edge, tying the card to the brand palette. */
+#client-reviews .review-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), transparent 78%);
+}
+
+/* The oversized quote mark becomes a watermark inside the card instead of
+   floating outside it, where it used to collide with the heading column. */
+#client-reviews .review-card .quote-mark {
+  position: absolute;
+  top: -22px;
+  right: 14px;
+  font-size: clamp(110px, 13vw, 165px);
+  line-height: 1;
+  color: var(--border);
+  opacity: .5;
+  pointer-events: none;
+  user-select: none;
+}
+
+#client-reviews .review-card-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  margin-bottom: 18px;
+}
+#client-reviews .review-card .rating {
+  margin: 0;
+  font-size: clamp(14px, 1.5vw, 18px);
+  letter-spacing: 3px;
+  color: var(--accent);
+}
+
+#client-reviews .review-card blockquote {
+  position: relative;
+  margin: 0 0 26px;
+  font-size: var(--font-lead, 17px);
+  line-height: 1.8;
+  color: var(--text);
+}
+
+/* Identity block: avatar, name, then project type / location / date. */
+#client-reviews .review-card-foot {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+#client-reviews .review-avatar {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+  color: var(--accent-ink);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: .5px;
+}
+#client-reviews .review-identity { min-width: 0; }
+#client-reviews .review-card .testimonial-person {
+  margin: 0 0 3px;
+  font-size: var(--font-h4, 16px);
+  font-weight: 500;
+  letter-spacing: .2px;
+  color: var(--text);
+}
+#client-reviews .review-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 10px;
+  margin: 0;
+  font-size: var(--font-caption, 12px);
+  line-height: 1.6;
+  color: var(--text-secondary-readable);
+}
+#client-reviews .review-where + .review-date::before {
+  content: "·";
+  margin-right: 10px;
+  color: var(--border);
+}
+#client-reviews #review-source { margin-top: 16px; }
+
+/* --------------------------------------------------------------------------
+   Previous / next controls
+   Labelled buttons rather than bare arrows, so the action is unambiguous.
+   -------------------------------------------------------------------------- */
+#client-reviews .slider-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px 20px;
+  margin-top: 22px;
+}
+#client-reviews .review-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+#client-reviews .review-position {
+  margin: 0 6px 0 0;
+  font-size: var(--font-caption, 12px);
+  color: var(--text-secondary-readable);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+#client-reviews .review-position strong {
+  color: var(--text);
+  font-weight: 500;
+}
+#client-reviews .review-nav .icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text);
+}
+#client-reviews .review-nav .icon-button:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent-ink);
+}
+#client-reviews .review-nav .icon-button:disabled {
+  opacity: .38;
+  cursor: not-allowed;
+}
+
+@media (max-width: 767px) {
+  #client-reviews .review-card { padding: 24px 20px; }
+  #client-reviews .review-card blockquote { font-size: var(--font-body, 15px); }
+  #client-reviews .slider-controls { justify-content: space-between; }
+  #client-reviews .review-avatar { width: 42px; height: 42px; font-size: 13px; }
+}

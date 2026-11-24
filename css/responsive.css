@@ -1,0 +1,2182 @@
+/* ==========================================================================
+   Very large desktops (1700px and up)
+   Extra breathing room once the layout has more width than it needs.
+   ========================================================================== */
+@media (min-width: 1700px) {
+  .site-header {
+    padding-left: max(64px, calc((100vw - 1440px) / 2));
+    padding-right: max(64px, calc((100vw - 1440px) / 2));
+  }
+  .hero-content {
+    padding-left: 64px;
+  }
+  .hero-bottom {
+    left: max(64px, calc((100vw - 1440px) / 2));
+    right: max(64px, calc((100vw - 1440px) / 2));
+  }
+  
+}
+/* ==========================================================================
+   Small desktops and large laptops (up to 1200px)
+   First step down: gaps tighten before any column count changes.
+   ========================================================================== */
+@media (max-width: 1200px) {
+  .site-header {
+    padding: 0 32px;
+    gap: 20px;
+  }
+  .desktop-nav {
+    gap: 23px;
+    margin-right: 10px;
+  }
+  .header-actions {
+    gap: 15px;
+  }
+  .header-cta {
+    padding: 12px 14px;
+    gap: 15px;
+  }
+  .wrap {
+    width: calc(100% - 80px);
+  }
+  .hero-content {
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+  .hero-bottom {
+    left: 40px;
+    right: 40px;
+  }
+  .section {
+    padding-top: 80px;
+    padding-bottom: 80px;
+  }
+  .intro {
+    column-gap: 50px;
+    padding-bottom: 35px;
+  }
+  .intro-foot {
+    margin-top: 45px;
+  }
+  .selected {
+    padding-top: 55px;
+  }
+  
+  .service-icon {
+    display: none;
+  }
+  .philosophy {
+    min-height: 580px;
+  }
+  .philosophy-copy {
+    padding: 70px 11%;
+  }
+  .collection-grid {
+    gap: 20px;
+  }
+  .collection-grid .project-category > span {
+    padding: 0 3px;
+  }
+  
+  .values-grid {
+    gap: 20px;
+  }
+  .process-grid {
+    gap: 17px;
+  }
+  
+  .testimonial-layout {
+    gap: 65px;
+  }
+  .final-cta {
+    padding: 70px 40px;
+    gap: 55px;
+  }
+  .site-footer {
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+  .footer-grid {
+    gap: 30px;
+  }
+  .contact-layout {
+    gap: 65px;
+    grid-template-columns: 0.8fr 1.4fr;
+  }
+  .form-panel {
+    padding: 32px;
+  }
+  .service-detail {
+    gap: 50px;
+  }
+  .service-detail-image {
+    height: 420px;
+  }
+  .founder-grid {
+    gap: 65px;
+  }
+  .lightbox-body {
+    gap: 25px;
+    grid-template-columns: 1.35fr 1fr;
+  }
+  
+}
+/* ==========================================================================
+   Tablets (up to 1023px)
+   Two-column layouts begin collapsing; sticky panels are released.
+   ========================================================================== */
+@media (max-width: 1023px) {
+  .desktop-nav,
+  .header-cta {
+    display: none;
+  }
+  .menu-button {
+    display: flex;
+  }
+  .site-header {
+    height: 80px;
+  }
+  .header-actions {
+    gap: 12px;
+  }
+  .hero {
+    height: calc(100svh - 80px);
+    min-height: 610px;
+  }
+  
+  .hero-content {
+    padding-top: 60px;
+    padding-bottom: 130px;
+  }
+  .hero-caption {
+    margin-right: 10px;
+  }
+  .intro {
+    grid-template-columns: 1fr 1fr;
+    gap: 35px;
+  }
+  
+  .intro .eyebrow {
+    font-size: 8px;
+  }
+  .intro-copy {
+    padding-top: 28px;
+  }
+  .intro-copy p {
+    font-size: 12px;
+  }
+  .intro-foot {
+    margin-top: 20px;
+  }
+  .intro-foot span {
+    font-size: 7px;
+    letter-spacing: 1.3px;
+  }
+  .featured-grid {
+    gap: 28px;
+    grid-template-columns: 1.25fr 1fr;
+  }
+  .featured-secondary {
+    margin-top: 70px;
+  }
+  
+  .featured-story {
+    gap: 20px;
+  }
+  .featured-story > p {
+    font-size: 10px;
+  }
+  .featured-story > .eyebrow {
+    max-width: 130px;
+  }
+  .featured-story > .text-link {
+    font-size: 10px;
+  }
+  .services-preview {
+    gap: 22px;
+  }
+  
+  .service-title {
+    gap: 10px;
+  }
+  .service-preview p {
+    font-size: 11px;
+  }
+  .philosophy {
+    min-height: 550px;
+  }
+  .philosophy-copy {
+    padding: 65px 10%;
+  }
+  
+  .philosophy-copy > .eyebrow {
+    font-size: 8px;
+    letter-spacing: 1.4px;
+  }
+  .collection-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .collection-grid .project-card:last-child {
+    display: none;
+  }
+  
+  .values-strip > div:first-child {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 15px;
+  }
+  .values-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 30px 45px;
+  }
+  .process-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 35px;
+  }
+  .step-number {
+    margin-bottom: 16px;
+  }
+  
+  .process-grid p {
+    font-size: 12px;
+  }
+  .testimonial-layout {
+    gap: 45px;
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  blockquote {
+    font-size: 22px;
+    min-height: 0;
+    margin-bottom: 12px;
+  }
+  .final-cta {
+    grid-template-columns: 1.2fr 1fr;
+    gap: 45px;
+  }
+  
+  .footer-grid {
+    grid-template-columns: 1.5fr 1fr 1fr;
+  }
+  .footer-contact {
+    grid-column: 1/-1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: 30px;
+    border-top: 1px solid var(--border);
+    padding-top: 25px;
+  }
+  .footer-contact h3 {
+    grid-column: 1/-1;
+    margin-bottom: 12px;
+  }
+  .footer-bottom {
+    margin-top: 35px;
+  }
+  .footer-bottom > div {
+    gap: 14px;
+  }
+  .page-heading {
+    padding-top: 55px;
+    padding-bottom: 45px;
+  }
+  
+  .wide-editorial {
+    height: 420px;
+  }
+  .editorial-split {
+    gap: 55px;
+  }
+  .founder-grid {
+    gap: 45px;
+    grid-template-columns: 1fr 1fr;
+  }
+  .portrait-placeholder {
+    min-height: 480px;
+  }
+  
+  .philosophy-grid {
+    gap: 40px 30px;
+  }
+  
+  .philosophy-grid p {
+    font-size: 12px;
+  }
+  .service-detail {
+    gap: 35px;
+  }
+  .service-detail-copy {
+    padding-right: 0;
+  }
+  .service-detail:nth-child(even) .service-detail-copy {
+    padding-left: 0;
+  }
+  .service-detail-image {
+    height: 430px;
+  }
+  
+  .service-detail-copy .eyebrow {
+    font-size: 8px;
+    letter-spacing: 1.3px;
+  }
+  .service-detail-copy > p:not(.eyebrow) {
+    font-size: 12px;
+  }
+  .benefits li {
+    font-size: 10px;
+  }
+  .gallery-toolbar {
+    align-items: flex-start;
+  }
+  .filters {
+    gap: 3px;
+  }
+  .filter-button {
+    padding: 9px 13px;
+    font-size: 10px;
+  }
+  #gallery-count {
+    padding-top: 10px;
+  }
+  .gallery-grid {
+    gap: 35px 28px;
+  }
+  .gallery-grid .project-card:nth-child(even) {
+    padding-top: 55px;
+  }
+  .gallery-grid.filtered .project-card {
+    padding-top: 0;
+  }
+  .contact-layout {
+    gap: 40px;
+    grid-template-columns: 1fr 1.5fr;
+  }
+  .form-panel {
+    padding: 25px;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 13px;
+  }
+  .form-field.full {
+    grid-column: auto;
+  }
+  
+  
+  .faq-section {
+    gap: 45px;
+  }
+  .legal-layout {
+    gap: 45px;
+    grid-template-columns: 1fr 2.3fr;
+  }
+  .lightbox {
+    max-width: calc(100vw - 30px);
+    max-height: calc(100dvh - 30px);
+  }
+  .lightbox-body {
+    grid-template-columns: 1fr;
+  }
+  .lightbox-visual {
+    min-height: 0;
+  }
+  #lightbox-image {
+    height: 42vh;
+    min-height: 230px;
+  }
+  .lightbox-details {
+    padding-top: 0;
+  }
+  
+  .lightbox-details dl {
+    display: flex;
+    gap: 25px;
+  }
+  .lightbox-details dl > div {
+    flex: 1;
+    display: block;
+  }
+  .lightbox-details dd {
+    text-align: left;
+  }
+  .lightbox-details .small-note {
+    margin-bottom: 14px;
+  }
+  .lightbox-shell {
+    padding: 15px 25px 25px;
+  }
+}
+/* ==========================================================================
+   Phones (up to 767px)
+   Single column throughout, larger tap targets, stacked navigation.
+   ========================================================================== */
+@media (max-width: 767px) {
+  html {
+    scroll-padding-top: 85px;
+  }
+  .wrap {
+    width: calc(100% - 44px);
+  }
+  .site-header {
+    height: 76px;
+    padding: 0 22px;
+    gap: 16px;
+  }
+  .brand > span {
+    font-size: 20px;
+  }
+  .brand small {
+    font-size: 6px;
+    letter-spacing: 2px;
+    margin-top: 7px;
+  }
+  .theme-toggle {
+    padding-right: 13px;
+    width: 40px;
+  }
+  .header-actions {
+    gap: 5px;
+  }
+  .section {
+    padding-top: 65px;
+    padding-bottom: 65px;
+  }
+  .eyebrow {
+    font-size: 8px;
+    letter-spacing: 1.6px;
+    margin-bottom: 20px;
+  }
+  .hero {
+    height: calc(100svh - 76px);
+    min-height: 610px;
+    max-height: 850px;
+  }
+  .hero-image {
+    object-position: 58% center;
+  }
+  .hero-shade {
+    background:
+      linear-gradient(90deg, #141913ac, #14191338),
+      linear-gradient(0deg, #0f140fa6, transparent 40%);
+  }
+  .hero-content {
+    padding: 60px 24px 135px;
+  }
+  .hero h1 {
+    
+    
+    
+    margin-bottom: 23px;
+  }
+  .hero-content .eyebrow {
+    font-size: 8px;
+    letter-spacing: 1.5px;
+    gap: 12px;
+    margin-bottom: 27px;
+  }
+  .short-line {
+    width: 24px;
+  }
+  .hero-content > p:not(.eyebrow) {
+    font-size: 12px;
+    margin-bottom: 27px;
+  }
+  .hero-actions {
+    align-items: flex-start;
+    gap: 17px;
+    flex-direction: column;
+  }
+  .hero-actions .button {
+    font-size: 11px;
+    min-width: 190px;
+    padding: 14px 20px;
+  }
+  .hero-actions .text-link {
+    font-size: 10px;
+  }
+  .hero-bottom {
+    left: 24px;
+    right: 24px;
+    bottom: 22px;
+    padding-top: 18px;
+  }
+  .scroll-cue {
+    font-size: 7px;
+    letter-spacing: 1.2px;
+    gap: 9px;
+  }
+  .scroll-icon {
+    width: 19px;
+    height: 30px;
+    line-height: 26px;
+  }
+  .hero-caption {
+    display: none;
+  }
+  .hero-index {
+    font-size: 15px;
+  }
+  .intro {
+    display: block;
+    padding-bottom: 30px;
+  }
+  
+  .intro-copy {
+    padding-top: 6px;
+    max-width: none;
+  }
+  .intro-copy p {
+    font-size: 13px;
+  }
+  .intro-foot {
+    margin-top: 35px;
+    padding-top: 22px;
+    gap: 18px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+  .intro-foot span {
+    font-size: 7px;
+    letter-spacing: 1px;
+    flex: 1;
+    min-width: 85px;
+  }
+  .section-heading {
+    gap: 24px;
+    margin-bottom: 35px;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  
+  .section-heading > .text-link {
+    font-size: 11px;
+  }
+  .section-heading .eyebrow {
+    font-size: 8px;
+    margin-bottom: 14px;
+  }
+  .collection-note {
+    font-size: 9px;
+    margin-top: -13px;
+  }
+  .selected {
+    padding-top: 45px;
+  }
+  .featured-grid {
+    grid-template-columns: 1fr;
+    gap: 35px;
+  }
+  .featured-secondary {
+    margin-top: 0;
+  }
+  .featured-main .project-image {
+    aspect-ratio: 1.22;
+  }
+  .featured-secondary .project-image {
+    aspect-ratio: 1.35;
+  }
+  .project-meta {
+    margin-top: 16px;
+  }
+  
+  .project-category {
+    font-size: 7px;
+    letter-spacing: 1px;
+  }
+  .project-image .image-badge {
+    font-size: 6px;
+    left: 12px;
+    top: 12px;
+  }
+  .project-hover {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    font-size: 11px;
+  }
+  .featured-story {
+    align-items: flex-start;
+    flex-direction: column;
+    margin-top: 30px;
+    padding-top: 25px;
+    gap: 14px;
+  }
+  .featured-story > .eyebrow {
+    max-width: none;
+    font-size: 7px;
+  }
+  .featured-story > p {
+    font-size: 12px;
+  }
+  .featured-story > .text-link {
+    font-size: 11px;
+  }
+  .services-preview {
+    grid-template-columns: 1fr;
+    gap: 35px;
+  }
+  .service-picture {
+    aspect-ratio: 1.7;
+    margin-bottom: 20px;
+  }
+  
+  .service-icon {
+    display: flex;
+  }
+  .service-preview p {
+    font-size: 12px;
+    max-width: 100%;
+  }
+  .service-preview .text-link {
+    font-size: 11px;
+  }
+  .philosophy {
+    grid-template-columns: 1fr;
+    min-height: 0;
+  }
+  .philosophy-image {
+    height: 370px;
+    min-height: 0;
+  }
+  .philosophy-copy {
+    padding: 55px 30px 60px;
+  }
+  
+  .philosophy-copy > p:not(.eyebrow) {
+    max-width: 450px;
+    font-size: 13px;
+  }
+  .philosophy-copy > .text-link {
+    font-size: 11px;
+  }
+  .collection-grid {
+    grid-template-columns: 1fr;
+    gap: 35px;
+  }
+  .collection-grid .project-card:nth-child(2) {
+    margin: 0;
+  }
+  .collection-grid .project-card:last-child {
+    display: block;
+  }
+  .collection-grid .project-image {
+    aspect-ratio: 1.35 !important;
+  }
+  
+  .values-strip {
+    padding-top: 45px;
+    padding-bottom: 45px;
+  }
+  
+  .values-strip .eyebrow {
+    font-size: 7px;
+  }
+  .values-grid {
+    gap: 30px 22px;
+    margin-top: 30px;
+  }
+  .values-grid article {
+    padding-left: 14px;
+  }
+  
+  .values-grid p {
+    font-size: 10px;
+  }
+  .process-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px 24px;
+    margin-top: 40px;
+  }
+  
+  .process-grid p {
+    font-size: 11px;
+  }
+  .step-number {
+    font-size: 31px;
+  }
+  .testimonial-layout {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  
+  .testimonial-layout .small-note {
+    margin-top: 20px;
+    font-size: 10px;
+  }
+  .testimonial-slider {
+    padding-top: 0;
+  }
+  .quote-mark {
+    font-size: 130px;
+    top: -25px;
+  }
+  .rating {
+    margin-bottom: 12px;
+  }
+  blockquote {
+    font-size: 20px;
+    min-height: 0;
+    margin-bottom: 12px;
+  }
+  .testimonial-person {
+    font-size: 9px;
+  }
+  .testimonial-person span {
+    margin-top: 3px;
+  }
+  .slider-controls {
+    margin-top: 17px;
+  }
+  .final-cta {
+    grid-template-columns: 1fr;
+    padding: 60px 25px;
+    gap: 30px;
+  }
+  
+  .final-cta .eyebrow {
+    font-size: 8px;
+    margin-bottom: 20px;
+  }
+  .cta-actions {
+    max-width: 450px;
+  }
+  .cta-actions .text-link {
+    display: flex;
+    justify-content: flex-start;
+    width: max-content;
+    max-width: 100%;
+  }
+  .cta-actions .button {
+    font-size: 11px;
+  }
+  .site-footer {
+    padding: 50px 24px 25px;
+  }
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 35px 30px;
+  }
+  .footer-brand {
+    grid-column: 1/-1;
+  }
+    /* Size deliberately omitted: the tagline uses the shared fluid token, so
+       it scales down on a phone rather than up. Only the spacing tightens. */
+    .footer-brand > p {
+      margin-top: 22px;
+      margin-bottom: 15px;
+    }
+  .footer-grid h3 {
+    
+    margin-bottom: 17px;
+  }
+  .footer-grid > div:not(:first-child) > a:not(.text-link),
+  .footer-grid > div > span {
+    min-height: 36px;
+  }
+  .footer-contact {
+    grid-template-columns: 1fr;
+  }
+  .footer-contact h3 {
+    margin-bottom: 10px;
+  }
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+    margin-top: 30px;
+    padding-top: 25px;
+  }
+  .footer-bottom > div {
+    flex-wrap: wrap;
+    gap: 18px;
+  }
+  .ownership {
+    font-size: 8px;
+    margin-top: 15px;
+  }
+  .demo-note {
+    font-size: 8px;
+  }
+  .demo-note > span {
+    display: block;
+    margin-bottom: 5px;
+  }
+  .whatsapp-float {
+    width: 46px;
+    height: 46px;
+    right: 16px;
+    bottom: 16px;
+  }
+  .whatsapp-float > .icon {
+    width: 24px;
+  }
+  .whatsapp-float > span {
+    display: none;
+  }
+  .page-heading {
+    padding-top: 43px;
+    padding-bottom: 37px;
+  }
+  .page-heading-top {
+    gap: 15px;
+  }
+  .page-heading-top .eyebrow {
+    max-width: 65%;
+  }
+  .section-number {
+    font-size: 6px;
+    letter-spacing: 0.6px;
+    white-space: nowrap;
+  }
+  
+  .page-intro {
+    font-size: 12px;
+  }
+  .wide-editorial {
+    height: 310px;
+  }
+  .wide-editorial > span {
+    font-size: 7px;
+    left: 15px;
+    bottom: 15px;
+  }
+  .editorial-split {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .editorial-split > div > p:not(.eyebrow) {
+    font-size: 13px;
+  }
+  .editorial-split .lead {
+    font-size: var(--font-lead);
+  }
+  .founder-grid {
+    grid-template-columns: 1fr;
+    gap: 35px;
+  }
+  .portrait-placeholder {
+    min-height: 400px;
+  }
+  .portrait-placeholder svg {
+    height: 300px;
+  }
+  .founder-copy h2 {
+    
+    overflow-wrap: anywhere;
+  }
+  .founder-copy .lead {
+    font-size: 15px !important;
+  }
+  .philosophy-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 30px 25px;
+  }
+  
+  .philosophy-grid p {
+    font-size: 11px;
+  }
+  .values-banner {
+    padding: 45px 0 60px;
+  }
+  
+  .service-jump {
+    gap: 8px 16px;
+    padding-bottom: 25px;
+  }
+  .service-jump > a {
+    gap: 8px;
+    min-height: 40px;
+  }
+  .service-jump .icon {
+    width: 12px;
+  }
+  .service-detail {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding: 40px 0;
+    scroll-margin-top: 80px;
+  }
+  .service-detail:nth-child(even) .service-detail-image {
+    order: 0;
+  }
+  .service-detail:nth-child(even) .service-detail-copy {
+    order: 0;
+  }
+  .service-detail-image {
+    height: 320px;
+  }
+  .service-detail-copy .eyebrow {
+    font-size: 8px;
+  }
+  
+  .service-detail-copy > p:not(.eyebrow) {
+    font-size: 13px;
+  }
+  .benefits li {
+    font-size: 12px;
+    padding: 11px 0;
+  }
+  .scope-note {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding-top: 30px;
+  }
+  .scope-note > p:last-child {
+    font-size: 11px;
+  }
+  .gallery-toolbar {
+    margin-bottom: 25px;
+    gap: 10px;
+    flex-direction: column;
+  }
+  .filters {
+    gap: 5px;
+  }
+  .filter-button {
+    font-size: 10px;
+    padding: 8px 14px;
+    min-height: 40px;
+  }
+  #gallery-count {
+    padding: 0 5px;
+    font-size: 9px;
+  }
+  .gallery-section .collection-note {
+    font-size: 8px;
+    margin-bottom: 25px;
+  }
+  .gallery-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .gallery-grid .project-card:nth-child(even) {
+    padding: 0;
+  }
+  .gallery-grid .project-image {
+    aspect-ratio: 1.2;
+  }
+  .gallery-grid .project-card:nth-child(3n) .project-image {
+    aspect-ratio: 1.3;
+  }
+  .gallery-grid .project-card:nth-child(4n) .project-image {
+    aspect-ratio: 1.2;
+  }
+  .gallery-end {
+    gap: 15px;
+    margin-top: 40px;
+  }
+  .gallery-end p {
+    font-size: 14px;
+    text-align: center;
+  }
+  .gallery-end .fine-line {
+    width: 20px;
+    flex-shrink: 0;
+  }
+  .lightbox {
+    max-width: 100vw;
+    width: 100vw;
+    max-height: 100dvh;
+    height: 100dvh;
+    margin: 0;
+    border: 0;
+  }
+  .lightbox-shell {
+    padding: 10px 16px 25px;
+  }
+  .lightbox-top {
+    margin-bottom: 10px;
+  }
+  .lightbox-top .eyebrow {
+    font-size: 7px;
+    letter-spacing: 1px;
+  }
+  .lightbox-body {
+    gap: 20px;
+  }
+  #lightbox-image {
+    height: 35vh;
+    min-height: 220px;
+  }
+  .lightbox-prev,
+  .lightbox-next {
+    width: 40px;
+    height: 40px;
+  }
+  .lightbox-prev {
+    left: 8px;
+  }
+  .lightbox-next {
+    right: 8px;
+  }
+  
+  .lightbox-details .eyebrow {
+    font-size: 8px;
+  }
+  .lightbox-details dl {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .lightbox-details dl > div {
+    font-size: 9px;
+    min-width: 80px;
+  }
+  .lightbox-details .button {
+    width: 100%;
+    justify-content: space-between;
+    min-height: 48px;
+  }
+  .contact-layout {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding-top: 0;
+    padding-bottom: 50px;
+  }
+  
+  .contact-layout aside > p:not(.eyebrow) {
+    font-size: 13px;
+    max-width: 100%;
+  }
+  .contact-methods {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 25px;
+  }
+  .contact-methods > div {
+    gap: 12px;
+    margin-bottom: 10px;
+    min-width: 0;
+  }
+  .contact-methods > div:last-child {
+    grid-column: 1/-1;
+  }
+  
+  .contact-methods a,
+  .contact-methods span {
+    font-size: 10px;
+    word-break: break-word;
+  }
+  .contact-photo {
+    display: none;
+  }
+  .contact-layout aside > .small-note {
+    font-size: 9px !important;
+    margin-top: 15px;
+  }
+  .form-panel {
+    padding: 28px 22px;
+  }
+  
+  .form-heading p {
+    font-size: 11px;
+  }
+  .form-notice {
+    padding: 13px 15px;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .form-field label {
+    font-size: 11px;
+  }
+  .form-field input,
+  .form-field select,
+  .form-field textarea {
+    font-size: 16px;
+    padding: 11px 12px;
+  }
+  .form-field input::placeholder,
+  .form-field textarea::placeholder {
+    font-size: 12px;
+  }
+  .form-privacy {
+    font-size: 10px;
+  }
+  .faq-section {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+  .faq-list summary {
+    font-size: 12px;
+    gap: 25px;
+  }
+  .legal-layout {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding-bottom: 60px;
+  }
+  .legal-nav {
+    position: static;
+  }
+  /* Chip styling for these links now lives in layout-fixes.css; only the
+     spacing below the eyebrow is adjusted here. */
+  .legal-nav .eyebrow {
+    margin-bottom: 12px;
+  }
+  .legal-alert {
+    font-size: 8px;
+  }
+  
+  .legal-content section > p {
+    font-size: 12px;
+  }
+}
+/* ==========================================================================
+   Very small phones (up to 374px)
+   Smallest supported width; prevents overflow on older devices.
+   ========================================================================== */
+@media (max-width: 374px) {
+  .wrap {
+    width: calc(100% - 36px);
+  }
+  .site-header {
+    padding: 0 16px;
+  }
+  .brand > span {
+    font-size: 18px;
+  }
+  .brand small {
+    font-size: 5.5px;
+    letter-spacing: 1.6px;
+  }
+  .header-actions {
+    gap: 0;
+  }
+  .hero {
+    min-height: 580px;
+  }
+  .hero-content {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  
+  .hero-content .eyebrow {
+    font-size: 7px;
+    letter-spacing: 1.25px;
+  }
+  .hero-bottom {
+    left: 20px;
+    right: 20px;
+  }
+  .hero-content > p:not(.eyebrow) {
+    font-size: 11px;
+  }
+  
+  
+  .philosophy-copy {
+    padding-left: 23px;
+    padding-right: 23px;
+  }
+  
+  .values-grid {
+    grid-template-columns: 1fr;
+  }
+  .values-grid p {
+    font-size: 12px;
+  }
+  
+  .process-grid {
+    gap: 30px 16px;
+  }
+  
+  
+  blockquote {
+    font-size: 20px;
+    min-height: 200px;
+  }
+  
+  .final-cta {
+    padding-left: 22px;
+    padding-right: 22px;
+  }
+  
+  .section-number {
+    display: none;
+  }
+  .philosophy-grid {
+    grid-template-columns: 1fr;
+  }
+  .philosophy-grid p {
+    font-size: 12px;
+  }
+  .form-panel {
+    padding: 24px 17px;
+  }
+  
+  .filter-button {
+    padding: 8px 11px;
+  }
+  .footer-grid {
+    gap: 30px 20px;
+  }
+  .contact-methods {
+    grid-template-columns: 1fr;
+  }
+  .contact-methods > div:last-child {
+    grid-column: auto;
+  }
+  .contact-methods a,
+  .contact-methods span {
+    font-size: 12px;
+  }
+}
+/* ==========================================================================
+   Touch input
+   Hover-only affordances are removed where there is no pointer.
+   ========================================================================== */
+@media (hover: none) {
+  .project-hover {
+    display: none;
+  }
+}
+/* ==========================================================================
+   Print
+   Strips navigation and decoration from the printed page.
+   ========================================================================== */
+@media print {
+  .site-header,
+  .site-footer,
+  .whatsapp-float,
+  .final-cta,
+  .filters,
+  .share-row {
+    display: none;
+  }
+  body {
+    background: white;
+    color: black;
+  }
+  .wrap {
+    width: 100%;
+  }
+  .section {
+    padding: 25px 0;
+  }
+  .hero {
+    height: 600px;
+  }
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  dialog {
+    display: none;
+  }
+}
+
+/* Revised editorial overview, centralized service layouts, and structured enquiry. */
+/* ==========================================================================
+   Accessibility helpers
+   Screen-reader-only text and the skip link.
+   ========================================================================== */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.intro-revised {
+  grid-template-columns: 1.08fr 1fr;
+  gap: 55px 85px;
+  align-items: center;
+  padding-bottom: 40px;
+}
+/* ==========================================================================
+   Introduction and values
+   Studio positioning, the highlights strip and the values statements.
+   ========================================================================== */
+.intro-text > p:not(.eyebrow) {
+  font-size: 13px;
+  line-height: 1.95;
+  color: var(--text-secondary-readable);
+  max-width: 480px;
+}
+.intro-text > p.studio-designer-note {
+  font-size: 10px;
+  margin-top: 28px;
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
+}
+.intro-visual {
+  height: 510px;
+  position: relative;
+}
+.intro-visual img {
+  object-position: center;
+}
+.intro-visual > span {
+  position: absolute;
+  bottom: 18px;
+  left: 18px;
+  right: 18px;
+  font-size: 8px;
+  letter-spacing: 1.2px;
+  background: #252920b8;
+  color: #fff;
+  padding: 9px 12px;
+}
+.intro-revised .intro-foot {
+  margin-top: 0;
+  width: 100%;
+}
+/* ==========================================================================
+   Services
+   Service cards, the service index and the detail sections.
+   ========================================================================== */
+.services-preview {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 42px 27px;
+}
+.service-kicker {
+  display: block;
+  text-transform: uppercase;
+  font-size: 8px;
+  letter-spacing: 1.6px;
+  color: var(--accent-ink);
+  margin: 0 0 10px;
+}
+.services-preview .service-picture {
+  aspect-ratio: 1.2;
+  margin-bottom: 23px;
+}
+.services-preview .service-title {
+  align-items: flex-start;
+  min-height: 58px;
+}
+
+.services-preview .service-title > .icon {
+  margin-top: 5px;
+}
+.services-preview p {
+  min-height: 110px;
+  font-size: 12px;
+  max-width: 100%;
+}
+.services-preview .text-link {
+  font-size: 11px;
+}
+/* ==========================================================================
+   Projects
+   Project cards, the collection grid and the project story pages.
+   ========================================================================== */
+.project-summary {
+  font-size: 12px;
+  color: var(--text-secondary-readable);
+  line-height: 1.9;
+  margin: 15px 0 8px;
+  max-width: 530px;
+}
+.project-location {
+  font-size: 9px;
+  color: var(--text-secondary-readable);
+  letter-spacing: 0.3px;
+}
+.home-page .collection {
+  padding-top: 0;
+}
+.collection-grid .project-summary {
+  font-size: 11px;
+}
+.home-designer .founder-copy > p {
+  max-width: 490px;
+}
+.portrait-configured {
+  overflow: hidden;
+  padding: 0;
+  height: 550px;
+}
+.portrait-configured > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.home-page .process > .text-link {
+  margin-top: 30px;
+}
+/* ==========================================================================
+   Introduction and values
+   Studio positioning, the highlights strip and the values statements.
+   ========================================================================== */
+.values-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  row-gap: 35px;
+}
+.values-strip > .text-link {
+  margin-top: 28px;
+}
+.home-contact {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 100px;
+  align-items: center;
+}
+.home-contact > div > p:not(.eyebrow) {
+  font-size: 13px;
+  color: var(--text-secondary-readable);
+  max-width: 390px;
+}
+.home-contact .button {
+  margin-top: 15px;
+}
+.home-contact-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px 32px;
+  border-top: 1px solid var(--border);
+  padding-top: 32px;
+}
+.home-contact-details > div:nth-child(n + 3) {
+  grid-column: 1/-1;
+}
+.home-contact-details h3 {
+  font-family: var(--sans);
+  
+  text-transform: uppercase;
+  
+  margin-bottom: 8px;
+}
+.home-contact-details a,
+.home-contact-details address,
+.home-contact-details p {
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+address {
+  font-style: normal;
+  color: var(--text-secondary-readable);
+}
+.about-approach {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 80px;
+  border-top: 1px solid var(--border);
+}
+.about-approach > div > p {
+  font-size: 14px;
+  color: var(--text-secondary-readable);
+}
+.experience-note {
+  border-left: 2px solid var(--accent);
+  padding: 22px 25px;
+  background: var(--surface-soft);
+  margin-top: 30px;
+}
+.experience-note .eyebrow {
+  margin-bottom: 12px;
+  font-size: 9px;
+}
+.experience-note > p {
+  font-size: 12px;
+  color: var(--text-secondary-readable);
+}
+/* ==========================================================================
+   Services
+   Service cards, the service index and the detail sections.
+   ========================================================================== */
+.service-detail {
+  align-items: start;
+  gap: 70px;
+  padding: 80px 0;
+  position: relative;
+}
+.service-detail-image {
+  position: sticky;
+  top: 125px;
+  height: 630px;
+}
+.service-detail-image img {
+  height: 100%;
+}
+.service-image-caption {
+  display: block;
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  color: #fff;
+  background: #252920b8;
+  padding: 8px 11px;
+}
+
+.service-detail-copy > p.service-short {
+  font-family: var(--serif);
+  font-size: 22px;
+  color: var(--text);
+  line-height: 1.55;
+  letter-spacing: -0.5px;
+}
+.service-detail-copy > p.service-description {
+  font-size: 13px;
+  line-height: 1.95;
+}
+.detail-label {
+  
+  
+  text-transform: uppercase;
+  font-family: var(--sans);
+  font-weight: 600;
+  margin: 28px 0 13px;
+}
+.service-offers {
+  padding-left: 16px;
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-secondary-readable);
+  line-height: 1.95;
+}
+.service-offers li {
+  padding-left: 5px;
+  margin-bottom: 5px;
+}
+.service-detail-copy .benefits {
+  margin: 0 0 23px;
+}
+.suitable {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 1.8;
+}
+.suitable strong {
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--text);
+}
+.service-jump > a {
+  font-size: 11px;
+  padding: 5px 0;
+}
+/* ==========================================================================
+   Forms and contact
+   Enquiry form fields, validation states and the contact page blocks.
+   ========================================================================== */
+.form-grid {
+  column-gap: 22px;
+  row-gap: 13px;
+}
+#enquiry-fields {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+.form-field .field-error {
+  font-size: 11px;
+  line-height: 1.6;
+  min-height: 36px;
+  margin-top: 5px;
+}
+.form-field input,
+.form-field select {
+  min-height: 49px;
+}
+.form-field input::placeholder,
+.form-field textarea::placeholder {
+  opacity: 1;
+}
+.form-field label {
+  font-size: 11px;
+}
+.form-status {
+  font-size: 12px;
+  line-height: 1.9;
+  scroll-margin-top: 125px;
+}
+.form-status:empty {
+  margin: 0;
+}
+.form-status:not(:empty) {
+  border-left: 2px solid currentColor;
+  padding: 15px 18px;
+  margin: 24px 0;
+  background: var(--surface-soft);
+}
+.form-status.notice {
+  color: var(--text-secondary-readable);
+}
+.form-status.success {
+  color: var(--success);
+}
+.form-status.error {
+  color: var(--danger);
+}
+.form-alternatives {
+  border-top: 1px solid var(--border);
+  padding-top: 22px;
+  margin-top: 25px;
+}
+.form-alternatives > p {
+  font-size: 11px;
+  margin-bottom: 8px;
+}
+.form-alternatives > div {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.form-alternatives .text-link {
+  font-size: 11px;
+}
+.form-alternatives .small-note {
+  font-size: 10px;
+  color: var(--text-secondary-readable);
+  margin-top: 14px;
+}
+.contact-methods small {
+  line-height: 1.9;
+}
+.contact-layout aside > p.small-note {
+  font-size: 11px !important;
+}
+.location-section {
+  display: grid;
+  grid-template-columns: 0.8fr 1.4fr;
+  gap: 75px;
+  padding: 70px 0;
+  border-top: 1px solid var(--border);
+  align-items: center;
+}
+
+.location-heading address {
+  font-size: 13px;
+  line-height: 2;
+  max-width: 350px;
+  overflow-wrap: anywhere;
+}
+.map-panel {
+  height: 390px;
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.map-placeholder,
+.map-consent {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 35px;
+}
+.map-arch {
+  display: block;
+  width: 88px;
+  height: 115px;
+  border: 1px solid var(--accent);
+  border-radius: 80px 80px 0 0;
+  margin-bottom: 26px;
+  position: relative;
+}
+.map-arch::after {
+  content: "";
+  position: absolute;
+  inset: 12px 12px 0;
+  border: 1px solid var(--accent);
+  border-bottom: 0;
+  border-radius: 70px 70px 0 0;
+}
+.map-placeholder .eyebrow {
+  font-size: 8px;
+  letter-spacing: 1.4px;
+  margin-bottom: 15px;
+  overflow-wrap: anywhere;
+}
+.map-placeholder p {
+  font-family: var(--serif);
+  font-size: 22px;
+  line-height: 1.6;
+  letter-spacing: -0.4px;
+  color: var(--text-secondary-readable);
+}
+.map-panel iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.map-consent > p:first-child {
+  font-family: var(--serif);
+  font-size: 28px;
+}
+.map-consent .small-note {
+  max-width: 320px;
+}
+.studio-hours {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 100px;
+  padding: 20px 0 75px;
+  align-items: center;
+}
+
+.studio-hours dl {
+  max-width: 430px;
+  margin: 0;
+}
+.studio-hours dl > div {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  padding: 12px 0;
+  font-size: 12px;
+}
+.studio-hours dd {
+  margin: 0;
+  text-align: right;
+  color: var(--text-secondary-readable);
+}
+.studio-hours > div > p:not(.eyebrow) {
+  font-size: 13px;
+  color: var(--text-secondary-readable);
+  max-width: 380px;
+}
+/* ==========================================================================
+   Footer
+   Footer grid, link columns and the bottom row.
+   ========================================================================== */
+.footer-grid {
+  grid-template-columns: 1.3fr 0.65fr 1.3fr 1.3fr;
+  gap: 40px;
+}
+.footer-grid > [data-service-links] > a {
+  line-height: 1.8;
+}
+.footer-contact [data-address],
+.footer-contact [data-hours] {
+  line-height: 1.85;
+}
+.socials a {
+  min-width: 40px;
+  min-height: 44px;
+}
+/* Text uses a darker bronze token while decorative accents retain the requested palette. */
+.fine-line {
+  background: var(--accent);
+}
+/* ==========================================================================
+   Small desktops and large laptops (up to 1200px)
+   First step down: gaps tighten before any column count changes.
+   ========================================================================== */
+@media (max-width: 1200px) {
+  .intro-revised {
+    gap: 40px 45px;
+  }
+  .intro-visual {
+    height: 480px;
+  }
+  .services-preview {
+    gap: 35px 22px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .services-preview .service-picture {
+    aspect-ratio: 1.6;
+  }
+  .services-preview .service-title {
+    min-height: 0;
+  }
+  .services-preview p {
+    min-height: 70px;
+  }
+  .service-detail {
+    gap: 45px;
+  }
+  .service-detail-image {
+    height: 570px;
+  }
+  .home-contact {
+    gap: 55px;
+  }
+  .location-section {
+    gap: 45px;
+  }
+  .footer-grid {
+    gap: 30px;
+    grid-template-columns: 1.15fr 0.6fr 1.3fr 1.3fr;
+  }
+}
+/* ==========================================================================
+   Laptops (up to 1100px)
+   Footer drops from four columns to three.
+   ========================================================================== */
+@media (max-width: 1100px) {
+  .contact-layout {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  .contact-layout aside {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 15px 35px;
+    align-items: start;
+  }
+  .contact-layout aside > .eyebrow,
+  .contact-layout aside > h2,
+  .contact-layout aside > p {
+    grid-column: 1;
+  }
+  .contact-layout aside .contact-methods {
+    grid-column: 2;
+    grid-row: 1/5;
+    margin: 0;
+  }
+  .contact-layout aside > .text-link {
+    grid-column: 1;
+  }
+  .contact-layout aside > .contact-photo {
+    display: none;
+  }
+  .form-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .form-panel {
+    padding: 40px;
+  }
+  .location-section {
+    grid-template-columns: 1fr 1.2fr;
+  }
+  
+}
+/* ==========================================================================
+   Tablets (up to 1023px)
+   Two-column layouts begin collapsing; sticky panels are released.
+   ========================================================================== */
+@media (max-width: 1023px) {
+  .intro-visual {
+    height: 470px;
+  }
+  
+  .intro-text > p:not(.eyebrow) {
+    font-size: 12px;
+  }
+  .values-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .home-contact {
+    gap: 45px;
+  }
+  
+  .home-contact-details {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+  .home-contact-details > div {
+    grid-column: 1;
+  }
+  .service-detail-image {
+    height: 550px;
+  }
+  
+  .service-detail-copy > p.service-short {
+    font-size: 20px;
+  }
+  .service-detail-copy > p.service-description {
+    font-size: 12px;
+  }
+  .service-offers {
+    font-size: 11px;
+  }
+  .service-detail-copy .benefits li {
+    font-size: 11px;
+  }
+  .footer-grid {
+    grid-template-columns: 1.2fr 0.7fr 1.3fr;
+  }
+  .footer-contact {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .about-approach {
+    gap: 45px;
+  }
+  .studio-hours {
+    gap: 50px;
+  }
+  .map-panel {
+    height: 350px;
+  }
+}
+/* ==========================================================================
+   Phones (up to 767px)
+   Single column throughout, larger tap targets, stacked navigation.
+   ========================================================================== */
+@media (max-width: 767px) {
+  .intro-revised {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 30px;
+  }
+  
+  .intro-text > p:not(.eyebrow) {
+    font-size: 13px;
+  }
+  .intro-visual {
+    height: 370px;
+  }
+  .intro-revised .intro-foot {
+    order: 3;
+  }
+  .services-preview .service-picture {
+    aspect-ratio: 1.2;
+  }
+  
+  .services-preview .service-title {
+    min-height: 58px;
+  }
+  .services-preview p {
+    min-height: 112px;
+    font-size: 11px;
+  }
+  .project-summary {
+    font-size: 12px;
+  }
+  .project-location {
+    font-size: 10px;
+  }
+  .home-page .collection {
+    padding-top: 0;
+  }
+  .home-contact {
+    grid-template-columns: 1fr;
+    gap: 35px;
+  }
+  .home-contact-details {
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .home-contact-details > div:nth-child(n + 3) {
+    grid-column: 1/-1;
+  }
+  .home-contact-details > div {
+    grid-column: auto;
+  }
+  .home-contact-details > .text-link {
+    grid-column: 1/-1;
+  }
+  .home-contact-details a,
+  .home-contact-details address,
+  .home-contact-details p {
+    font-size: 11px;
+  }
+  .about-approach {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .experience-note {
+    padding: 20px;
+  }
+  .service-detail {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding: 45px 0;
+  }
+  .service-detail-image {
+    position: relative;
+    top: auto;
+    height: 330px;
+  }
+  
+  .service-detail-copy > p.service-description {
+    font-size: 13px;
+  }
+  .service-offers {
+    font-size: 12px;
+  }
+  .service-detail-copy .benefits li {
+    font-size: 12px;
+  }
+  .service-detail-copy > p.service-short {
+    font-size: 23px;
+  }
+  .service-jump > a {
+    font-size: 10px;
+  }
+  .contact-layout aside {
+    display: block;
+  }
+  .contact-layout aside .contact-methods {
+    margin-top: 25px;
+  }
+  .form-panel {
+    padding: 30px 24px;
+  }
+  .form-field input,
+  .form-field textarea,
+  .form-field select {
+    font-size: 16px;
+  }
+  .form-field .field-error {
+    font-size: 11px;
+    min-height: 34px;
+  }
+  .form-notice p {
+    font-size: 11px;
+  }
+  .form-alternatives > div {
+    gap: 18px;
+  }
+  .location-section {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding: 45px 0;
+  }
+  
+  .map-panel {
+    height: 330px;
+  }
+  .map-placeholder {
+    padding: 25px 18px;
+  }
+  .map-placeholder p {
+    font-size: 21px;
+  }
+  .studio-hours {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding-bottom: 55px;
+  }
+  
+  .studio-hours dl {
+    max-width: none;
+  }
+  .footer-grid {
+    grid-template-columns: 1fr 1.2fr;
+    gap: 30px 24px;
+  }
+  .footer-contact {
+    grid-template-columns: 1fr;
+  }
+  .footer-grid > [data-service-links] > a {
+    min-height: 40px !important;
+  }
+  .portrait-configured {
+    height: 440px;
+    min-height: 0;
+  }
+  
+  .contact-layout aside > p.small-note {
+    font-size: 11px !important;
+  }
+}
+/* ==========================================================================
+   Small phones (up to 639px)
+   Further tightening for narrow handsets.
+   ========================================================================== */
+@media (max-width: 639px) {
+  .services-preview {
+    grid-template-columns: 1fr;
+    gap: 38px;
+  }
+  .services-preview .service-picture {
+    aspect-ratio: 1.6;
+  }
+  .services-preview .service-title {
+    min-height: 0;
+  }
+  
+  .services-preview p {
+    min-height: 0;
+    font-size: 12px;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .form-panel {
+    padding: 27px 20px;
+  }
+  .form-field .field-error {
+    min-height: 20px;
+  }
+  .form-status:not(:empty) {
+    padding: 14px;
+    font-size: 12px;
+  }
+  .values-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+/* ==========================================================================
+   Very small phones (up to 374px)
+   Smallest supported width; prevents overflow on older devices.
+   ========================================================================== */
+@media (max-width: 374px) {
+  
+  .intro-visual {
+    height: 300px;
+  }
+  .home-contact-details {
+    grid-template-columns: 1fr;
+  }
+  .home-contact-details > div {
+    grid-column: 1;
+  }
+  .values-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  
+  
+  .service-detail-image {
+    height: 285px;
+  }
+  
+  .form-panel {
+    padding: 24px 17px;
+  }
+  .form-alternatives > div {
+    gap: 15px;
+  }
+  .map-placeholder .eyebrow {
+    font-size: 7px;
+    letter-spacing: 0.8px;
+  }
+  .map-placeholder p {
+    font-size: 19px;
+  }
+  
+  .footer-grid {
+    gap: 28px 18px;
+  }
+  .studio-hours dl > div {
+    font-size: 11px;
+    gap: 14px;
+  }
+}
+
+/* Compact Home service-card content on tablet and desktop; mobile stays unchanged.
+   Natural content heights avoid blank title/description slots after font scaling. */
+/* ==========================================================================
+   Tablet and above (768px and up)
+   Rules that should only apply once there is room for them.
+   ========================================================================== */
+@media (min-width: 768px) {
+  .services-preview .service-picture {
+    margin-bottom: 16px;
+  }
+  .services-preview .service-kicker {
+    margin-bottom: 8px;
+  }
+  .services-preview .service-title {
+    min-height: 0;
+    margin-bottom: 10px;
+  }
+  .services-preview p {
+    min-height: 0;
+    margin-bottom: 12px;
+  }
+}

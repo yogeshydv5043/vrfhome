@@ -1,0 +1,19 @@
+Reference photography: Unsplash. Images are inspiration imagery, not completed projects by this demo studio.
+
+living — image source: https://images.unsplash.com/photo-1600210492486-724fe5c67fb0
+calm — image source: https://images.unsplash.com/photo-1600607687920-4e2a09cf159d
+kitchen — image source: https://images.unsplash.com/photo-1556912172-45b7abe8b7e1
+bedroom — image source: https://images.unsplash.com/photo-1611892440504-42a792e24d32
+dining — image source: https://images.unsplash.com/photo-1616486338812-3dadae4b4ace
+office — image source: https://images.unsplash.com/photo-1497366754035-f200968a6e72
+detail — image source: https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea
+lounge — image source: https://images.unsplash.com/photo-1600210491892-03d54c0aaf87
+workspace — image source: https://images.unsplash.com/photo-1497366811353-6870744d04b2
+kitchen2 — image source: https://images.unsplash.com/photo-1600607687939-ce8a6c25118c
+
+Unsplash license: https://unsplash.com/license
+No affiliation or endorsement is implied. Replace reference imagery with authorized project photography before publication.
+
+VRF brand logo: supplied by the website owner in this conversation. Local file media/brand/logo/vrf-logo.png. Cropped transparent padding and resized for website/favicon use; not AI-generated. Rights have not been independently verified.
+
+Transparent-logo update: vrf-logo-light.png recolours only the white/neutral lettering and swoosh portions to navy for legibility on pale surfaces. The silhouette, gold details and alpha channel are preserved. Dark mode uses the original white-and-gold mark; no logo card or background is displayed.

@@ -1,0 +1,164 @@
+/* Targeted navigation/card audit and form-focused Contact refresh. */
+/* Suppress only the programmatic pointer-navigation outline, not keyboard focus. */
+.pointer-section-focus:focus { outline:none; }
+
+/* Text must wrap instead of being cut off. Image crops remain intentional. */
+:is(.project-card,.service-preview,.process-grid article,.values-grid article,.philosophy-grid article,.media-card,.contact-info-card) { min-width:0; }
+:is(.project-card,.service-preview,.process-grid article,.values-grid article,.philosophy-grid article,.media-card) :is(h3,p,.project-title,.project-category,.project-summary,.media-title) { overflow-wrap:anywhere; word-break:normal; }
+.project-meta > span:first-child { min-width:0; }
+.form-field .project-select-value { overflow:visible; text-overflow:clip; white-space:normal; overflow-wrap:anywhere; }
+.collection-grid .project-card:last-child:not([hidden]) { display:block; }
+
+/* 'Your space, your story' invitations are desktop-only across the site. */
+.desktop-story-cta { gap:36px; padding:40px 32px; margin-bottom:48px; border:1px solid var(--depth-rim); border-radius:16px; background:linear-gradient(140deg,var(--depth-glass-strong),var(--surface)); box-shadow:inset 0 1px 0 var(--depth-edge),0 12px 30px -24px var(--depth-shadow); }
+.story-cta-actions { display:flex; align-items:center; justify-content:flex-end; flex-wrap:wrap; gap:18px; }
+.story-cta-actions .button { min-width:180px; min-height:54px; gap:16px; white-space:normal; }
+.story-cta-actions .icon { flex:0 0 20px; width:20px; height:20px; }
+@media (max-width:1024px) { .desktop-story-cta,.final-cta { display:none; } }
+
+/* Keep the original form DOM and contact configuration; restructure the layout. */
+body[data-route="contact-us/"] .page-heading { display:grid; grid-template-columns:1.2fr .8fr; align-items:end; gap:20px 50px; padding-top:54px; padding-bottom:40px; }
+body[data-route="contact-us/"] .page-heading-top { grid-column:1/-1; }
+body[data-route="contact-us/"] .page-heading h1 { margin:0; }
+body[data-route="contact-us/"] .page-heading > .page-intro { margin:0; max-width:460px; }
+.contact-layout.contact-redesign { grid-template-columns:minmax(0,1.3fr) minmax(0,.8fr); gap:32px; align-items:start; padding-top:0; padding-bottom:56px; }
+.contact-redesign .form-panel { min-width:0; padding:32px; }
+.contact-redesign .form-notice { overflow-wrap:anywhere; }
+.contact-redesign .form-heading h2 { margin-bottom:12px; }
+.contact-redesign .contact-sidebar { display:grid; grid-template-columns:minmax(0,1fr); gap:20px; min-width:0; }
+.contact-info-card { padding:28px; border:1px solid var(--depth-rim); border-radius:14px; background:linear-gradient(140deg,var(--depth-glass-strong),var(--surface)); box-shadow:inset 0 1px 0 var(--depth-edge),0 8px 20px -15px var(--depth-shadow); }
+.contact-info-card .eyebrow { margin-bottom:16px; }
+.contact-info-card h2 { margin:0 0 16px; }
+.contact-info-card > p:not(.eyebrow),.contact-info-card address { font-size:12px; line-height:1.85; color:var(--text-secondary-readable); margin:0 0 20px; overflow-wrap:anywhere; }
+.contact-info-card address { font-style:normal; }
+.contact-channel-list { display:grid; gap:12px; margin:24px 0; }
+.contact-channel { position:relative; display:grid; gap:7px; padding:15px 34px 15px 16px; min-width:0; border:1px solid var(--depth-rim); border-radius:9px; background:var(--surface); }
+.contact-channel:hover { border-color:var(--accent-ink); }
+.contact-channel-label { font-size:9px; letter-spacing:.1em; color:var(--accent-ink); }
+.contact-channel > span:not(.contact-channel-label):not(.channel-arrow) { font-size:12px; line-height:1.65; overflow-wrap:anywhere; }
+.channel-arrow { position:absolute; right:14px; top:50%; translate:0 -50%; color:var(--accent-ink); }
+.contact-whatsapp { width:100%; gap:16px; font-size:12px; padding:15px; }
+.contact-hours dl { margin:0; }
+.contact-hours dl > div { padding:14px 0; border-top:1px solid var(--border); display:grid; gap:6px; }
+.contact-hours dt { font-size:11px; color:var(--text-secondary-readable); }
+.contact-hours dd { margin:0; font-size:12px; line-height:1.7; overflow-wrap:anywhere; }
+.contact-map-section { display:block; padding:0 0 56px; border-top:0; }
+.contact-map-heading { display:flex; align-items:flex-end; justify-content:space-between; gap:30px; margin-bottom:22px; }
+.contact-map-heading h2,.contact-map-heading p { margin-bottom:0; }
+.contact-map-heading .eyebrow { margin-bottom:14px; }
+.contact-map-heading > .small-note { max-width:330px; }
+.contact-map-section .map-panel { width:100%; height:auto; min-height:320px; border:1px solid var(--depth-rim); border-radius:14px; overflow:hidden; }
+.contact-map-section .map-consent { min-height:320px; height:auto; padding:30px; }
+.contact-map-section .map-panel iframe { display:block; width:100%; height:360px; }
+body[data-route="contact-us/"] .faq-section { padding-top:38px; padding-bottom:70px; border-top:1px solid var(--border); gap:50px; }
+@media (max-width:1279px) {
+  .contact-layout.contact-redesign { gap:24px; grid-template-columns:minmax(0,1.25fr) minmax(0,.85fr); }
+  .contact-redesign .form-panel { padding:26px; }
+  .contact-info-card { padding:22px; }
+}
+@media (max-width:1024px) {
+  .contact-layout.contact-redesign { grid-template-columns:minmax(0,1fr); }
+  .contact-redesign .contact-sidebar { grid-template-columns:repeat(2,minmax(0,1fr)); align-items:start; }
+  .contact-sidebar .direct-contact { grid-row:span 2; }
+  .contact-info-card { height:100%; }
+}
+@media (max-width:767px) {
+  body[data-route="contact-us/"] .page-heading { display:block; padding-top:34px; padding-bottom:30px; }
+  body[data-route="contact-us/"] .page-heading h1 { margin:20px 0 18px; }
+  .contact-layout.contact-redesign { gap:24px; padding-bottom:38px; }
+  .contact-redesign .form-panel { padding:22px 18px; }
+  .contact-redesign .contact-sidebar { grid-template-columns:minmax(0,1fr); gap:16px; }
+  .contact-sidebar .direct-contact { grid-row:auto; }
+  .contact-info-card { padding:22px; height:auto; }
+  .contact-map-section { padding-bottom:38px; }
+  .contact-map-heading { display:block; }
+  .contact-map-heading > .small-note { margin-top:16px; }
+  .contact-map-section .map-consent { padding:24px 18px; }
+  body[data-route="contact-us/"] .faq-section { gap:24px; padding-top:32px; padding-bottom:48px; }
+}
+.contact-redesign .form-grid .contact-wide-field { grid-column:1/-1; }
+/* Large touch-only tablet profiles should not receive the desktop invitation. */
+@media (hover:none) and (pointer:coarse) { .desktop-story-cta,.final-cta { display:none; } }
+.media-collection-heading { margin:0 0 24px; }
+.contact-redesign .form-field .field-error:empty { display:none; }
+.contact-redesign .form-field .field-error { min-height:0; }
+@media (max-width:639px) {
+  .contact-redesign .form-grid { grid-template-columns:minmax(0,1fr); gap:18px; }
+  .contact-redesign .form-grid > .form-field { grid-column:1/-1; }
+}
+/* Explicit cross-page keyboard intent also covers browsers that reset :focus-visible. */
+.keyboard-section-focus:focus { outline:2px solid var(--accent-ink); outline-offset:5px; }
+
+/* Consistent raised CTA buttons, with separate space for each action. */
+.final-cta .cta-actions { display:flex; flex-direction:column; align-items:stretch; gap:18px; }
+.final-cta .cta-actions > p { margin:0 0 6px; }
+.final-cta .cta-actions > .button { width:100%; min-height:54px; padding:16px 20px; gap:12px; margin:0; white-space:normal; text-align:center; }
+.final-cta .cta-actions > .button .icon { flex-shrink:0; }
+
+/* About: six individually padded cards; stable dimensions on hover. */
+#philosophy .philosophy-grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; align-items:stretch; }
+#philosophy .philosophy-grid article { min-width:0; padding:28px; border:1px solid var(--depth-rim); border-radius:14px; background:linear-gradient(135deg,var(--depth-glass-strong),var(--surface)); box-shadow:inset 0 1px 0 var(--depth-edge),0 10px 26px -22px var(--depth-shadow); }
+#philosophy .philosophy-grid .eyebrow { display:block; margin:0 0 22px; }
+#philosophy .philosophy-grid h3 { margin:0 0 14px; }
+#philosophy .philosophy-grid p { margin:0; line-height:1.85; }
+#philosophy .philosophy-grid article:hover { transform:none; scale:none; border-color:var(--accent-ink); }
+
+/* Contact: details | form, then half-width map | FAQs beneath them. */
+.contact-layout.contact-split-layout { grid-template-columns:minmax(0,35fr) minmax(0,65fr); grid-template-areas:"details form" "map faq"; gap:40px 32px; }
+.contact-split-layout > .contact-sidebar { grid-area:details; }
+.contact-split-layout > .form-panel { grid-area:form; }
+.contact-split-layout > .contact-map-section { grid-area:map; min-width:0; padding:0; margin:0; }
+.contact-split-layout .contact-map-heading { display:block; margin-bottom:24px; }
+.contact-split-layout .contact-map-section > .small-note { margin:16px 0 0; font-size:11px; line-height:1.8; }
+.contact-split-layout .contact-map-section > .small-note a { text-decoration:underline; text-underline-offset:3px; }
+body[data-route="contact-us/"] .contact-split-layout > .faq-section { grid-area:faq; display:block; min-width:0; margin:0; padding:0; border:0; }
+.contact-split-layout .faq-section > div:first-child { margin-bottom:24px; }
+.contact-split-layout .faq-section h2 { margin:0; }
+.contact-split-layout .faq-section .eyebrow { margin-bottom:14px; }
+.contact-split-layout .faq-list { width:100%; }
+@media (max-width:1024px) {
+  #philosophy .philosophy-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:22px; }
+  .contact-layout.contact-split-layout { grid-template-columns:minmax(0,1fr); grid-template-areas:"details" "form" "map" "faq"; gap:32px; }
+}
+@media (max-width:639px) {
+  #philosophy .philosophy-grid { grid-template-columns:minmax(0,1fr); gap:18px; }
+  #philosophy .philosophy-grid article { padding:24px; }
+  .contact-split-layout .contact-map-section .map-panel iframe { height:320px; }
+}
+
+/* Open map: the map shows the full studio address centered, with the raised
+   Open map button directly beneath it. The map itself is a Google Maps embed
+   for the full studio address (js/config.js), so the address location is
+   shown in the map and the button opens the same place. A black veil sits
+   above the map (below the centered block) for a consistent, readable
+   finish in both themes; it ignores pointer events. */
+.contact-split-layout .map-wrap { position:relative; }
+.contact-split-layout .map-veil { position:absolute; inset:0; z-index:1; pointer-events:none; border-radius:14px; background:rgba(10,13,17,.4); }
+html[data-theme="dark"] .contact-split-layout .map-veil { background:rgba(8,10,14,.5); }
+.contact-split-layout .map-center { position:absolute; left:0; right:0; top:50%; transform:translateY(-50%); z-index:2; display:flex; flex-direction:column; align-items:center; gap:14px; padding:0 20px; pointer-events:none; text-align:center; }
+.contact-split-layout .map-address { margin:0; max-width:440px; font-size:12px; line-height:1.8; font-weight:500; color:#fff; text-shadow:0 1px 10px rgba(0,0,0,.65); overflow-wrap:anywhere; }
+.contact-split-layout .map-open { pointer-events:auto; gap:14px; padding:14px 24px; min-height:52px; border-radius:2px; box-shadow:0 1px 0 var(--depth-edge),0 14px 30px -14px var(--depth-shadow); }
+.contact-split-layout .map-open:hover { transform:none; }
+.contact-sidebar .location-heading address { margin-bottom:0; }
+
+/* Mobile/tablet Contact flow (1024px and below):
+   – "LET'S CONNECT" and "A TIME TO CONNECT" are hidden (call/email/WhatsApp
+     stay reachable through the form alternatives and the bottom contact
+     bar; studio hours remain in the footer).
+   – The section below the form is the FIND THE STUDIO heading plus the map
+     with its centered Open map button: the COME SAY HELLO content (label,
+     heading, address) is hidden. The location-heading element stays in the
+     flow at zero height so the #contact-details anchor still reaches the
+     map section. */
+@media (max-width:1024px) {
+  body[data-route="contact-us/"] .contact-layout.contact-split-layout { grid-template-columns:minmax(0,1fr); grid-template-areas:none; row-gap:0; }
+  body[data-route="contact-us/"] .contact-split-layout > .contact-sidebar { display:contents; }
+  body[data-route="contact-us/"] .contact-split-layout > .contact-sidebar > .direct-contact { display:none; }
+  body[data-route="contact-us/"] .contact-split-layout > .form-panel { order:1; grid-area:auto; margin-bottom:32px; }
+  body[data-route="contact-us/"] .contact-split-layout > .contact-sidebar > .location-heading { order:2; grid-area:auto; height:auto; margin-bottom:0; padding:0; border:0; border-radius:0; background:none; box-shadow:none; }
+  body[data-route="contact-us/"] .contact-split-layout > .contact-sidebar > .location-heading > * { display:none; }
+  body[data-route="contact-us/"] .contact-split-layout > .contact-map-section { order:3; grid-area:auto; margin-bottom:32px; }
+  body[data-route="contact-us/"] .contact-split-layout .contact-map-heading { display:block; margin-bottom:22px; }
+  body[data-route="contact-us/"] .contact-split-layout > .contact-sidebar > .contact-hours { display:none; }
+  body[data-route="contact-us/"] .contact-split-layout > .faq-section { order:4; grid-area:auto; }
+}
