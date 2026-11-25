@@ -12,12 +12,10 @@
 #client-reviews .review-nav { flex:0 0 auto; align-items:center; }
 #client-reviews #review-position { margin:0 8px 0 0; white-space:nowrap; }
 #client-reviews .slider-dot { flex:0 0 28px; }
-#client-reviews .reviews-empty { margin:0; padding:24px; border:1px solid var(--border); border-radius:12px; }
 
 /* ==========================================================================
-   Verified public rating panel
-   Shown while no written customer review is published. Every figure is the
-   real aggregate from the studio's public business listing and links to it.
+   Live rating summary
+   Statistics come from the approved-review aggregate in Supabase.
    ========================================================================== */
 #client-reviews .reviews-proof {
   margin: 0;
@@ -57,6 +55,33 @@
   color: var(--text);
   font-weight: 500;
 }
+#client-reviews .proof-breakdown {
+  display: grid;
+  gap: 8px;
+  margin-top: 20px;
+}
+#client-reviews .proof-breakdown[hidden] { display: none; }
+#client-reviews .proof-breakdown-row {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr) 36px;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-secondary-readable);
+  font-size: 11px;
+}
+#client-reviews .proof-breakdown-track {
+  height: 7px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--border);
+}
+#client-reviews .proof-breakdown-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+}
+#client-reviews .proof-breakdown-count { text-align: right; font-variant-numeric: tabular-nums; }
 #client-reviews .proof-note {
   margin: 20px 0 0;
   font-size: var(--font-body, 16px);
@@ -75,14 +100,6 @@
   width: 13px;
   height: 13px;
   flex: 0 0 auto;
-}
-#client-reviews .proof-invite {
-  margin: 20px 0 0;
-  padding-top: 18px;
-  border-top: 1px solid var(--border);
-  font-size: var(--font-caption, 12px);
-  line-height: 1.8;
-  color: var(--text-secondary-readable);
 }
 @media (max-width: 767px) {
   #client-reviews .reviews-proof { padding: 26px 22px 24px; }

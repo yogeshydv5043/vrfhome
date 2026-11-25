@@ -37,4 +37,4 @@ When the public Supabase settings are empty, the page can render permission-clea
 - As `anon`, verify `SELECT` succeeds and direct insert/update/delete plus `submit_review` execution are denied. Confirm the Edge Function’s service key is not present in any public asset.
 - Test keyboard-only stars, field error announcements, reduced motion, dark theme, and real desktop/tablet/mobile browsers at narrow widths. Check browser console/network errors and horizontal overflow.
 
-The repository has no live Supabase project configuration, secret material or connected review backend, so this final live acceptance checklist must be run against the deployment by an authorized operator.
+The frontend contains only the public Supabase URL and publishable key. This checkout does not verify that the live database migrations, Edge Function deployment or server-side secrets are in place, so an authorized operator must complete the live acceptance checklist against the deployed project.

@@ -9,7 +9,7 @@
    1. Copy the template block below into the `reviews: []` array.
    2. Fill in the real customer name, their actual words, and the real date.
    3. Set `published: true` only after you have the customer's permission.
-   4. If the review exists publicly (Google, JustDial, magicpin), paste that
+   4. If the review exists publicly on a third-party review site, paste that
       page's https:// link into `sourceUrl` so visitors can verify it.
 
    TEMPLATE — copy everything between the braces:

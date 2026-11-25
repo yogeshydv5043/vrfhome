@@ -18,7 +18,7 @@ const SITE_CONFIG = Object.freeze({
   /* Short line printed across the bottom of the portrait. Leave empty for no caption. */
   designerPortraitCaption: "Ritesh Kumar at the studio, Sector 93, Gurugram",
   experience:
-    "VRF Home Interiors Private Limited was incorporated on 10 September 2020 (CIN U36999HR2020PTC089195) and operates from Sector 93, Gurugram. The studio delivers residential and commercial interior design, modular kitchens, custom joinery and renovation work across Gurugram and the National Capital Region, and holds a 4.9 average public rating from customer ratings on its Sector 93 listing.",
+    "VRF Home Interiors Private Limited was incorporated on 10 September 2020 (CIN U36999HR2020PTC089195) and operates from Sector 93, Gurugram. The studio delivers residential and commercial interior design, modular kitchens, custom joinery and renovation work across Gurugram and the National Capital Region.",
   phone: "+91 99990 88992",
   email: "vrf.interiors@gmail.com",
   whatsapp: "919999088992", // International digits only, without + or spaces.
@@ -62,24 +62,6 @@ const SITE_CONFIG = Object.freeze({
   incorporationDate: "10 September 2020",
   effectiveDate: "22 September 2026",
   jurisdiction: "Gurugram, Haryana, India",
-  /* Verified public rating from the studio's Sector 93 business listing.
-     A real, externally-hosted aggregate — update the numbers whenever the
-     listing changes.
-
-     sourceUrl is deliberately empty. The "See the ratings for yourself" link
-     was removed from the Home page on request so the rating panel does not
-     send visitors to another site, and an empty value here stops the address
-     shipping to the browser at all. js/reviews.js hides any rating link when
-     this is blank, so putting the address back is the only step needed to
-     restore it:
-       https://magicpin.in/Gurgaon/Sector-93/Lifestyle/Vrf-Home-Interiors-Pvt.-Ltd./store/187c148/ */
-  publicRating: {
-    value: "4.9",
-    count: 964,
-    sourceLabel: "magicpin",
-    sourceUrl: "",
-    verifiedListing: true,
-  },
   /* Studio location used for the Contact page map pin (URL-encoded). */
   mapEmbedUrl:
     "https://www.google.com/maps?q=VRF%20HOME%20INTERIORS%20PVT.%20LTD.%2C%20Shop%20No.11%2C%20Sector%2093%20Rd%2C%20near%20Jotram%20Chowk%2C%20Hayatpur%2C%20Sector%2093%2C%20Gurugram%2C%20Haryana%20122001&z=16&output=embed",

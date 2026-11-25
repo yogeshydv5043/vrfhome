@@ -41,10 +41,10 @@
         "description": "Interior design studio in Sector 93, Gurugram. Residential and commercial interiors, modular kitchens and custom joinery across Gurugram and the NCR."
       }
     </script>
-<script defer="" src="js/routes.js?v=b60"></script><script defer="" src="js/config.js?v=b109"></script>
+<script defer="" src="js/routes.js?v=b60"></script><script defer="" src="js/config.js?v=b110"></script>
 <script defer="True" src="js/data.js?v=b117"></script>
 <script defer="True" src="js/content.js?v=b113"></script>
-<script defer="" src="js/main.js?v=b90"></script><script defer="" src="js/reviews-config.js?v=b102"></script><script defer="" src="js/reviews.js?v=b109"></script>
+<script defer="" src="js/main.js?v=b90"></script><script defer="" src="js/reviews-config.js?v=b102"></script><script defer="" src="js/supabase-config.js?v=b5"></script><script defer="" src="js/reviews.js?v=b112"></script>
 <script defer="" src="js/navigation.js?v=b117"></script>
 <script defer="" src="js/gallery.js?v=b60"></script>
 <script defer="" src="js/contact.js?v=b64"></script>
@@ -57,7 +57,7 @@
 <link href="css/social-icons.css?v=b103" rel="stylesheet"/>
 <link href="css/raised-depth.css?v=b60" rel="stylesheet"/>
 <link href="css/home-services-spacing.css?v=b60" rel="stylesheet"/>
-<link href="css/reviews.css?v=b62" rel="stylesheet"/><link href="css/site-ivory-theme.css?v=b60" rel="stylesheet"/>
+<link href="css/reviews.css?v=b64" rel="stylesheet"/><link href="css/site-ivory-theme.css?v=b60" rel="stylesheet"/>
 <script defer="" src="js/site-ivory-theme.js?v=b60"></script>
 <link href="css/home-hero-overlay.css?v=b60" rel="stylesheet"/>
 <link href="css/interaction-stability.css?v=b60" rel="stylesheet"/>
@@ -174,10 +174,10 @@
 <span class="stat-label">VRF Home Interiors Pvt. Ltd.</span>
 <span class="stat-desc">Incorporated 10 September 2020</span>
 </div>
-<div class="stat-card">
-<strong class="stat-num">4.9 ★</strong>
-<span class="stat-label">Public Customer Rating</span>
-<span class="stat-desc">From ratings on our Sector 93 listing</span>
+<div class="stat-card" aria-live="polite">
+<strong class="stat-num"><span data-rating-value>—</span><span data-rating-scale hidden> / 5</span></strong>
+<span class="stat-label">Approved Customer Rating</span>
+<span class="stat-desc" data-rating-count>Loading review count…</span>
 </div>
 <div class="stat-card">
 <strong class="stat-num">Sector 93</strong>
@@ -595,8 +595,8 @@
      ================================================================== -->
 <section class="featured-work section" hidden="" id="featured-work"></section>
 <!-- ==================================================================
-     Client reviews. Populated from js/reviews-config.js by js/reviews.js.
-     While no review is published this collapses to the verified rating panel.
+     Client reviews. The slider uses permission-cleared entries from
+     js/reviews-config.js; rating statistics are fetched from Supabase.
      ================================================================== -->
 <section class="testimonials section" id="client-reviews">
 <div class="wrap testimonial-layout">
@@ -623,21 +623,15 @@
 <a class="text-link" hidden="" id="review-source" rel="noopener noreferrer" target="_blank"></a>
 </article>
 </div>
-<div class="reviews-proof" hidden="" id="reviews-empty">
+<div class="reviews-proof" id="reviews-proof" role="group" aria-label="Approved customer review statistics">
 <div class="proof-score">
-<strong class="proof-value" data-rating-value="">4.9</strong>
-<span class="proof-stars" aria-hidden="true">★★★★★</span>
-<span class="proof-count">from <strong data-rating-count="">964</strong> customer ratings</span>
+<strong class="proof-value" data-rating-value="—">—</strong>
+<span class="proof-scale" data-rating-scale hidden="">/ 5</span>
+<span class="proof-stars" data-rating-stars aria-hidden="true" hidden=""></span>
+<span class="proof-count"><strong data-rating-count>Loading review count…</strong></span>
 </div>
-<p class="proof-note">This is our verified public rating on our Sector 93 business listing &mdash; every rating is left by a real customer and counted by the platform, not by us.</p>
-<!-- The "See the ratings for yourself" link to the magicpin listing was
-     removed on request: the rating panel no longer sends visitors off the
-     site. js/reviews.js guards the anchor with `if (link)`, so its absence
-     is handled and nothing throws. SITE_CONFIG.publicRating.sourceUrl was
-     emptied at the same time, so the URL is not shipped to the browser
-     either; the address is recorded in the comment beside it there if the
-     link is ever wanted back. -->
-<p class="proof-invite">Written reviews from recent projects are being collected and will be published here with each customer&rsquo;s permission.</p>
+<div class="proof-breakdown" data-rating-breakdown role="group" hidden="" aria-label="Approved reviews by star rating"></div>
+<p class="proof-note" data-rating-status role="status" aria-live="polite">Loading approved review statistics…</p>
 </div>
 <noscript>Enable JavaScript to view configured reviews.</noscript>
 <div class="slider-controls" hidden="">

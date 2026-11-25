@@ -36,13 +36,13 @@
   <link href="css/raised-depth.css?v=b60" rel="stylesheet" />
   <link href="css/site-ivory-theme.css?v=b60" rel="stylesheet" />
   <link href="css/interaction-stability.css?v=b60" rel="stylesheet" />
-  <link href="css/page-reviews.css?v=b1" rel="stylesheet" />
+  <link href="css/page-reviews.css?v=b3" rel="stylesheet" />
   <link rel="icon" href="media/brand/favicon/favicon.ico?v=b60" sizes="any" />
   <link rel="icon" href="media/brand/favicon/favicon.svg?v=b60" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="media/brand/favicon/apple-touch-icon.png?v=b60" />
   <link rel="manifest" href="site.webmanifest?v=b60" />
   <script defer src="js/routes.js?v=b60"></script>
-  <script defer src="js/config.js?v=b109"></script>
+  <script defer src="js/config.js?v=b110"></script>
   <script defer src="js/data.js?v=b117"></script>
   <script defer src="js/reviews-config.js?v=b102"></script>
   <script defer src="js/supabase-config.js?v=b5"></script>
@@ -51,7 +51,7 @@
   <script defer src="js/navigation.js?v=b117"></script>
   <script defer src="js/insights.js?v=b60"></script>
   <script defer src="js/site-ivory-theme.js?v=b60"></script>
-  <script defer src="js/page-reviews.js?v=b2"></script>
+  <script defer src="js/page-reviews.js?v=b4"></script>
 </head>
 <body class="inner-page reviews-page" data-route="reviews/">
   <a class="skip-link" href="reviews/#main">Skip to content</a>
@@ -85,10 +85,11 @@
       <h2 class="visually-hidden" id="reviews-summary-heading">Overall public rating</h2>
       <div class="reviews-summary form-panel">
         <div class="summary-score">
-          <strong class="summary-value" data-rating-value>4.9</strong>
-          <span class="summary-stars" aria-hidden="true">★★★★★</span>
-          <span class="summary-count">from <strong data-rating-count>964</strong> customer ratings</span>
-          <p class="summary-note">Public aggregate rating. The breakdown below reflects written reviews published on this page.</p>
+          <strong class="summary-value" data-rating-value>—</strong>
+          <span class="summary-scale" data-rating-scale hidden>/ 5</span>
+          <span class="summary-stars" aria-hidden="true" hidden></span>
+          <span class="summary-count"><strong data-rating-count>Loading review count…</strong></span>
+          <p class="summary-note">Average and breakdown are calculated from approved reviews stored on this site.</p>
         </div>
         <div class="summary-bars" id="summary-bars" hidden aria-hidden="true"></div>
         <p class="summary-bars-empty small-note" id="summary-bars-empty">The written-review breakdown will appear as reviews are published here.</p>

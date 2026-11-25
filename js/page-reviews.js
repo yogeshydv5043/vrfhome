@@ -292,6 +292,7 @@
     updateSummary();
   }
   function renderSummary(value) {
+    syncHeadlineRating(value);
     if (!summaryBars || !value || Number(value.total) < 1) {
       if (summaryBars) { summaryBars.replaceChildren(); summaryBars.hidden = true; }
       if (summaryEmpty) summaryEmpty.hidden = false;
@@ -332,7 +333,7 @@
   }
   function updateSummary() {
     if (summary) return renderSummary(summary);
-    if (supabaseReady && total > reviews.length) {
+    if (supabaseReady) {
       if (summaryEmpty) summaryEmpty.textContent = "The written-review breakdown is temporarily unavailable.";
       return renderSummary(null);
     }
@@ -341,13 +342,24 @@
     const counts = [5, 4, 3, 2, 1].map((rating) => reviews.filter((item) => Number(item.rating) === rating).length);
     renderSummary({ total: reviews.length, five_star: counts[0], four_star: counts[1], three_star: counts[2], two_star: counts[3], one_star: counts[4] });
   }
-  function syncHeadlineRating() {
-    const rating = typeof SITE_CONFIG !== "undefined" ? SITE_CONFIG.publicRating : null;
-    if (!rating) return;
-    const value = document.querySelector("[data-rating-value]");
-    const count = document.querySelector("[data-rating-count]");
-    if (value && rating.value) value.textContent = String(rating.value);
-    if (count && Number.isFinite(Number(rating.count))) count.textContent = Number(rating.count).toLocaleString("en-IN");
+  function syncHeadlineRating(value) {
+    const total = value && Number.isSafeInteger(Number(value.total)) ? Number(value.total) : null;
+    const average = value && Number.isFinite(Number(value.average)) ? Number(value.average) : null;
+    const averageNode = document.querySelector("[data-rating-value]");
+    const scaleNode = document.querySelector("[data-rating-scale]");
+    const countNode = document.querySelector("[data-rating-count]");
+    const starsNode = document.querySelector(".summary-stars");
+    const available = total !== null && total > 0 && average !== null;
+    if (averageNode) averageNode.textContent = available ? average.toFixed(1) : "—";
+    if (scaleNode) scaleNode.hidden = !available;
+    if (countNode) countNode.textContent = total === null
+      ? (supabaseReady ? "Review count unavailable" : "0 approved reviews")
+      : `${total.toLocaleString("en-IN")} approved ${total === 1 ? "review" : "reviews"}`;
+    if (starsNode) {
+      const filled = available ? Math.max(0, Math.min(5, Math.round(average))) : 0;
+      starsNode.textContent = "★".repeat(filled) + "☆".repeat(5 - filled);
+      starsNode.hidden = !available;
+    }
   }
   function parseTotal(response, countFallback) {
     const header = response.headers.get("content-range") || "";
@@ -366,7 +378,7 @@
     if (!response.ok) throw new Error("summary_failed");
     const rows = await response.json();
     const row = Array.isArray(rows) ? rows[0] : rows;
-    return row && Number(row.total) > 0 ? row : null;
+    return row || null;
   }
   function supabaseHeaders(extra = {}) {
     return { apikey: publishableKey, Authorization: `Bearer ${publishableKey}`, Accept: "application/json", ...extra };
@@ -433,7 +445,8 @@
   function summarizeLocal(items) {
     if (!items.length) return null;
     const counts = [5, 4, 3, 2, 1].map((n) => items.filter((item) => item.rating === n).length);
-    return { total: items.length, five_star: counts[0], four_star: counts[1], three_star: counts[2], two_star: counts[3], one_star: counts[4] };
+    const average = items.reduce((sum, item) => sum + Number(item.rating), 0) / items.length;
+    return { total: items.length, average, five_star: counts[0], four_star: counts[1], three_star: counts[2], two_star: counts[3], one_star: counts[4] };
   }
   async function loadNextPage() {
     if (loadingMore || offset >= total) return;
@@ -570,7 +583,7 @@
         reviews = [review, ...reviews.filter((item) => String(item.id) !== String(review.id))];
         total += 1;
         offset = Math.max(offset, reviews.length);
-        try { summary = await fetchSummary(); } catch (_) { summary = summarizeLocal(reviews); }
+        try { summary = await fetchSummary(); } catch (_) { summary = null; }
         render();
         form.reset();
         selectedRating = 0;
@@ -584,6 +597,7 @@
         resetTurnstile();
         setStatus("Thank you. Your review has been published.", "success");
         startCooldown(body.cooldown_seconds || 300);
+        try { localStorage.setItem("vrf-review-stats-updated", String(Date.now())); } catch (_) {}
         list?.querySelector(".review-entry")?.scrollIntoView({ behavior: "smooth", block: "center" });
       } else if (response.status === 429) {
         const retry = Number(body.retry_after || response.headers.get("retry-after") || 300);
@@ -645,7 +659,6 @@
   }
 
   buildStars();
-  syncHeadlineRating();
   bindForm();
   updateCount();
   updateSubmit();
