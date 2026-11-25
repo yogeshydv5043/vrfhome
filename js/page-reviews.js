@@ -148,7 +148,7 @@
     if (!submitButton) return;
     const valid = !problemFor("name") && !problemFor("location") && !problemFor("comment") && !problemFor("rating");
     const cooldown = cooldownUntil > Date.now();
-    submitButton.disabled = !formReady || busy || !valid || cooldown;
+    submitButton.disabled = !formReady || busy || !valid || !captchaToken || cooldown;
   }
   function fieldSummary(invalid) {
     if (invalid.length === 1) return "One field still needs attention.";
@@ -374,6 +374,7 @@
   async function fetchPage(start, limit) {
     const url = new URL(`${endpoint}/rest/v1/reviews`);
     url.searchParams.set("select", "id,name,rating,comment,location,created_at");
+    url.searchParams.set("is_approved", "eq.true");
     url.searchParams.set("order", "created_at.desc,id.desc");
     url.searchParams.set("limit", String(limit));
     url.searchParams.set("offset", String(start));
@@ -416,6 +417,7 @@
       }
       render();
       if (formDisabled) formDisabled.hidden = formReady;
+      if (config.revealFormAfterLoadMore === true && reviews.length >= total) revealForm(false);
       if (formReady) mountTurnstile();
     } catch (error) {
       showError(error.message === "permission_denied" ? "The review service could not read its public review list. Please try again later." : "We could not load the reviews just now. Please try again.");
@@ -551,16 +553,19 @@
     const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
     try {
       const base = normalizeEndpoint(config.functionsUrl) || `${endpoint}/functions/v1`;
-      const response = await fetch(`${base}/submit-review`, {
+      const functionName = typeof config.submitFunction === "string" && /^[a-z0-9-]+$/i.test(config.submitFunction)
+        ? config.submitFunction
+        : "submit-review";
+      const response = await fetch(`${base}/${functionName}`, {
         method: "POST",
         headers: { apikey: publishableKey, Authorization: `Bearer ${publishableKey}`, "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({ name: inputValue("name"), location: inputValue("location"), rating: selectedRating, comment: inputValue("comment"), captchaToken }),
+        body: JSON.stringify({ name: inputValue("name"), location: inputValue("location"), rating: selectedRating, comment: inputValue("comment"), turnstileToken: captchaToken }),
         signal: controller.signal,
         cache: "no-store",
       });
       let body = {};
       try { body = await response.json(); } catch (_) {}
-      if (response.status === 201 && body.status === "created" && body.review) {
+      if (response.status === 201 && body.status === "created" && body.review?.is_approved === true) {
         const review = body.review;
         reviews = [review, ...reviews.filter((item) => String(item.id) !== String(review.id))];
         total += 1;

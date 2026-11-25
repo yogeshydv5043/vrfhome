@@ -10,7 +10,7 @@ type ReviewInput = {
   rating: number;
   comment: string;
   location: string;
-  captchaToken: string;
+  turnstileToken: string;
 };
 type FieldErrors = Record<string, string>;
 
@@ -159,7 +159,7 @@ async function handle(request: Request, env: Runtime = runtime): Promise<Respons
   if (Object.keys(errors).length) return response(422, { error: { code: "validation_failed" }, fields: errors }, origin, allow);
   const address = clientAddress(request);
   if (!address) return response(400, { error: { code: "client_unidentified" } }, origin, allow);
-  const captcha = await verifyTurnstile(clean(body.captchaToken), address, origin, env);
+  const captcha = await verifyTurnstile(clean(body.turnstileToken), address, origin, env);
   if (captcha === "failed") return response(403, { error: { code: "captcha_failed" } }, origin, allow);
   if (captcha === "unavailable") return response(503, { error: { code: "captcha_unavailable" } }, origin, allow);
 

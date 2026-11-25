@@ -63,8 +63,8 @@ begin
     return jsonb_build_object('status', 'rate_limited', 'retry_after', v_retry);
   end if;
 
-  insert into public.reviews (name, rating, comment, location)
-  values (v_name, p_rating::smallint, v_comment, v_location)
+  insert into public.reviews (name, rating, comment, location, is_approved)
+  values (v_name, p_rating::smallint, v_comment, v_location, true)
   returning * into v_review;
 
   return jsonb_build_object(
@@ -75,6 +75,7 @@ begin
       'rating', v_review.rating,
       'comment', v_review.comment,
       'location', v_review.location,
+      'is_approved', v_review.is_approved,
       'created_at', v_review.created_at
     )
   );

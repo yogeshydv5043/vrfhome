@@ -6,6 +6,7 @@ create table if not exists public.reviews (
   rating smallint not null,
   comment varchar(60) not null,
   location varchar(40) not null,
+  is_approved boolean not null default true,
   created_at timestamptz not null default now(),
   constraint reviews_name_length check (char_length(regexp_replace(btrim(name), '[[:space:]]+', ' ', 'g')) between 3 and 30),
   constraint reviews_rating_range check (rating between 1 and 5),
@@ -19,7 +20,7 @@ create index if not exists reviews_created_at_desc_idx
 alter table public.reviews enable row level security;
 drop policy if exists "Public can read reviews" on public.reviews;
 create policy "Public can read reviews" on public.reviews
-  for select to anon, authenticated using (true);
+  for select to anon, authenticated using (is_approved = true);
 
 revoke all on table public.reviews from anon, authenticated;
 grant select on table public.reviews to anon, authenticated;
@@ -37,7 +38,8 @@ select
   count(*) filter (where rating = 3)::bigint as three_star,
   count(*) filter (where rating = 2)::bigint as two_star,
   count(*) filter (where rating = 1)::bigint as one_star
-from public.reviews;
+from public.reviews
+where is_approved = true;
 
 grant select on public.review_summary to anon, authenticated;
 

@@ -1,10 +1,10 @@
 # Review page setup and operations
 
-The review page is served at `/reviews/`. With the checked-in blank public settings it intentionally uses the fallback list, shows a configuration notice, and does not submit anything. No Supabase credentials or Turnstile keys are included in this repository.
+The review page is served at `/reviews/`. Its checked-in public settings point to the configured Supabase project and include the public Turnstile site key. Review writes remain unavailable until the database migrations and Edge Function secrets are provisioned and the function is deployed.
 
 ## Supabase provisioning
 
-1. Create a Supabase project and run `supabase/migrations/20260918120000_reviews.sql`, followed by `supabase/migrations/20260918120100_rate_limit.sql`.
+1. For a fresh Supabase project, run `supabase/migrations/20260918120000_reviews.sql`, `supabase/migrations/20260918120100_rate_limit.sql`, and `supabase/migrations/20261124100000_reviews_approval.sql` in timestamp order. The approval migration is safe to run after the initial schema and also upgrades existing installations to explicit `is_approved` filtering.
 2. Deploy `supabase/functions/submit-review` and keep `verify_jwt = false` for that function as configured in `supabase/config.toml`. It still verifies the public browser key, allowed origin and Turnstile challenge, then calls the database through its private service-role key.
 3. Create a Cloudflare Turnstile widget for `vrfhomeinteriors.com` (and `www.vrfhomeinteriors.com` if used).
 4. Set function secrets in Supabase, never in frontend JavaScript:
@@ -18,7 +18,7 @@ The review page is served at `/reviews/`. With the checked-in blank public setti
    ```
 
    Supabase supplies `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` to Edge Functions. `TRUSTED_PROXY_HOPS` may be set only after confirming the deployed proxy chain. The function fails closed if required secrets, a trustworthy client address, or the CAPTCHA verification service are unavailable.
-5. Set `url`, `publishableKey` (the public/anon key only), and `turnstileSiteKey` in `js/supabase-config.js`. The page’s `pageSize` defaults to 10. Bump `?v=` on edited scripts because root hosting rules mark JavaScript as immutable.
+5. Confirm `url`, `publishableKey` (public/anon key only), `submitFunction`, `functionsUrl`, and `turnstileSiteKey` in `js/supabase-config.js` match the project. The page size is 10. Bump `?v=` on edited scripts because root hosting rules mark JavaScript as immutable.
 6. Verify the public table policies and view, then exercise reads, submission, rate limits, CAPTCHA rejection, and deletion via the Supabase dashboard. Reviews publish immediately; there is no public edit/delete or moderation interface.
 
 The service-role key, Turnstile secret, database password and IP hash salt must never be copied into browser-delivered files. `supabase/` is backend source and must not be included in a static website release. A nested Apache denial rule and the root `htaccess-root.txt` template provide additional protection if those files are accidentally present on Apache hosting.
