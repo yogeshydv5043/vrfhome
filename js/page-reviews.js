@@ -12,6 +12,10 @@
     comment: { min: 10, maxChars: 3000, maxWords: 50, label: "review" },
     location: { min: 10, max: 40, label: "location" },
   });
+  const URL_IN_REVIEW = /(?:\b(?:https?|ftp|file):\s*\/\/?|\bwww\s*\.\s*|\blocalhost(?::\d{1,5})?(?:[/?#]\S*)?|\b(?:\d{1,3}\.){3}\d{1,3}(?::\d{1,5})?(?:[/?#]\S*)?|\b[\p{L}\d](?:[\p{L}\d-]{0,61}[\p{L}\d])?(?:\.[\p{L}\d](?:[\p{L}\d-]{0,61}[\p{L}\d])?)*\.[\p{L}]{2,}(?::\d{1,5})?(?:[/?#]\S*)?)/iu;
+  const EMAIL_IN_REVIEW = /\b[A-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Z0-9](?:[A-Z0-9.-]*[A-Z0-9])?\b/iu;
+  const SQL_IN_REVIEW = /\b(?:select\s+(?:\*|[\w`".[\]]+(?:\s*,\s*[\w`".[\]]+)*)\s+from\s+[\w`".[\]]+|insert\s+into\s+[\w`".[\]]+|update\s+[\w`".[\]]+\s+set\b|delete\s+from\s+[\w`".[\]]+|(?:drop|alter|truncate|create)\s+(?:table|database|schema)\b|union(?:\s+all)?\s+select\b|exec(?:ute)?\s+[\w`"]+)|(?:--|\/\*|\*\/|;\s*(?:select|insert|update|delete|drop|alter|union|exec)\b)|\b(?:or|and)\s+\d+\s*=\s*\d+\b/i;
+  const SQL_TAUTOLOGY_REVIEW = /(?:'|"|`)\s*(?:or|and)\s+(?:'|"|`)?[\w]+(?:'|"|`)?\s*=\s*(?:'|"|`)?[\w]+(?:'|"|`)?/i;
   const DEFAULT_COMMENTS = Object.freeze({
     1: "Poor experience. I expected better service.",
     2: "Average experience. Improvements are needed.",
@@ -100,7 +104,7 @@
   let turnstileCycleStartedAt = 0;
   let lastTurnstileTokenMs = null;
   let lastTurnstileMountToTokenMs = null;
-  let formRevealed = config.revealFormAfterLoadMore !== true;
+  let formRevealed = true;
   let lastSnapshotWindow = -1;
   let snapshotRefreshInFlight = false;
 
@@ -195,6 +199,9 @@
     status.className = `form-status${kind ? ` ${kind}` : ""}`;
     status.hidden = !text;
   }
+  function clearCaptchaStatus() {
+    if (status?.classList.contains("error") && /spam|security check/i.test(status.textContent)) setStatus("");
+  }
   function inputValue(name) { return clean(fields[name]?.value || ""); }
   function problemFor(name) {
     if (name === "rating") return selectedRating >= 1 && selectedRating <= 5 ? "" : "Please choose a rating from 1 to 5.";
@@ -203,6 +210,8 @@
     const value = inputValue(name);
     const size = length(value);
     if (!value) return `Please enter your ${rule.label}.`;
+    if (EMAIL_IN_REVIEW.test(value) || URL_IN_REVIEW.test(value)) return "Please remove email addresses and URLs from this field.";
+    if (SQL_IN_REVIEW.test(value) || SQL_TAUTOLOGY_REVIEW.test(value)) return "SQL commands or SQL-like content are not allowed.";
     if (size < rule.min) return `Please use at least ${rule.min} characters (${size} so far).`;
     if (name === "comment" && wordCount(value) > rule.maxWords)
       return `Please keep your review to ${rule.maxWords} words or fewer.`;
@@ -615,7 +624,6 @@
       }
       render();
       if (formDisabled) formDisabled.hidden = formReady;
-      if (config.revealFormAfterLoadMore === true && reviews.length >= total) revealForm(false);
       if (formReady) mountTurnstile();
     } catch (error) {
       showError(error.message === "permission_denied" ? "The review service could not read its public review list. Please try again later." : "We could not load the reviews just now. Please try again.");
@@ -679,7 +687,6 @@
       if (!result.data.length) total = offset;
       render();
       if (moreStatus) moreStatus.textContent = "";
-      if (config.revealFormAfterLoadMore === true) revealForm(false);
     } catch (_) {
       if (moreStatus) moreStatus.textContent = "Could not load more reviews. Please try again.";
     } finally {
@@ -724,10 +731,12 @@
           lastTurnstileTokenMs = tokenReadyAt - turnstileCycleStartedAt;
           lastTurnstileMountToTokenMs = tokenReadyAt - turnstileApiLoadStartedAt;
           captchaToken = token;
+          clearCaptchaStatus();
           if (!deviceToken && !deviceTokenPromise) ensureDeviceToken();
           updateSubmit();
         },
-        "expired-callback": () => { captchaToken = ""; updateSubmit(); },
+        "expired-callback": () => { captchaToken = ""; setStatus("The spam check expired. Please complete it again.", "error"); updateSubmit(); },
+        "timeout-callback": () => { captchaToken = ""; setStatus("The spam check timed out. Please complete it again.", "error"); updateSubmit(); },
         "error-callback": () => { captchaToken = ""; setStatus("Spam protection could not be verified. Please try again.", "error"); updateSubmit(); },
         theme: document.documentElement.dataset.theme === "dark" ? "dark" : "light",
       });
@@ -952,10 +961,6 @@
     document.getElementById("reviews-retry")?.addEventListener("click", loadFirstPage);
     moreButton?.addEventListener("click", loadNextPage);
     document.getElementById("write-first-review")?.addEventListener("click", () => revealForm(true));
-    if (config.revealFormAfterLoadMore === true) {
-      formSection.hidden = true;
-      formRevealed = false;
-    }
     if (formDisabled) formDisabled.hidden = formReady;
     if (modeNote) modeNote.hidden = supabaseReady;
     if (formReady && formRevealed) ensureDeviceToken();

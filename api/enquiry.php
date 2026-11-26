@@ -53,6 +53,13 @@ function field(string $name, int $max = 160, bool $multiline = false): string {
     if (preg_match($multiline ? '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/' : '/[\x00-\x1F\x7F]/', $v)) fail(422, 'VALIDATION_FAILED');
     return trim($v);
 }
+function containsDisallowedPublicText(string $value): bool {
+    $email = '~\\b[A-Z0-9._%+-]+@[A-Z0-9](?:[A-Z0-9.-]*[A-Z0-9])?\\b~i';
+    $url = '~(?:\\b(?:https?|ftp|file):\\s*//|\\bwww\\s*\\.|\\blocalhost(?::\\d{1,5})?(?:[/?#]\\S*)?|\\b(?:[\\w-]+\\.)+[a-z]{2,}(?::\\d{1,5})?(?:[/?#]\\S*)?|\\b(?:\\d{1,3}\\.){3}\\d{1,3}(?::\\d+)?(?:[/?#]\\S*)?)~iu';
+    $sql = '~\\b(?:select\\s+(?:\\*|[\\w`".\\[\\]]+(?:\\s*,\\s*[\\w`".\\[\\]]+)*)\\s+from\\s+[\\w`".\\[\\]]+|insert\\s+into\\s+[\\w`".\\[\\]]+|update\\s+[\\w`".\\[\\]]+\\s+set\\b|delete\\s+from\\s+[\\w`".\\[\\]]+|(?:drop|alter|truncate|create)\\s+(?:table|database|schema)\\b|union(?:\\s+all)?\\s+select\\b|exec(?:ute)?\\s+[\\w`"]+)|(?:--|/\\*|\\*/|;\\s*(?:select|insert|update|delete|drop|alter|union|exec)\\b)|\\b(?:or|and)\\s+\\d+\\s*=\\s*\\d+\\b~i';
+    $sqlTautology = '~(?:\\x27|"|`)\\s*(?:or|and)\\s+(?:\\x27|"|`)?[A-Za-z0-9_]+(?:\\x27|"|`)?\\s*=\\s*(?:\\x27|"|`)?[A-Za-z0-9_]+(?:\\x27|"|`)?~i';
+    return preg_match($email, $value) === 1 || preg_match($url, $value) === 1 || preg_match($sql, $value) === 1 || preg_match($sqlTautology, $value) === 1;
+}
 
 $method = $_SERVER['REQUEST_METHOD'] ?? '';
 if (!in_array($method, ['GET', 'POST'], true)) { header('Allow: GET, POST'); fail(405, 'METHOD_NOT_ALLOWED'); }
@@ -126,6 +133,10 @@ $data = [
     'address2' => field('address2'), 'state' => field('state'),
     'postalCode' => field('postalCode', 20), 'country' => field('country', 100),
 ];
+// Email is accepted only in the dedicated email field; public text fields reject URLs, emails and SQL-like payloads.
+foreach (['name', 'city', 'message', 'address1', 'address2', 'state', 'postalCode', 'country'] as $textField) {
+    if (containsDisallowedPublicText($data[$textField])) fail(422, 'VALIDATION_FAILED');
+}
 $services = ['residential'=>'Residential Interior Design','commercial'=>'Commercial Interior Design','kitchen'=>'Modular Kitchen Design','living-room'=>'Living Room Design','bedroom'=>'Bedroom Design','office'=>'Office Interior Design','space-planning'=>'Space Planning','renovation'=>'Renovation & Styling','other'=>'Other / please advise'];
 if (!preg_match('/\A[\p{L}\p{M} .\x{2019}\x{0027}-]+\z/u', $data['name']) || preg_match_all('/\p{L}/u', $data['name']) < 2 ||
     !filter_var($data['email'], FILTER_VALIDATE_EMAIL) || str_contains($data['email'], '..') ||

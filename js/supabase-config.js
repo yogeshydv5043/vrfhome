@@ -8,6 +8,5 @@ window.VRF_SUPABASE_CONFIG = Object.freeze({
   functionsUrl: "https://rryfjuzvdlymtbiqtqeu.supabase.co/functions/v1",
   turnstileSiteKey: "0x4AAAAAAGRA7iO5YcvUusYP",
   pageSize: 10,
-  revealFormAfterLoadMore: true,
   timeoutMs: 12000,
 });

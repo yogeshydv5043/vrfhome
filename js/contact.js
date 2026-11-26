@@ -65,9 +65,22 @@
       Studio.contactText(notice,
         "Submitting sends your enquiry through this website’s mail service to vrf.interiors@gmail.com. Please review the Privacy Policy. WhatsApp links prefill the service/reference only; your form entries are not copied there.");
   }
+  const URL_IN_TEXT = /(?:\b(?:https?|ftp|file):\s*\/\/?|\bwww\s*\.\s*|\blocalhost(?::\d{1,5})?(?:[/?#]\S*)?|\b(?:\d{1,3}\.){3}\d{1,3}(?::\d{1,5})?(?:[/?#]\S*)?|\b[\p{L}\d](?:[\p{L}\d-]{0,61}[\p{L}\d])?(?:\.[\p{L}\d](?:[\p{L}\d-]{0,61}[\p{L}\d])?)*\.[\p{L}]{2,}(?::\d{1,5})?(?:[/?#]\S*)?)/iu;
+  const EMAIL_IN_TEXT = /\b[A-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Z0-9](?:[A-Z0-9.-]*[A-Z0-9])?\b/iu;
+  const SQL_IN_TEXT = /\b(?:select\s+(?:\*|[\w`".[\]]+(?:\s*,\s*[\w`".[\]]+)*)\s+from\s+[\w`".[\]]+|insert\s+into\s+[\w`".[\]]+|update\s+[\w`".[\]]+\s+set\b|delete\s+from\s+[\w`".[\]]+|(?:drop|alter|truncate|create)\s+(?:table|database|schema)\b|union(?:\s+all)?\s+select\b|exec(?:ute)?\s+[\w`"]+)|(?:--|\/\*|\*\/|;\s*(?:select|insert|update|delete|drop|alter|union|exec)\b)|\b(?:or|and)\s+\d+\s*=\s*\d+\b/i;
+  const SQL_TAUTOLOGY = /(?:'|"|`)\s*(?:or|and)\s+(?:'|"|`)?[\w]+(?:'|"|`)?\s*=\s*(?:'|"|`)?[\w]+(?:'|"|`)?/i;
+  const PUBLIC_TEXT_FIELDS = new Set(["name", "city", "message", "address1", "address2", "state", "postalCode", "country"]);
+  function contentSafetyError(name, text) {
+    if (!text || !PUBLIC_TEXT_FIELDS.has(name)) return "";
+    if (EMAIL_IN_TEXT.test(text) || URL_IN_TEXT.test(text)) return "Please remove email addresses and URLs from this field.";
+    if (SQL_IN_TEXT.test(text) || SQL_TAUTOLOGY.test(text)) return "SQL commands or SQL-like content are not allowed.";
+    return "";
+  }
   // Returns the validation message for a field, or an empty string if valid.
   function errorFor(name) {
     const v = value(name);
+    const safetyError = contentSafetyError(name, v);
+    if (safetyError) return safetyError;
     if (name === "name") {
       if (!v) return "Please enter your name.";
       if ((v.match(/\p{L}/gu) || []).length < 2)

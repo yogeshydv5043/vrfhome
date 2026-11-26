@@ -33,12 +33,23 @@ function clean(value: unknown): string {
 }
 function chars(value: string): number { return Array.from(value).length; }
 function wordCount(value: string): number { return value ? value.split(/\s+/u).length : 0; }
+const URL_IN_REVIEW = /(?:\b(?:https?|ftp|file):\s*\/\/?|\bwww\s*\.\s*|\blocalhost(?::\d{1,5})?(?:[/?#]\S*)?|\b(?:\d{1,3}\.){3}\d{1,3}(?::\d{1,5})?(?:[/?#]\S*)?|\b[\p{L}\d](?:[\p{L}\d-]{0,61}[\p{L}\d])?(?:\.[\p{L}\d](?:[\p{L}\d-]{0,61}[\p{L}\d])?)*\.[\p{L}]{2,}(?::\d{1,5})?(?:[/?#]\S*)?)/iu;
+const EMAIL_IN_REVIEW = /\b[A-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Z0-9](?:[A-Z0-9.-]*[A-Z0-9])?\b/iu;
+const SQL_IN_REVIEW = /\b(?:select\s+(?:\*|[\w`".[\]]+(?:\s*,\s*[\w`".[\]]+)*)\s+from\s+[\w`".[\]]+|insert\s+into\s+[\w`".[\]]+|update\s+[\w`".[\]]+\s+set\b|delete\s+from\s+[\w`".[\]]+|(?:drop|alter|truncate|create)\s+(?:table|database|schema)\b|union(?:\s+all)?\s+select\b|exec(?:ute)?\s+[\w`"]+)|(?:--|\/\*|\*\/|;\s*(?:select|insert|update|delete|drop|alter|union|exec)\b)|\b(?:or|and)\s+\d+\s*=\s*\d+\b/i;
+const SQL_TAUTOLOGY_REVIEW = /(?:'|"|`)\s*(?:or|and)\s+(?:'|"|`)?[\w]+(?:'|"|`)?\s*=\s*(?:'|"|`)?[\w]+(?:'|"|`)?/i;
+function publicTextError(value: string): string {
+  if (EMAIL_IN_REVIEW.test(value) || URL_IN_REVIEW.test(value)) return "Please remove email addresses and URLs from this field.";
+  if (SQL_IN_REVIEW.test(value) || SQL_TAUTOLOGY_REVIEW.test(value)) return "SQL commands or SQL-like content are not allowed.";
+  return "";
+}
 function fieldErrors(body: Record<string, unknown>): FieldErrors {
   const errors: FieldErrors = {};
   for (const [name, rule] of Object.entries(FIELD_RULES)) {
     const value = clean(body[name]);
     const count = chars(value);
+    const safetyError = publicTextError(value);
     if (!value) errors[name] = `Please enter your ${name === "comment" ? "review" : name}.`;
+    else if (safetyError) errors[name] = safetyError;
     else if (count < rule.min) errors[name] = `Your ${name === "comment" ? "review" : name} must be at least ${rule.min} characters.`;
     else if (name === "comment" && wordCount(value) > MAX_REVIEW_WORDS) errors[name] = `Your review must be ${MAX_REVIEW_WORDS} words or fewer.`;
     else if (count > rule.max) errors[name] = name === "comment" ? "Your review must be 3000 characters or fewer." : `Your ${name} must be ${rule.max} characters or fewer.`;
