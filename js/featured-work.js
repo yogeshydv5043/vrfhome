@@ -120,10 +120,10 @@
       img.setAttribute("height", "600");
       figure.append(img);
       if (item.type === "video") figure.append(el("span", "featured-work-kind", "Film"));
-      card.append(figure);
-
-      card.append(el("h3", "featured-work-title", item.title || ""));
-      if (item.caption) card.append(el("p", "featured-work-caption", item.caption));
+      var footer = el("footer", "featured-work-footer");
+      footer.append(el("h3", "featured-work-title", item.title || ""));
+      if (item.caption) footer.append(el("p", "featured-work-caption", item.caption));
+      card.append(figure, footer);
       grid.append(card);
     });
 
