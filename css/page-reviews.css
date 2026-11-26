@@ -55,7 +55,7 @@
 .reviews-empty .small-note { margin-bottom:18px; }
 .reviews-actions { display:grid; justify-items:center; gap:8px; padding-top:24px; }
 .reviews-actions .button { min-width:min(100%,250px); }
-.reviews-chevron { font-size:20px; line-height:1; }
+.reviews-chevron { display:block; flex:0 0 auto; width:16px; height:16px; }
 #load-more-status { min-height:1.5em; margin:0; text-align:center; }
 .reviews-page .review-form-section { padding-top:clamp(28px, 4vw, 40px); padding-bottom:clamp(28px, 4vw, 40px); }
 .review-form-card { width:100%; max-width:800px; margin-inline:auto; padding:24px; }
