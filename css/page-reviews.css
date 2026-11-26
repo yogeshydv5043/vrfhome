@@ -62,17 +62,15 @@
   padding:8px 2px;
   gap:10px;
   border:0;
-  border-bottom:1px solid var(--border);
   border-radius:0;
   background:transparent;
   box-shadow:none;
   color:var(--text);
   letter-spacing:.08em;
   text-transform:uppercase;
-  transition:color 180ms ease, border-color 180ms ease;
+  transition:color 180ms ease;
 }
 .reviews-page .reviews-actions #load-more-reviews:hover {
-  border-bottom-color:var(--accent-ink);
   background:transparent;
   color:var(--accent-ink);
 }
