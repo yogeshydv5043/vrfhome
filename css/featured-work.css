@@ -112,10 +112,8 @@
 
 .featured-work-footer {
   margin-top: 12px;
-  padding: 14px 16px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: var(--surface);
+  padding: 14px 0 16px;
+  border-bottom: 1px solid var(--border);
 }
 
 .featured-work-title {
