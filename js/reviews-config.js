@@ -1,7 +1,8 @@
-/* EDIT THIS FILE to manage Home → WORDS THAT MATTER reviews.
-   Keep reviews in the order you want them displayed. No HTML editing required.
+/* Optional local fallback reviews for Home → WORDS THAT MATTER.
+   The home carousel first loads the five newest approved reviews from the
+   shared Supabase snapshot; these entries are used only if that request fails.
    IMPORTANT: this is a PUBLIC file, including unpublished entries. Do not put
-   private contact details or confidential drafts here. Publish only genuine
+   private contact details or confidential drafts here. Include only genuine
    customer feedback you have permission to display. See README.md section 4.
 
    HOW TO ADD A REAL REVIEW
@@ -19,7 +20,6 @@
        quote: "",         // Their actual words. Do not paraphrase or invent.
        projectType: "",   // e.g. "3BHK Apartment" — the real scope
        location: "",      // e.g. "Sector 93, Gurugram" — the real area
-       rating: 5,         // Whole number 1–5, or remove this line
        date: "",          // YYYY-MM-DD, the real date the feedback was given
        sourceLabel: "",   // e.g. "Google" — where it was originally posted
        sourceUrl: "",     // https:// link to the original, if public
@@ -34,9 +34,9 @@ window.VRF_REVIEWS_CONFIG = {
      customer feedback, never illustrative or sample testimonials. */
   emptyState: "message",
 
-  /* No customer reviews are published yet. The studio's public rating is
-     shown as a verifiable aggregate on the Home page instead. Add real,
-     permission-cleared feedback here using the template above. */
+  /* Local fallback for Home if the approved-review snapshot cannot be loaded.
+     Keep these entries genuine and permission-cleared; the carousel sorts
+     this fallback by date and displays up to five. */
   reviews: [],
 
   /* Optional seed content for reviews/index.html while Supabase is not set up.

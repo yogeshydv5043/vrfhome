@@ -46,7 +46,7 @@
 <script defer="True" src="js/data.js?v=b117"></script>
   <script defer src="js/site-footer.js?v=b2"></script>
 <script defer="True" src="js/content.js?v=b114"></script>
-<script defer="" src="js/main.js?v=b91"></script><script defer="" src="js/reviews-config.js?v=b102"></script><script defer="" src="js/supabase-config.js?v=b5"></script><script defer="" src="js/reviews.js?v=b113"></script>
+<script defer="" src="js/main.js?v=b91"></script><script defer="" src="js/reviews-config.js?v=b103"></script><script defer="" src="js/supabase-config.js?v=b5"></script><script defer="" src="js/reviews.js?v=b115"></script>
 <script defer="" src="js/navigation.js?v=b117"></script>
 <script defer="" src="js/gallery.js?v=b60"></script>
 <script defer="" src="js/contact.js?v=b64"></script>
@@ -55,11 +55,11 @@
 <script defer="" src="js/media-data.js?v=b102"></script><script defer="" src="js/featured-work-config.js?v=b101"></script><script defer="" src="js/featured-work.js?v=b102"></script>
 <link href="css/premium.css?v=b105" rel="stylesheet"/>
 <link href="/media/brand/favicon/favicon.ico?v=b60" rel="icon" sizes="any"/><link href="/media/brand/favicon/favicon.svg?v=b60" rel="icon" type="image/svg+xml"/><link href="/media/brand/favicon/favicon-32.png?v=b60" rel="icon" sizes="32x32" type="image/png"/><link href="/media/brand/favicon/apple-touch-icon.png?v=b60" rel="apple-touch-icon" sizes="180x180"/><link href="/site.webmanifest?v=b60" rel="manifest"/><link href="css/branding.css?v=b60" rel="stylesheet"/>
-<link href="css/footer.css?v=b78" rel="stylesheet"/><link href="css/heading-scale.css?v=b80" rel="stylesheet"/><link href="css/image-guard.css?v=b102" rel="stylesheet"/><script defer="" src="js/image-guard.js?v=b101"></script><link href="css/glass-depth.css?v=b96" rel="stylesheet"/><link href="css/layout-fixes.css?v=b115" rel="stylesheet"/><script defer="" src="js/section-navigation.js?v=b117"></script><link href="css/contact-refresh.css?v=b60" rel="stylesheet"/><link href="css/whatsapp.css?v=b60" rel="stylesheet"/>
+<link href="css/footer.css?v=b78" rel="stylesheet"/><link href="css/heading-scale.css?v=b80" rel="stylesheet"/><link href="css/image-guard.css?v=b102" rel="stylesheet"/><script defer="" src="js/image-guard.js?v=b101"></script><link href="css/glass-depth.css?v=b96" rel="stylesheet"/><link href="css/layout-fixes.css?v=b116" rel="stylesheet"/><script defer="" src="js/section-navigation.js?v=b117"></script><link href="css/contact-refresh.css?v=b60" rel="stylesheet"/><link href="css/whatsapp.css?v=b60" rel="stylesheet"/>
 <link href="css/social-icons.css?v=b103" rel="stylesheet"/>
 <link href="css/raised-depth.css?v=b60" rel="stylesheet"/>
 <link href="css/home-services-spacing.css?v=b60" rel="stylesheet"/>
-<link href="css/reviews.css?v=b64" rel="stylesheet"/><link href="css/site-ivory-theme.css?v=b60" rel="stylesheet"/>
+<link href="css/reviews.css?v=b65" rel="stylesheet"/><link href="css/site-ivory-theme.css?v=b60" rel="stylesheet"/>
 <script defer="" src="js/site-ivory-theme.js?v=b60"></script>
 <link href="css/home-hero-overlay.css?v=b60" rel="stylesheet"/>
 <link href="css/interaction-stability.css?v=b60" rel="stylesheet"/>
@@ -175,11 +175,6 @@
 <strong class="stat-num">Since 2020</strong>
 <span class="stat-label">VRF Home Interiors Pvt. Ltd.</span>
 <span class="stat-desc">Incorporated 10 September 2020</span>
-</div>
-<div class="stat-card" aria-live="polite">
-<strong class="stat-num"><span data-rating-value>—</span><span data-rating-scale hidden> / 5</span></strong>
-<span class="stat-label">Approved Customer Rating</span>
-<span class="stat-desc" data-rating-count>Loading review count…</span>
 </div>
 <div class="stat-card">
 <strong class="stat-num">Sector 93</strong>
@@ -597,23 +592,19 @@
      ================================================================== -->
 <section class="featured-work section" hidden="" id="featured-work"></section>
 <!-- ==================================================================
-     Client reviews. The slider uses permission-cleared entries from
-     js/reviews-config.js; rating statistics are fetched from Supabase.
+     Client reviews. The carousel shows up to five newest approved reviews
+     from the shared public review snapshot; ratings are not displayed.
      ================================================================== -->
 <section class="testimonials section" id="client-reviews">
 <div class="wrap testimonial-layout">
 <div>
 <p class="eyebrow">WORDS THAT MATTER</p>
 <h2>A space to love.<br class="head-break"/><em>A story to share.</em></h2>
-<p class="small-note" id="reviews-note" hidden=""></p>
+<p class="small-note" id="reviews-note" role="status" aria-live="polite">Loading the latest approved reviews…</p>
 </div>
-<div aria-label="Client feedback" aria-roledescription="carousel" class="testimonial-slider" role="region"><div aria-atomic="true" aria-live="polite" hidden="" id="testimonial-content" role="group">
+<div aria-label="Latest customer reviews" aria-roledescription="carousel" class="testimonial-slider" role="region"><div aria-atomic="true" aria-live="polite" hidden="" id="testimonial-content" role="group">
 <article class="review-card">
 <span aria-hidden="true" class="quote-mark">“</span>
-<header class="review-card-head">
-<div class="rating" role="img" hidden=""></div>
-<p class="eyebrow" hidden="" id="review-kind"></p>
-</header>
 <blockquote id="testimonial-quote"></blockquote>
 <footer class="review-card-foot">
 <span aria-hidden="true" class="review-avatar" id="review-avatar"></span>
@@ -625,17 +616,7 @@
 <a class="text-link" hidden="" id="review-source" rel="noopener noreferrer" target="_blank"></a>
 </article>
 </div>
-<div class="reviews-proof" id="reviews-proof" role="group" aria-label="Approved customer review statistics">
-<div class="proof-score">
-<strong class="proof-value" data-rating-value="—">—</strong>
-<span class="proof-scale" data-rating-scale hidden="">/ 5</span>
-<span class="proof-stars" data-rating-stars aria-hidden="true" hidden=""></span>
-<span class="proof-count"><strong data-rating-count>Loading review count…</strong></span>
-</div>
-<div class="proof-breakdown" data-rating-breakdown role="group" hidden="" aria-label="Approved reviews by star rating"></div>
-<p class="proof-note" data-rating-status role="status" aria-live="polite">Loading approved review statistics…</p>
-</div>
-<noscript>Enable JavaScript to view configured reviews.</noscript>
+<noscript>Enable JavaScript to view the latest customer reviews.</noscript>
 <div class="slider-controls" hidden="">
 <div aria-label="Choose a review" class="slider-dots" role="group"></div>
 <div class="review-nav"><span class="review-position" id="review-position"></span>
