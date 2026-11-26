@@ -125,6 +125,7 @@
 .review-form-actions #review-submit .icon { width:15px; height:15px; flex-shrink:0; margin:0; transform:none!important; }
 .review-form-actions .button:disabled { opacity:.55; cursor:not-allowed; }
 .form-status { flex:1 1 220px; margin:0; color:var(--text-secondary-readable); font-size:13px; }
+.reviews-page .review-form-actions .form-status { font-size:8px; }
 .form-status.success { color:var(--success); }
 .form-status.error { color:var(--danger); }
 .review-privacy-note { margin-top:14px; color:var(--text-secondary-readable); font-size:calc(var(--font-small) + 2px) !important; line-height:1.6; }
