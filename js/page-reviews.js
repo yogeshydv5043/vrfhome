@@ -28,6 +28,9 @@
   });
   const RATING_WORDS = Object.freeze({ 1: "poor", 2: "below average", 3: "average", 4: "very good", 5: "excellent" });
   const pageSize = Number.isInteger(config.pageSize) ? Math.max(1, Math.min(config.pageSize, 50)) : 10;
+  const snapshotResource = "approved_review_cache";
+  const snapshotWindowMs = 30 * 60 * 1000;
+  const snapshotRefreshGraceMs = 60 * 1000;
   const endpoint = normalizeEndpoint(config.url);
   const publishableKey = typeof config.publishableKey === "string" ? config.publishableKey.trim() : "";
   const supabaseReady = !!(endpoint && publishableKey);
@@ -88,7 +91,12 @@
   let deviceToken = readDeviceToken();
   let deviceTokenPromise = null;
   let formRevealed = config.revealFormAfterLoadMore !== true;
+  let lastSnapshotWindow = -1;
+  let snapshotRefreshInFlight = false;
 
+  function currentSnapshotWindow() {
+    return Math.floor((Date.now() - snapshotRefreshGraceMs) / snapshotWindowMs);
+  }
   function normalizeEndpoint(value) {
     if (typeof value !== "string" || !value.trim()) return "";
     try {
@@ -474,7 +482,7 @@
     let ratingTotal = 0;
     let ratingSum = 0;
     while (true) {
-      const url = new URL(`${endpoint}/rest/v1/reviews`);
+      const url = new URL(`${endpoint}/rest/v1/${snapshotResource}`);
       url.searchParams.set("select", "rating");
       url.searchParams.set("is_approved", "eq.true");
       url.searchParams.set("order", "created_at.asc,id.asc");
@@ -515,7 +523,7 @@
     return { apikey: publishableKey, Authorization: `Bearer ${publishableKey}`, Accept: "application/json", ...extra };
   }
   async function fetchPage(start, limit) {
-    const url = new URL(`${endpoint}/rest/v1/reviews`);
+    const url = new URL(`${endpoint}/rest/v1/${snapshotResource}`);
     url.searchParams.set("select", "id,name,rating,comment,location,created_at");
     url.searchParams.set("is_approved", "eq.true");
     url.searchParams.set("order", "created_at.desc,id.desc");
@@ -551,6 +559,7 @@
         total = result.total;
         offset = reviews.length;
         try { summary = applySummaryCount(await fetchSummary()); } catch (_) { summary = null; }
+        lastSnapshotWindow = currentSnapshotWindow();
       } else {
         fallbackItems = readFallback();
         reviews = fallbackItems.slice(0, pageSize);
@@ -571,6 +580,29 @@
       if (formDisabled) formDisabled.hidden = formReady;
       if (formReady) mountTurnstile();
       updateSubmit();
+    }
+  }
+  async function refreshCachedSnapshot() {
+    const windowId = currentSnapshotWindow();
+    if (!supabaseReady || document.hidden || windowId <= lastSnapshotWindow || snapshotRefreshInFlight || busy || loadingMore) return;
+    snapshotRefreshInFlight = true;
+    try {
+      const visibleLimit = Math.min(1000, Math.max(pageSize, reviews.length));
+      const [page, nextSummary] = await Promise.all([
+        fetchPage(0, visibleLimit),
+        fetchSummary(),
+      ]);
+      reviews = page.data;
+      total = page.total;
+      offset = reviews.length;
+      summary = applySummaryCount(nextSummary);
+      lastSnapshotWindow = currentSnapshotWindow();
+      clearError();
+      render();
+    } catch (_) {
+      // Keep the last shared snapshot visible and retry on the next check.
+    } finally {
+      snapshotRefreshInFlight = false;
     }
   }
   function summarizeLocal(items) {
@@ -753,12 +785,6 @@
       let body = {};
       try { body = await response.json(); } catch (_) {}
       if (response.status === 201 && body.status === "created" && body.review?.is_approved === true) {
-        const review = body.review;
-        reviews = [review, ...reviews.filter((item) => String(item.id) !== String(review.id))];
-        total += 1;
-        offset = Math.max(offset, reviews.length);
-        try { summary = applySummaryCount(await fetchSummary()); } catch (_) { summary = null; }
-        render();
         form.reset();
         selectedRating = 0;
         ratingGroup?.querySelectorAll("[role=radio]").forEach((radio, index) => { radio.setAttribute("aria-checked", "false"); radio.tabIndex = index === 0 ? 0 : -1; });
@@ -769,10 +795,8 @@
         markField("rating", "");
         updateCount();
         resetTurnstile();
-        setStatus("Thank you. Your review has been published.", "success");
+        setStatus("Thank you. Your review has been saved and approved. It will appear publicly within 30 minutes.", "success");
         startCooldown(300);
-        try { localStorage.setItem("vrf-review-stats-updated", String(Date.now())); } catch (_) {}
-        list?.querySelector(".review-entry")?.scrollIntoView({ behavior: "smooth", block: "center" });
       } else if (response.status === 429) {
         const retry = Number(body.retry_after || response.headers.get("retry-after") || 300);
         setStatus("You have recently submitted a review. Please try again when the cooldown ends.", "error");
@@ -845,4 +869,8 @@
   updateSubmit();
   restoreCooldown();
   loadFirstPage();
+  window.setInterval(() => { void refreshCachedSnapshot(); }, 60_000);
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) void refreshCachedSnapshot();
+  });
 })();

@@ -5,8 +5,24 @@
 alter table public.reviews
   drop constraint if exists reviews_comment_length;
 
-alter table public.reviews
-  alter column comment type text;
+-- Avoid an unnecessary TYPE rewrite when an installation already uses text.
+-- Besides being redundant, PostgreSQL rejects even a same-type ALTER when a
+-- materialized view depends on the column. Fresh legacy schemas still upgrade.
+do $$
+begin
+  if exists (
+    select 1
+    from information_schema.columns
+    where table_schema = 'public'
+      and table_name = 'reviews'
+      and column_name = 'comment'
+      and data_type <> 'text'
+  ) then
+    alter table public.reviews
+      alter column comment type text;
+  end if;
+end;
+$$;
 
 alter table public.reviews
   add constraint reviews_comment_length check (

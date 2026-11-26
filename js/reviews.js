@@ -15,10 +15,16 @@
   const statsStatus = section.querySelector("[data-rating-status]");
   const breakdown = section.querySelector("[data-rating-breakdown]");
   const proofPanel = document.getElementById("reviews-proof");
+  const snapshotWindowMs = 30 * 60 * 1000;
+  const snapshotRefreshGraceMs = 60 * 1000;
   let lastStatsFetch = 0;
   let statsRequest = null;
   let statsRefreshQueued = false;
+  let lastSnapshotWindow = currentSnapshotWindow();
 
+  function currentSnapshotWindow() {
+    return Math.floor((Date.now() - snapshotRefreshGraceMs) / snapshotWindowMs);
+  }
   function setUnavailable() {
     averageNodes.forEach((node) => { node.textContent = "—"; });
     scaleNodes.forEach((node) => { node.hidden = true; });
@@ -86,7 +92,7 @@
       if (force) statsRefreshQueued = true;
       return statsRequest;
     }
-    if (!force && Date.now() - lastStatsFetch < 30000) return;
+    if (!force && Date.now() - lastStatsFetch < snapshotWindowMs) return;
     let endpoint = "";
     try {
       const parsed = new URL(typeof supabaseConfig.url === "string" ? supabaseConfig.url.trim() : "");
@@ -113,6 +119,7 @@
         if (!row) throw new Error("review_summary_empty");
         displayStatistics(row);
         lastStatsFetch = Date.now();
+        lastSnapshotWindow = currentSnapshotWindow();
       } catch (_) {
         setUnavailable();
       } finally {
@@ -128,13 +135,19 @@
   }
 
   refreshStatistics();
-  window.addEventListener("storage", (event) => {
-    if (event.key === "vrf-review-stats-updated") refreshStatistics(true);
-  });
+  function refreshAfterSnapshotWindow() {
+    if (!document.hidden && currentSnapshotWindow() > lastSnapshotWindow) refreshStatistics(true);
+  }
+  window.setInterval(refreshAfterSnapshotWindow, 60_000);
   document.addEventListener("visibilitychange", () => {
-    if (!document.hidden) refreshStatistics();
+    if (document.hidden) return;
+    if (currentSnapshotWindow() > lastSnapshotWindow) refreshStatistics(true);
+    else refreshStatistics();
   });
-  window.addEventListener("focus", () => refreshStatistics());
+  window.addEventListener("focus", () => {
+    if (currentSnapshotWindow() > lastSnapshotWindow) refreshStatistics(true);
+    else refreshStatistics();
+  });
 
   // Trims a value, tolerating a missing one.
   const text = value => typeof value === "string" ? value.trim() : "";

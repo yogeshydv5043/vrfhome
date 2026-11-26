@@ -4,7 +4,7 @@ The review page is served at `/reviews/`. Its checked-in public settings point t
 
 ## Supabase provisioning
 
-1. For a fresh Supabase project, run `supabase/migrations/20260918120000_reviews.sql`, `supabase/migrations/20260918120100_rate_limit.sql`, `supabase/migrations/20261124100000_reviews_approval.sql`, `supabase/migrations/20261124110000_reviews_device_rate_limit.sql`, and `supabase/migrations/20261124120000_reviews_word_limit.sql` in timestamp order. The approval migration upgrades existing installations to explicit `is_approved` filtering; the device migration adds the browser/device cooldown while retaining the IP cooldown; the final migration changes the review limit to 50 words.
+1. For a fresh Supabase project, run the migrations in `supabase/migrations/` in timestamp order from `20260918120000_reviews.sql` through `20261124150000_public_reviews_cache_only.sql`. This creates the review schema, rate-limit RPC, approval behavior, 50-word validation, aggregate view, and shared approved-review snapshot. The global cache migration requires `pg_cron`; it refreshes `approved_review_cache` every 30 minutes and makes `review_summary` aggregate from that snapshot. The final cache-only permission migration must be applied after the frontend is deployed reading `approved_review_cache`, so public clients cannot bypass the shared snapshot by querying `reviews` directly.
 2. Deploy `supabase/functions/submit-review` and keep `verify_jwt = false` for that function as configured in `supabase/config.toml`. It still verifies the public browser key, allowed origin and Turnstile challenge, then calls the database through its private service-role key.
 3. Create a Cloudflare Turnstile widget for `vrfhomeinteriors.com` (and `www.vrfhomeinteriors.com` if used).
 4. Set function secrets in Supabase, never in frontend JavaScript:
@@ -18,7 +18,7 @@ The review page is served at `/reviews/`. Its checked-in public settings point t
 
    Supabase supplies `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` to Edge Functions. `TRUSTED_PROXY_HOPS` may be set only after confirming the deployed proxy chain. The function fails closed if required secrets, a trustworthy client address, or the CAPTCHA verification service are unavailable.
 5. Confirm `url`, `publishableKey` (public/anon key only), `submitFunction`, `functionsUrl`, and `turnstileSiteKey` in `js/supabase-config.js` match the project. The page size is 10. Bump `?v=` on edited scripts because root hosting rules mark JavaScript as immutable.
-6. Verify the public table policies and view, then exercise reads, submission, rate limits, CAPTCHA rejection, and deletion via the Supabase dashboard. Reviews publish immediately; there is no public edit/delete or moderation interface.
+6. Verify `approved_review_cache`, `review_summary`, the `refresh-approved-review-cache` Cron job, and the public snapshot permissions. Exercise reads, submission, rate limits, and CAPTCHA rejection via the Supabase dashboard. New reviews are saved and automatically approved immediately, but appear in the public list and summary after the next shared 30-minute snapshot refresh; there is no public edit/delete or moderation interface.
 
 The cooldown is fixed at 300 seconds in the Edge Function; do not override it with a client setting. The service-role key, Turnstile secret, database password and IP hash salt must never be copied into browser-delivered files. `supabase/` is backend source and must not be included in a static website release. A nested Apache denial rule and the root `htaccess-root.txt` template provide additional protection if those files are accidentally present on Apache hosting.
 
@@ -30,10 +30,10 @@ When the public Supabase settings are empty, the page can render permission-clea
 
 ## Test checklist for an enabled deployment
 
-- Read the first page and confirm newest-first order, exact count, summary totals and the next page at 10 items.
-- Submit a valid review of up to 50 whitespace-separated words (minimum 10 characters) and confirm it appears at the top; confirm the database contains the cleaned four review fields and timestamp. A 51-word review must be rejected, including when submitted directly to the Edge Function.
+- Read the first page from `approved_review_cache` and confirm newest-first order, exact count, summary totals and the next page at 10 items.
+- Submit a valid review of up to 50 whitespace-separated words (minimum 10 characters) and confirm it is saved and approved immediately but remains absent from the public list and summary until the next Cron refresh (within 30 minutes). After refresh, confirm it appears in both and the stats agree. A 51-word review must be rejected, including when submitted directly to the Edge Function.
 - Verify 422 field validation, failed Turnstile (403), missing Turnstile configuration (503), and a 429 cooldown for a repeated submission from either the same browser identifier (including after changing IP) or the same IP (including from another browser). Confirm recovery after the timer.
-- As `anon`, verify `SELECT` succeeds and direct insert/update/delete plus `submit_review` execution are denied. Confirm the Edge Function’s service key is not present in any public asset.
+- As `anon`, verify `SELECT` succeeds on `approved_review_cache` and `review_summary`, while direct reads/inserts/updates/deletes on `reviews` and `submit_review` execution are denied. Confirm the Edge Function’s service key is not present in any public asset.
 - Test keyboard-only stars, field error announcements, reduced motion, dark theme, and real desktop/tablet/mobile browsers at narrow widths. Check browser console/network errors and horizontal overflow.
 
 The frontend contains only the public Supabase URL and publishable key. This checkout does not verify that the live database migrations, Edge Function deployment or server-side secrets are in place, so an authorized operator must complete the live acceptance checklist against the deployed project.
