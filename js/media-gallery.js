@@ -63,7 +63,7 @@
     const media = document.createElement(item.type==="photo"?"img":"video");
     if (item.type==="photo") { media.alt=item.alt; media.draggable=false; media.decoding="async"; }
     else {
-      media.controls=true; media.playsInline=true; media.preload="metadata";
+      media.controls=true; media.playsInline=true; media.preload="none";
       /* Muted on open. Seven of the eight studio walkthroughs carry only room
          tone, and one is loud enough to startle someone browsing at a desk,
          so none of them starts with sound. defaultMuted sets the attribute as

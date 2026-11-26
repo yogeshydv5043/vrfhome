@@ -9,7 +9,7 @@
 
   const RULES = Object.freeze({
     name: { min: 3, max: 30, label: "name" },
-    comment: { min: 10, max: 60, label: "review" },
+    comment: { min: 10, maxChars: 3000, maxWords: 50, label: "review" },
     location: { min: 10, max: 40, label: "location" },
   });
   const DEFAULT_COMMENTS = Object.freeze({
@@ -60,6 +60,7 @@
   const status = document.getElementById("review-form-status");
   const cooldownBox = document.getElementById("review-cooldown");
   const cooldownTime = document.getElementById("review-cooldown-time");
+  const toast = document.querySelector(".toast");
   const captchaHost = document.getElementById("review-captcha");
   const fields = { name: nameInput, location: locationInput, comment: commentInput };
   const errors = {
@@ -82,6 +83,10 @@
   let captchaLoad = null;
   let cooldownTimer = 0;
   let cooldownUntil = 0;
+  let toastTimer = 0;
+  let toastHideTimer = 0;
+  let deviceToken = readDeviceToken();
+  let deviceTokenPromise = null;
   let formRevealed = config.revealFormAfterLoadMore !== true;
 
   function normalizeEndpoint(value) {
@@ -94,7 +99,60 @@
     } catch (_) { return ""; }
   }
   function clean(value) { return String(value ?? "").trim().replace(/\s+/gu, " "); }
+  const DEVICE_TOKEN_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\.\d{10,13}\.[0-9a-f]{64}$/i;
+  function readDeviceToken() {
+    try {
+      const token = localStorage.getItem("vrf-review-device-token") || "";
+      return DEVICE_TOKEN_PATTERN.test(token) ? token : "";
+    } catch (_) { return ""; }
+  }
+  function storeDeviceToken(token) {
+    deviceToken = DEVICE_TOKEN_PATTERN.test(token || "") ? token : "";
+    try {
+      if (deviceToken) localStorage.setItem("vrf-review-device-token", deviceToken);
+      else localStorage.removeItem("vrf-review-device-token");
+    } catch (_) { /* Server verification remains authoritative without storage. */ }
+  }
+  function submissionUrl() {
+    const base = normalizeEndpoint(config.functionsUrl) || `${endpoint}/functions/v1`;
+    const functionName = typeof config.submitFunction === "string" && /^[a-z0-9-]+$/i.test(config.submitFunction)
+      ? config.submitFunction
+      : "submit-review";
+    return `${base}/${functionName}`;
+  }
+  async function ensureDeviceToken() {
+    if (deviceToken && DEVICE_TOKEN_PATTERN.test(deviceToken)) return true;
+    if (!formReady) return false;
+    if (deviceTokenPromise) return deviceTokenPromise;
+    deviceTokenPromise = (async () => {
+      try {
+        const response = await timedFetch(submissionUrl(), {
+          method: "POST",
+          headers: { apikey: publishableKey, Authorization: `Bearer ${publishableKey}`, "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({ action: "device-token" }),
+          cache: "no-store",
+        });
+        const body = await response.json().catch(() => ({}));
+        if (!response.ok || typeof body.deviceToken !== "string" || !DEVICE_TOKEN_PATTERN.test(body.deviceToken))
+          throw new Error("device_token_unavailable");
+        storeDeviceToken(body.deviceToken);
+        return true;
+      } catch (_) {
+        storeDeviceToken("");
+        setStatus("We could not prepare the review security check. Please try again.", "error");
+        return false;
+      } finally {
+        deviceTokenPromise = null;
+        updateSubmit();
+      }
+    })();
+    return deviceTokenPromise;
+  }
   function length(value) { return Array.from(value).length; }
+  function wordCount(value) {
+    const trimmed = String(value ?? "").trim();
+    return trimmed ? trimmed.split(/\s+/u).length : 0;
+  }
   function byId(id) { return document.getElementById(id); }
   function setMessage(node, text) { if (node) node.textContent = text; }
   function setBusy(value) {
@@ -123,7 +181,10 @@
     const size = length(value);
     if (!value) return `Please enter your ${rule.label}.`;
     if (size < rule.min) return `Please use at least ${rule.min} characters (${size} so far).`;
-    if (size > rule.max) return `Please keep this to ${rule.max} characters or fewer.`;
+    if (name === "comment" && wordCount(value) > rule.maxWords)
+      return `Please keep your review to ${rule.maxWords} words or fewer.`;
+    if (size > (rule.maxChars ?? rule.max))
+      return `Please keep this to ${rule.maxChars ?? rule.max} characters or fewer.`;
     return "";
   }
   function markField(name, problem) {
@@ -138,17 +199,16 @@
     return !problem;
   }
   function updateCount() {
-    const size = length(commentInput?.value || "");
+    const words = wordCount(commentInput?.value || "");
     if (commentCount) {
-      commentCount.textContent = `${size}/60`;
-      commentCount.classList.toggle("is-over", size > RULES.comment.max);
+      commentCount.textContent = `${words}/${RULES.comment.maxWords} words`;
+      commentCount.classList.toggle("is-over", words > RULES.comment.maxWords);
     }
   }
   function updateSubmit() {
     if (!submitButton) return;
     const valid = !problemFor("name") && !problemFor("location") && !problemFor("comment") && !problemFor("rating");
-    const cooldown = cooldownUntil > Date.now();
-    submitButton.disabled = !formReady || busy || !valid || !captchaToken || cooldown;
+    submitButton.disabled = !formReady || busy || !valid || !captchaToken || !deviceToken || !!deviceTokenPromise;
   }
   function fieldSummary(invalid) {
     if (invalid.length === 1) return "One field still needs attention.";
@@ -234,8 +294,11 @@
   function formatDate(value) {
     const date = new Date(value);
     if (!Number.isFinite(date.getTime())) return "";
-    try { return new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(date); }
-    catch (_) { return date.toISOString().slice(0, 10); }
+    try { return new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "short", year: "numeric", timeZone: "UTC" }).format(date); }
+    catch (_) {
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      return `${String(date.getUTCDate()).padStart(2, "0")} ${months[date.getUTCMonth()]} ${date.getUTCFullYear()}`;
+    }
   }
   function createReviewCard(item, isNew = false) {
     const card = document.createElement("li");
@@ -244,7 +307,17 @@
     head.className = "review-entry-head";
     const person = document.createElement("strong");
     person.className = "review-entry-name";
-    person.textContent = clean(item.name);
+    const reviewerName = clean(item.name) || "Unknown reviewer";
+    person.textContent = reviewerName;
+    const identity = document.createElement("div");
+    identity.className = "review-entry-person";
+    const avatar = document.createElement("span");
+    avatar.className = "review-entry-avatar";
+    avatar.setAttribute("aria-hidden", "true");
+    avatar.textContent = Array.from(clean(item.name))[0]?.toLocaleUpperCase("en") || "U";
+    const tone = Array.from(reviewerName.toLocaleLowerCase("en")).reduce((sum, char) => sum + char.codePointAt(0), 0) % 5;
+    avatar.classList.add(`avatar-tone-${tone}`);
+    identity.append(avatar, person);
     const stars = document.createElement("span");
     stars.className = "review-entry-rating";
     stars.setAttribute("role", "img");
@@ -255,7 +328,7 @@
       star.textContent = "★";
       stars.append(star);
     }
-    head.append(person, stars);
+    head.append(identity, stars);
     const comment = document.createElement("p");
     comment.className = "review-entry-comment";
     comment.textContent = clean(item.comment);
@@ -292,7 +365,7 @@
     updateSummary();
   }
   function renderSummary(value) {
-    syncHeadlineRating(value);
+    syncHeadlineRating(value, total);
     if (!summaryBars || !value || Number(value.total) < 1) {
       if (summaryBars) { summaryBars.replaceChildren(); summaryBars.hidden = true; }
       if (summaryEmpty) summaryEmpty.hidden = false;
@@ -342,19 +415,20 @@
     const counts = [5, 4, 3, 2, 1].map((rating) => reviews.filter((item) => Number(item.rating) === rating).length);
     renderSummary({ total: reviews.length, five_star: counts[0], four_star: counts[1], three_star: counts[2], two_star: counts[3], one_star: counts[4] });
   }
-  function syncHeadlineRating(value) {
-    const total = value && Number.isSafeInteger(Number(value.total)) ? Number(value.total) : null;
+  function syncHeadlineRating(value, knownTotal = null) {
+    const summaryTotal = value && Number.isSafeInteger(Number(value.total)) ? Number(value.total) : null;
+    const displayTotal = summaryTotal ?? (Number.isSafeInteger(knownTotal) ? knownTotal : null);
     const average = value && Number.isFinite(Number(value.average)) ? Number(value.average) : null;
     const averageNode = document.querySelector("[data-rating-value]");
     const scaleNode = document.querySelector("[data-rating-scale]");
     const countNode = document.querySelector("[data-rating-count]");
     const starsNode = document.querySelector(".summary-stars");
-    const available = total !== null && total > 0 && average !== null;
+    const available = displayTotal !== null && displayTotal > 0 && average !== null;
     if (averageNode) averageNode.textContent = available ? average.toFixed(1) : "—";
     if (scaleNode) scaleNode.hidden = !available;
-    if (countNode) countNode.textContent = total === null
-      ? (supabaseReady ? "Review count unavailable" : "0 approved reviews")
-      : `${total.toLocaleString("en-IN")} approved ${total === 1 ? "review" : "reviews"}`;
+    if (countNode) countNode.textContent = displayTotal === null
+      ? "Review count unavailable"
+      : `${displayTotal.toLocaleString("en-IN")} approved ${displayTotal === 1 ? "review" : "reviews"}`;
     if (starsNode) {
       const filled = available ? Math.max(0, Math.min(5, Math.round(average))) : 0;
       starsNode.textContent = "★".repeat(filled) + "☆".repeat(5 - filled);
@@ -374,11 +448,68 @@
   }
   async function fetchSummary() {
     if (!supabaseReady) return null;
-    const response = await timedFetch(`${endpoint}/rest/v1/review_summary?select=*`, { headers: supabaseHeaders(), cache: "no-store" });
-    if (!response.ok) throw new Error("summary_failed");
-    const rows = await response.json();
-    const row = Array.isArray(rows) ? rows[0] : rows;
-    return row || null;
+    try {
+      const columns = "total,average,five_star,four_star,three_star,two_star,one_star";
+      const response = await timedFetch(`${endpoint}/rest/v1/review_summary?select=${columns}`, { headers: supabaseHeaders(), cache: "no-store" });
+      if (!response.ok) throw new Error("summary_failed");
+      const rows = await response.json();
+      const row = Array.isArray(rows) ? rows[0] : rows;
+      if (row && Number.isFinite(Number(row.total)) && Number.isFinite(Number(row.average))) return row;
+    } catch (_) {
+      // Fall back to the public, approved review rows if the aggregate view
+      // is missing or temporarily unavailable in the deployed project.
+    }
+    return fetchSummaryFromReviews();
+  }
+  function applySummaryCount(value) {
+    const count = Number(value?.total);
+    if (Number.isSafeInteger(count) && count >= 0) total = count;
+    return value;
+  }
+  async function fetchSummaryFromReviews() {
+    const batchSize = 1000;
+    const counts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+    let offset = 0;
+    let expectedTotal = null;
+    let ratingTotal = 0;
+    let ratingSum = 0;
+    while (true) {
+      const url = new URL(`${endpoint}/rest/v1/reviews`);
+      url.searchParams.set("select", "rating");
+      url.searchParams.set("is_approved", "eq.true");
+      url.searchParams.set("order", "created_at.asc,id.asc");
+      url.searchParams.set("limit", String(batchSize));
+      url.searchParams.set("offset", String(offset));
+      const response = await timedFetch(url.href, {
+        headers: supabaseHeaders({ Prefer: "count=exact" }),
+        cache: "no-store",
+      });
+      if (!response.ok) throw new Error("review_summary_fallback_failed");
+      const rows = await response.json();
+      if (!Array.isArray(rows)) throw new Error("review_summary_fallback_invalid");
+      const exactTotal = parseTotal(response, null);
+      if (exactTotal !== null) expectedTotal = exactTotal;
+      rows.forEach((row) => {
+        const rating = Number(row.rating);
+        if (!Number.isInteger(rating) || rating < 1 || rating > 5) return;
+        counts[rating] += 1;
+        ratingTotal += 1;
+        ratingSum += rating;
+      });
+      offset += rows.length;
+      if (!rows.length || (expectedTotal !== null && offset >= expectedTotal)) break;
+      if (offset >= 50000) throw new Error("review_summary_fallback_too_large");
+    }
+    const total = expectedTotal ?? ratingTotal;
+    return {
+      total,
+      average: ratingTotal ? ratingSum / ratingTotal : 0,
+      five_star: counts[5],
+      four_star: counts[4],
+      three_star: counts[3],
+      two_star: counts[2],
+      one_star: counts[1],
+    };
   }
   function supabaseHeaders(extra = {}) {
     return { apikey: publishableKey, Authorization: `Bearer ${publishableKey}`, Accept: "application/json", ...extra };
@@ -406,7 +537,7 @@
       id: String(item?.id || `${item?.created_at || "fallback"}-${item?.name || "guest"}`),
       name: clean(item?.name), rating: Number(item?.rating), comment: clean(item?.comment || item?.quote),
       location: clean(item?.location), created_at: String(item?.created_at || item?.date || ""),
-    })).filter((item) => item.name && item.comment && item.location && Number.isInteger(item.rating) && item.rating >= 1 && item.rating <= 5)
+    })).filter((item) => item.comment && item.location && Number.isInteger(item.rating) && item.rating >= 1 && item.rating <= 5)
       .sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)));
   }
   async function loadFirstPage() {
@@ -419,7 +550,7 @@
         reviews = result.data;
         total = result.total;
         offset = reviews.length;
-        try { summary = await fetchSummary(); } catch (_) { summary = null; }
+        try { summary = applySummaryCount(await fetchSummary()); } catch (_) { summary = null; }
       } else {
         fallbackItems = readFallback();
         reviews = fallbackItems.slice(0, pageSize);
@@ -480,7 +611,10 @@
   function revealForm(focus = true) {
     formRevealed = true;
     if (formSection) formSection.hidden = false;
-    if (formReady) mountTurnstile();
+    if (formReady) {
+      mountTurnstile();
+      ensureDeviceToken();
+    }
     if (focus) formSection?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
   }
 
@@ -501,7 +635,11 @@
       captchaHost.replaceChildren();
       turnstileWidget = turnstile.render(captchaHost, {
         sitekey: siteKey,
-        callback: (token) => { captchaToken = token; updateSubmit(); },
+        callback: (token) => {
+          captchaToken = token;
+          if (!deviceToken && !deviceTokenPromise) ensureDeviceToken();
+          updateSubmit();
+        },
         "expired-callback": () => { captchaToken = ""; updateSubmit(); },
         "error-callback": () => { captchaToken = ""; setStatus("Spam protection could not be verified. Please try again.", "error"); updateSubmit(); },
         theme: document.documentElement.dataset.theme === "dark" ? "dark" : "light",
@@ -519,25 +657,59 @@
     captchaToken = "";
     try { if (turnstileWidget !== null) window.turnstile?.reset(turnstileWidget); } catch (_) {}
   }
+  function formatCountdown(seconds) {
+    const value = Math.max(0, Math.ceil(Number(seconds) || 0));
+    return `${String(Math.floor(value / 60)).padStart(2, "0")}:${String(value % 60).padStart(2, "0")}`;
+  }
+  function showRateLimitToast(seconds) {
+    if (!toast) return;
+    clearInterval(toastTimer);
+    clearTimeout(toastHideTimer);
+    const until = Date.now() + Math.max(1, Number(seconds) || 1) * 1000;
+    const tick = () => {
+      const remaining = Math.max(0, Math.ceil((until - Date.now()) / 1000));
+      toast.textContent = `You have already submitted a review. Please try again in ${formatCountdown(remaining)} minutes.`;
+    };
+    toast.className = "toast review-rate-toast";
+    toast.hidden = false;
+    tick();
+    toastTimer = window.setInterval(tick, 1000);
+    toastHideTimer = window.setTimeout(() => {
+      clearInterval(toastTimer);
+      toastTimer = 0;
+      toast.hidden = true;
+      toast.className = "toast";
+    }, 4500);
+  }
   function startCooldown(seconds) {
     const duration = Math.max(1, Math.min(Number(seconds) || 300, 86400));
     cooldownUntil = Date.now() + duration * 1000;
+    try { localStorage.setItem("vrf-review-cooldown-until", String(cooldownUntil)); } catch (_) {}
     clearInterval(cooldownTimer);
     if (cooldownBox) cooldownBox.hidden = false;
     const tick = () => {
       const remaining = Math.max(0, Math.ceil((cooldownUntil - Date.now()) / 1000));
-      if (cooldownTime) cooldownTime.textContent = `${Math.floor(remaining / 60)}:${String(remaining % 60).padStart(2, "0")}`;
+      if (cooldownTime) cooldownTime.textContent = formatCountdown(remaining);
       if (remaining <= 0) {
         clearInterval(cooldownTimer);
         cooldownTimer = 0;
         cooldownUntil = 0;
         if (cooldownBox) cooldownBox.hidden = true;
+        try { localStorage.removeItem("vrf-review-cooldown-until"); } catch (_) {}
         setStatus("You can post another review now.", "success");
       }
       updateSubmit();
     };
     tick();
     cooldownTimer = window.setInterval(tick, 1000);
+  }
+  function restoreCooldown() {
+    try {
+      const savedUntil = Number(localStorage.getItem("vrf-review-cooldown-until"));
+      if (Number.isFinite(savedUntil) && savedUntil > Date.now()) {
+        startCooldown(Math.ceil((savedUntil - Date.now()) / 1000));
+      } else localStorage.removeItem("vrf-review-cooldown-until");
+    } catch (_) { /* The server remains authoritative after refresh. */ }
   }
   function responseCode(body) { return body?.error?.code || body?.code || body?.error || ""; }
   async function submit(event) {
@@ -548,6 +720,7 @@
       return;
     }
     if (cooldownUntil > Date.now()) {
+      showRateLimitToast(Math.ceil((cooldownUntil - Date.now()) / 1000));
       setStatus("Please wait for the cooldown to finish before submitting another review.", "error");
       return;
     }
@@ -555,6 +728,11 @@
     if (!captchaToken) {
       setStatus("Please complete the spam check before submitting your review.", "error");
       captchaHost?.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+    if (!deviceToken && !(await ensureDeviceToken())) return;
+    if (!deviceToken) {
+      setStatus("The review security check is not ready. Please try again.", "error");
       return;
     }
     busy = true;
@@ -565,14 +743,10 @@
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
     try {
-      const base = normalizeEndpoint(config.functionsUrl) || `${endpoint}/functions/v1`;
-      const functionName = typeof config.submitFunction === "string" && /^[a-z0-9-]+$/i.test(config.submitFunction)
-        ? config.submitFunction
-        : "submit-review";
-      const response = await fetch(`${base}/${functionName}`, {
+      const response = await fetch(submissionUrl(), {
         method: "POST",
         headers: { apikey: publishableKey, Authorization: `Bearer ${publishableKey}`, "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({ name: inputValue("name"), location: inputValue("location"), rating: selectedRating, comment: inputValue("comment"), turnstileToken: captchaToken }),
+        body: JSON.stringify({ name: inputValue("name"), location: inputValue("location"), rating: selectedRating, comment: inputValue("comment"), turnstileToken: captchaToken, deviceToken }),
         signal: controller.signal,
         cache: "no-store",
       });
@@ -583,7 +757,7 @@
         reviews = [review, ...reviews.filter((item) => String(item.id) !== String(review.id))];
         total += 1;
         offset = Math.max(offset, reviews.length);
-        try { summary = await fetchSummary(); } catch (_) { summary = null; }
+        try { summary = applySummaryCount(await fetchSummary()); } catch (_) { summary = null; }
         render();
         form.reset();
         selectedRating = 0;
@@ -596,14 +770,19 @@
         updateCount();
         resetTurnstile();
         setStatus("Thank you. Your review has been published.", "success");
-        startCooldown(body.cooldown_seconds || 300);
+        startCooldown(300);
         try { localStorage.setItem("vrf-review-stats-updated", String(Date.now())); } catch (_) {}
         list?.querySelector(".review-entry")?.scrollIntoView({ behavior: "smooth", block: "center" });
       } else if (response.status === 429) {
         const retry = Number(body.retry_after || response.headers.get("retry-after") || 300);
         setStatus("You have recently submitted a review. Please try again when the cooldown ends.", "error");
         startCooldown(retry);
+        showRateLimitToast(retry);
         resetTurnstile();
+      } else if (response.status === 400 && responseCode(body) === "device_identifier_required") {
+        storeDeviceToken("");
+        await ensureDeviceToken();
+        setStatus("The review security check was refreshed. Please submit once more.", "error");
       } else if (response.status === 422) {
         const fieldErrors = body.fields || body.error?.fields || {};
         let invalid = [];
@@ -634,6 +813,7 @@
   function bindForm() {
     for (const [name, control] of Object.entries(fields)) {
       control?.addEventListener("input", () => {
+        if (!deviceToken && !deviceTokenPromise && formReady) ensureDeviceToken();
         if (name === "comment") updateCount();
         if (touched.has(name)) validateField(name, true);
         if (status && status.classList.contains("error")) setStatus("");
@@ -656,11 +836,13 @@
     }
     if (formDisabled) formDisabled.hidden = formReady;
     if (modeNote) modeNote.hidden = supabaseReady;
+    if (formReady && formRevealed) ensureDeviceToken();
   }
 
   buildStars();
   bindForm();
   updateCount();
   updateSubmit();
+  restoreCooldown();
   loadFirstPage();
 })();

@@ -22,18 +22,18 @@
   // Builds a responsive <img> with width, height and the right loading mode.
   function image(src, alt, hero = false) {
     const node = document.createElement("img");
-    node.src = src;
     node.alt = alt;
     node.width = 1800;
     node.height = 1200;
     node.decoding = "async";
+    node.loading = hero ? "eager" : "lazy";
     if (hero) node.fetchPriority = "high";
-    else node.loading = "lazy";
     if (src.endsWith("-1800.webp")) {
       node.srcset = `${src.replace("-1800.webp", "-480.webp")} 480w, ${src.replace("-1800.webp", "-960.webp")} 960w, ${src} 1800w`;
       node.sizes = hero ? "100vw" : "(max-width: 767px) 100vw, 60vw";
     }
     node.addEventListener("error", () => node.classList.add("image-error"));
+    node.src = src;
     return node;
   }
   const hero = document.querySelector(".story-hero > img");
@@ -121,6 +121,8 @@
     empty.hidden = true;
     const before = widget.querySelector(".compare-before"),
       after = widget.querySelector(".compare-after");
+    before.loading = after.loading = "lazy";
+    before.decoding = after.decoding = "async";
     before.src = comparison.before;
     before.alt = comparison.beforeAlt || `Before renovation: ${project.title}`;
     after.src = comparison.after;

@@ -1,9 +1,11 @@
-const MAX_BODY_BYTES = 4096;
+const MAX_BODY_BYTES = 8192;
 const FIELD_RULES = {
   name: { min: 3, max: 30 },
-  comment: { min: 10, max: 60 },
+  comment: { min: 10, max: 3000 },
   location: { min: 10, max: 40 },
 } as const;
+const MAX_REVIEW_WORDS = 50;
+const DEVICE_TOKEN_TTL_MS = 365 * 24 * 60 * 60 * 1000;
 
 type ReviewInput = {
   name: string;
@@ -30,6 +32,7 @@ function clean(value: unknown): string {
   return typeof value === "string" ? value.trim().replace(/\s+/gu, " ") : "";
 }
 function chars(value: string): number { return Array.from(value).length; }
+function wordCount(value: string): number { return value ? value.split(/\s+/u).length : 0; }
 function fieldErrors(body: Record<string, unknown>): FieldErrors {
   const errors: FieldErrors = {};
   for (const [name, rule] of Object.entries(FIELD_RULES)) {
@@ -37,7 +40,8 @@ function fieldErrors(body: Record<string, unknown>): FieldErrors {
     const count = chars(value);
     if (!value) errors[name] = `Please enter your ${name === "comment" ? "review" : name}.`;
     else if (count < rule.min) errors[name] = `Your ${name === "comment" ? "review" : name} must be at least ${rule.min} characters.`;
-    else if (count > rule.max) errors[name] = `Your ${name} must be ${rule.max} characters or fewer.`;
+    else if (name === "comment" && wordCount(value) > MAX_REVIEW_WORDS) errors[name] = `Your review must be ${MAX_REVIEW_WORDS} words or fewer.`;
+    else if (count > rule.max) errors[name] = name === "comment" ? "Your review must be 3000 characters or fewer." : `Your ${name} must be ${rule.max} characters or fewer.`;
   }
   const rating = body.rating;
   if (!Number.isInteger(rating) || Number(rating) < 1 || Number(rating) > 5) {
@@ -82,6 +86,40 @@ async function sha256(text: string): Promise<string> {
   const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
   return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
 }
+async function hmac(secret: string, message: string): Promise<{ key: CryptoKey; signature: Uint8Array }> {
+  const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign", "verify"]);
+  const signature = new Uint8Array(await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(message)));
+  return { key, signature };
+}
+function toHex(bytes: Uint8Array): string {
+  return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+function fromHex(value: string): Uint8Array {
+  return new Uint8Array(value.match(/.{2}/g)?.map((part) => Number.parseInt(part, 16)) || []);
+}
+/* The browser only persists this opaque token. It cannot invent or alter a
+   device nonce accepted by the write path without the server-held HMAC key. */
+async function issueDeviceToken(secret: string, now: number): Promise<string> {
+  const nonce = crypto.randomUUID().toLowerCase();
+  const expires = now + DEVICE_TOKEN_TTL_MS;
+  const signed = await hmac(secret, `review-device:v1:${nonce}:${expires}`);
+  return `${nonce}.${expires}.${toHex(signed.signature)}`;
+}
+async function verifyDeviceToken(token: string, secret: string, now: number): Promise<string> {
+  const match = token.match(/^([0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})\.(\d{10,13})\.([0-9a-f]{64})$/i);
+  if (!match) return "";
+  const [, nonce, expiryText, signatureText] = match;
+  const expires = Number(expiryText);
+  if (!Number.isSafeInteger(expires) || expires < now || expires > now + DEVICE_TOKEN_TTL_MS + 60_000) return "";
+  try {
+    const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["verify"]);
+    const signatureBytes = fromHex(signatureText);
+    const signatureBuffer = new ArrayBuffer(signatureBytes.length);
+    new Uint8Array(signatureBuffer).set(signatureBytes);
+    const valid = await crypto.subtle.verify("HMAC", key, signatureBuffer, new TextEncoder().encode(`review-device:v1:${nonce.toLowerCase()}:${expires}`));
+    return valid ? nonce.toLowerCase() : "";
+  } catch { return ""; }
+}
 function clientAddress(request: Request): string {
   const cf = request.headers.get("cf-connecting-ip")?.trim();
   if (cf && validIp(cf)) return cf;
@@ -122,7 +160,7 @@ async function verifyTurnstile(token: string, address: string, origin: string | 
   finally { clearTimeout(timer); }
 }
 
-async function handle(request: Request, env: Runtime = runtime): Promise<Response> {
+export async function handle(request: Request, env: Runtime = runtime): Promise<Response> {
   const origin = request.headers.get("origin");
   const allow = allowedOrigins(env);
   if (origin && !allow.has(origin)) return response(403, { error: { code: "origin_not_allowed" } }, null, allow);
@@ -155,19 +193,30 @@ async function handle(request: Request, env: Runtime = runtime): Promise<Respons
     body = parsed as Record<string, unknown>;
   } catch { return response(400, { error: { code: "bad_request" } }, origin, allow); }
 
-  const errors = fieldErrors(body);
-  if (Object.keys(errors).length) return response(422, { error: { code: "validation_failed" }, fields: errors }, origin, allow);
   const address = clientAddress(request);
   if (!address) return response(400, { error: { code: "client_unidentified" } }, origin, allow);
+  if (body.action === "device-token") {
+    try {
+      const deviceToken = await issueDeviceToken(salt, env.now());
+      return response(200, { deviceToken }, origin, allow);
+    } catch { return response(503, { error: { code: "not_configured" } }, origin, allow); }
+  }
+  const deviceToken = typeof body.deviceToken === "string" ? body.deviceToken.trim() : "";
+  const deviceNonce = await verifyDeviceToken(deviceToken, salt, env.now());
+  if (!deviceNonce) return response(400, { error: { code: "device_identifier_required" } }, origin, allow);
+  const errors = fieldErrors(body);
+  if (Object.keys(errors).length) return response(422, { error: { code: "validation_failed" }, fields: errors }, origin, allow);
   const captcha = await verifyTurnstile(clean(body.turnstileToken), address, origin, env);
   if (captcha === "failed") return response(403, { error: { code: "captcha_failed" } }, origin, allow);
   if (captcha === "unavailable") return response(503, { error: { code: "captcha_unavailable" } }, origin, allow);
 
-  const cooldownRaw = Number.parseInt(env.env("REVIEW_COOLDOWN_SECONDS") || "300", 10);
-  const cooldown = Number.isFinite(cooldownRaw) ? Math.max(60, Math.min(cooldownRaw, 86400)) : 300;
+  const cooldown = 300;
   let clientHash: string;
-  try { clientHash = await sha256(`${address}:${salt}`); }
-  catch { return response(503, { error: { code: "not_configured" } }, origin, allow); }
+  let deviceHash: string;
+  try {
+    clientHash = await sha256(`ip:${address}:${salt}`);
+    deviceHash = await sha256(`device:${deviceNonce}:${salt}`);
+  } catch { return response(503, { error: { code: "not_configured" } }, origin, allow); }
 
   const rpcUrl = `${supabaseUrl.replace(/\/+$/, "")}/rest/v1/rpc/submit_review`;
   const controller = new AbortController();
@@ -178,6 +227,7 @@ async function handle(request: Request, env: Runtime = runtime): Promise<Respons
       headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}`, "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({
         p_client_hash: clientHash,
+        p_device_hash: deviceHash,
         p_name: clean(body.name),
         p_rating: body.rating,
         p_comment: clean(body.comment),
@@ -199,4 +249,4 @@ async function handle(request: Request, env: Runtime = runtime): Promise<Respons
   } finally { clearTimeout(timer); }
 }
 
-Deno.serve((request: Request) => handle(request));
+if (typeof Deno !== "undefined") Deno.serve((request: Request) => handle(request));

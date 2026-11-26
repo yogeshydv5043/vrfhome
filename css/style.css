@@ -2075,3 +2075,27 @@ body.modal-open .whatsapp-float {
   line-height: 2;
   overflow-wrap: anywhere;
 }
+
+
+/* Neutral, dimension-preserving fallback for images that fail to load. */
+.media-load-fallback {
+  display: inline-grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: min(100%, var(--media-fallback-width, 320px));
+  min-height: 24px;
+  aspect-ratio: var(--media-fallback-ratio, 3 / 2);
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: inherit;
+  background: var(--surface-soft);
+  color: var(--text-secondary-readable);
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: center;
+}
+.media-video-fallback {
+  padding: 12px 16px;
+  color: var(--text-secondary-readable);
+  font-size: 13px;
+}

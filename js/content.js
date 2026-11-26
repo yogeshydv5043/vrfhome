@@ -161,11 +161,11 @@
   // Points an image at a source, hiding it if the source is unusable.
   function setImage(image, src, alt) {
     if (!image || !safeAsset(src)) return;
-    image.src = src.replace("-1800.webp", "-960.webp");
     if (src.endsWith("-1800.webp"))
       image.srcset = `${src.replace("-1800.webp", "-480.webp")} 480w, ${src.replace("-1800.webp", "-960.webp")} 960w, ${src} 1800w`;
     else image.removeAttribute("srcset");
     image.alt = alt;
+    image.src = src.replace("-1800.webp", "-960.webp");
   }
   // Replaces a list's children with freshly built items.
   function list(ul, items) {

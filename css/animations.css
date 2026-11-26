@@ -1,5 +1,5 @@
-/* Smooth scrolling across all pages and restrained opacity/translation motion.
-   Images and cards never zoom on hover, and the former automatic hero zoom is removed. */
+/* Keep the document and its copy visible on first paint. Only transient menus
+   and dialogs animate; no page section waits for scroll or JavaScript to appear. */
 /* ==========================================================================
    Base and reset
    Element defaults that everything else builds on.
@@ -9,10 +9,6 @@ html {
   scroll-padding-top: 100px;
 }
 
-@keyframes hero-reveal {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
-}
 @keyframes menu-reveal {
   from { opacity: 0.4; transform: translateX(28px); }
   to { opacity: 1; transform: translateX(0); }
@@ -22,63 +18,14 @@ html {
   to { opacity: 1; transform: translateY(0); }
 }
 .hero-image { animation: none; transform: none; }
-.hero-content > .eyebrow { animation: hero-reveal 750ms cubic-bezier(.22, 1, .36, 1) both; }
-.hero h1 { animation: hero-reveal 850ms 70ms cubic-bezier(.22, 1, .36, 1) both; }
-.hero-content > p:not(.eyebrow), .hero-actions { animation: hero-reveal 900ms 130ms cubic-bezier(.22, 1, .36, 1) both; }
 .mobile-menu[open] { animation: menu-reveal 280ms cubic-bezier(.22, 1, .36, 1); }
 .lightbox[open] { animation: dialog-reveal 240ms cubic-bezier(.22, 1, .36, 1); }
-
-/* All page scrolling smooth reveal animation */
-.reveal-ready .reveal {
-  opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 600ms cubic-bezier(0.16, 1, 0.3, 1),
-              transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.reveal-ready .reveal.is-visible {
-  opacity: 1 !important;
-  transform: none !important;
-}
-
-/* Staggered smooth animation for child cards in grids */
-.reveal-ready .process-grid > .reveal:nth-child(1),
-.reveal-ready .values-grid > .reveal:nth-child(1),
-.reveal-ready .services-preview > .reveal:nth-child(1),
-.reveal-ready .featured-grid > .reveal:nth-child(1),
-.reveal-ready .gallery-grid > .reveal:nth-child(1),
-.reveal-ready .collection-grid > .reveal:nth-child(1) {
-  transition-delay: 50ms;
-}
-
-.reveal-ready .process-grid > .reveal:nth-child(2),
-.reveal-ready .values-grid > .reveal:nth-child(2),
-.reveal-ready .services-preview > .reveal:nth-child(2),
-.reveal-ready .featured-grid > .reveal:nth-child(2),
-.reveal-ready .gallery-grid > .reveal:nth-child(2),
-.reveal-ready .collection-grid > .reveal:nth-child(2) {
-  transition-delay: 130ms;
-}
-
-.reveal-ready .process-grid > .reveal:nth-child(3),
-.reveal-ready .values-grid > .reveal:nth-child(3),
-.reveal-ready .services-preview > .reveal:nth-child(3),
-.reveal-ready .featured-grid > .reveal:nth-child(3),
-.reveal-ready .gallery-grid > .reveal:nth-child(3),
-.reveal-ready .collection-grid > .reveal:nth-child(3) {
-  transition-delay: 210ms;
-}
-
-.reveal-ready .process-grid > .reveal:nth-child(4) { transition-delay: 290ms; }
-.reveal-ready .process-grid > .reveal:nth-child(5) { transition-delay: 370ms; }
-.reveal-ready .process-grid > .reveal:nth-child(6) { transition-delay: 450ms; }
 
 .theme-toggle .icon { transition: transform 300ms ease; }
 .theme-toggle:hover .icon { transform: rotate(15deg); }
 
 /* Native cross-page navigation: never fade a snapshot of the header/root.
-   The previous 180ms root view transition made navigation chrome briefly vanish.
-   Keep local hero/reveal/dialog motion, but not a whole-document crossfade. */
+   Keep menu/dialog motion local; never crossfade or hide page content. */
 @view-transition { navigation: none; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -87,6 +34,5 @@ html {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-  .reveal-ready .reveal { opacity: 1; transform: none; }
   @view-transition { navigation: none; }
 }
