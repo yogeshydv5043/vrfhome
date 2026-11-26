@@ -106,6 +106,7 @@
 .review-form-card [aria-invalid="true"] { border-color:var(--danger); }
 .review-form-card input:focus-visible, .review-form-card textarea:focus-visible, .star-input:focus-visible { outline:2px solid var(--accent-ink); outline-offset:3px; }
 .field-error { display:block; min-height:18px; margin-top:3px; color:var(--danger); font-size:11px; line-height:1.4; }
+.review-form-card .field-error:empty { display:none; }
 .field-foot { display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
 .char-count { flex:0 0 auto; padding-top:5px; color:var(--text-secondary-readable); font-size:11px; font-variant-numeric:tabular-nums; }
 .char-count.is-over { color:var(--danger); }
