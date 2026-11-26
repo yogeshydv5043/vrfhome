@@ -96,6 +96,7 @@
   let cooldownUntil = 0;
   let toastTimer = 0;
   let toastHideTimer = 0;
+  let statusTimer = 0;
   let deviceToken = readDeviceToken();
   let deviceTokenPromise = null;
   let lastDeviceTokenMs = null;
@@ -195,9 +196,19 @@
   function clearError() { if (errorPanel) errorPanel.hidden = true; }
   function setStatus(text, kind = "") {
     if (!status) return;
+    window.clearTimeout(statusTimer);
+    statusTimer = 0;
     status.textContent = text;
     status.className = `form-status${kind ? ` ${kind}` : ""}`;
     status.hidden = !text;
+    if (text) {
+      statusTimer = window.setTimeout(() => {
+        statusTimer = 0;
+        status.textContent = "";
+        status.className = "form-status";
+        status.hidden = true;
+      }, 5000);
+    }
   }
   function clearCaptchaStatus() {
     if (status?.classList.contains("error") && /spam|security check/i.test(status.textContent)) setStatus("");
