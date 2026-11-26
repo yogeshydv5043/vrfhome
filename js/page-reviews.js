@@ -65,8 +65,6 @@
   const submitButton = document.getElementById("review-submit");
   const submitLabel = submitButton?.querySelector("[data-submit-label]");
   const status = document.getElementById("review-form-status");
-  const cooldownBox = document.getElementById("review-cooldown");
-  const cooldownTime = document.getElementById("review-cooldown-time");
   const toast = document.querySelector(".toast");
   const captchaHost = document.getElementById("review-captcha");
   const fields = { name: nameInput, location: locationInput, comment: commentInput };
@@ -88,7 +86,6 @@
   let turnstileWidget = null;
   let captchaToken = "";
   let captchaLoad = null;
-  let cooldownTimer = 0;
   let cooldownUntil = 0;
   let toastTimer = 0;
   let toastHideTimer = 0;
@@ -735,37 +732,19 @@
       toastTimer = 0;
       toast.hidden = true;
       toast.className = "toast";
-    }, 4500);
+    }, 5000);
   }
   function startCooldown(seconds) {
     const duration = Math.max(1, Math.min(Number(seconds) || 300, 86400));
     cooldownUntil = Date.now() + duration * 1000;
     try { localStorage.setItem("vrf-review-cooldown-until", String(cooldownUntil)); } catch (_) {}
-    clearInterval(cooldownTimer);
-    if (cooldownBox) cooldownBox.hidden = false;
-    const tick = () => {
-      const remaining = Math.max(0, Math.ceil((cooldownUntil - Date.now()) / 1000));
-      if (cooldownTime) cooldownTime.textContent = formatCountdown(remaining);
-      if (remaining <= 0) {
-        clearInterval(cooldownTimer);
-        cooldownTimer = 0;
-        cooldownUntil = 0;
-        if (cooldownBox) cooldownBox.hidden = true;
-        try { localStorage.removeItem("vrf-review-cooldown-until"); } catch (_) {}
-        setStatus("You can post another review now.", "success");
-      }
-      updateSubmit();
-    };
-    tick();
-    cooldownTimer = window.setInterval(tick, 1000);
   }
   function restoreCooldown() {
     try {
       const savedUntil = Number(localStorage.getItem("vrf-review-cooldown-until"));
-      if (Number.isFinite(savedUntil) && savedUntil > Date.now()) {
-        startCooldown(Math.ceil((savedUntil - Date.now()) / 1000));
-      } else localStorage.removeItem("vrf-review-cooldown-until");
-    } catch (_) { /* The server remains authoritative after refresh. */ }
+      cooldownUntil = Number.isFinite(savedUntil) && savedUntil > Date.now() ? savedUntil : 0;
+      if (!cooldownUntil) localStorage.removeItem("vrf-review-cooldown-until");
+    } catch (_) { cooldownUntil = 0; /* The server remains authoritative after refresh. */ }
   }
   function responseCode(body) { return body?.error?.code || body?.code || body?.error || ""; }
   async function submit(event) {
@@ -789,8 +768,12 @@
     }
     if (cooldownUntil > Date.now()) {
       showRateLimitToast(Math.ceil((cooldownUntil - Date.now()) / 1000));
-      setStatus("Please wait for the cooldown to finish before submitting another review.", "error");
+      setStatus("");
       return;
+    }
+    if (cooldownUntil) {
+      cooldownUntil = 0;
+      try { localStorage.removeItem("vrf-review-cooldown-until"); } catch (_) {}
     }
     const validationStartedAt = performance.now();
     const fieldsValid = validateAll();
@@ -856,7 +839,7 @@
       } else if (response.status === 429) {
         outcome = "rate_limited";
         const retry = Number(body.retry_after || response.headers.get("retry-after") || 300);
-        setStatus("You have recently submitted a review. Please try again when the cooldown ends.", "error");
+        setStatus("");
         startCooldown(retry);
         showRateLimitToast(retry);
         resetTurnstile();
