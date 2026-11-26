@@ -1,5 +1,6 @@
 /* Customer reviews page. Components are scoped so the shared site shell is untouched. */
 .reviews-page { overflow-x: clip; }
+.reviews-page [hidden] { display:none !important; }
 .reviews-page .page-heading { padding-top: clamp(64px, 9vw, 118px); padding-bottom: 8px; }
 .reviews-page-heading { max-width: 1440px; }
 .reviews-page-heading .eyebrow { display:flex; gap:20px; align-items:center; }
@@ -30,7 +31,12 @@
 .reviews-list-head .eyebrow { margin-bottom:10px; }
 #reviews-showing { flex:0 0 auto; margin-bottom:5px; }
 .reviews-mode-note { margin:0 0 18px; padding:12px 16px; border-left:2px solid var(--accent); background:var(--surface-soft); }
-.reviews-loading { padding:24px 0; color:var(--text-secondary-readable); }
+.reviews-loading { display:flex; align-items:center; gap:10px; padding:24px 0; color:var(--text-secondary-readable); }
+.summary-loading { display:flex; align-items:center; gap:8px; margin:10px 0 0; color:var(--text-secondary-readable); font-size:12px; }
+.review-spinner { display:inline-block; flex:0 0 auto; width:18px; height:18px; border:2px solid var(--border); border-top-color:var(--accent-ink); border-radius:50%; animation:review-spinner-rotate 800ms linear infinite; }
+.review-spinner-small { width:14px; height:14px; border-width:2px; }
+@keyframes review-spinner-rotate { to { transform:rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .review-spinner { animation:none; } }
 .reviews-error { display:flex; align-items:center; justify-content:space-between; gap:20px; padding:24px; margin:12px 0; }
 .reviews-error p { margin:0; color:var(--danger); }
 .reviews-list { display:grid; gap:14px; margin:0; padding:0; list-style:none; }

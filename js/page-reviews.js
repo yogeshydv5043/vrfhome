@@ -43,6 +43,8 @@
 
   const list = document.getElementById("reviews-list");
   const loading = document.getElementById("reviews-loading");
+  const summaryLoading = document.getElementById("summary-loading");
+  const summaryCard = document.querySelector(".reviews-summary");
   const errorPanel = document.getElementById("reviews-error");
   const errorText = errorPanel?.querySelector("[data-error-text]");
   const showing = document.getElementById("reviews-showing");
@@ -51,6 +53,7 @@
   const actions = document.getElementById("reviews-actions");
   const moreButton = document.getElementById("load-more-reviews");
   const moreLabel = moreButton?.querySelector("[data-load-label]");
+  const moreSpinner = moreButton?.querySelector("[data-load-spinner]");
   const moreStatus = document.getElementById("load-more-status");
   const summaryBars = document.getElementById("summary-bars");
   const summaryEmpty = document.getElementById("summary-bars-empty");
@@ -563,6 +566,8 @@
   async function loadFirstPage() {
     clearError();
     setBusy(true);
+    if (summaryLoading) summaryLoading.hidden = false;
+    if (summaryCard) summaryCard.setAttribute("aria-busy", "true");
     if (modeNote) modeNote.hidden = supabaseReady;
     try {
       if (supabaseReady) {
@@ -587,6 +592,8 @@
       showError(error.message === "permission_denied" ? "The review service could not read its public review list. Please try again later." : "We could not load the reviews just now. Please try again.");
       if (empty) empty.hidden = true;
     } finally {
+      if (summaryLoading) summaryLoading.hidden = true;
+      if (summaryCard) summaryCard.setAttribute("aria-busy", "false");
       setBusy(false);
       render();
       if (formDisabled) formDisabled.hidden = formReady;
@@ -628,6 +635,7 @@
     loadingMore = true;
     clearError();
     if (moreButton) moreButton.disabled = true;
+    if (moreSpinner) moreSpinner.hidden = false;
     if (moreLabel) moreLabel.textContent = "Loading…";
     if (moreStatus) moreStatus.textContent = "Loading more reviews…";
     try {
@@ -648,6 +656,7 @@
     } finally {
       loadingMore = false;
       if (moreButton) moreButton.disabled = false;
+      if (moreSpinner) moreSpinner.hidden = true;
       if (moreLabel) moreLabel.textContent = "Load more reviews";
       render();
     }

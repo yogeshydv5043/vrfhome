@@ -53,7 +53,7 @@
   <script defer src="js/navigation.js?v=b117"></script>
   <script defer src="js/insights.js?v=b60"></script>
   <script defer src="js/site-ivory-theme.js?v=b60"></script>
-  <script defer src="js/page-reviews.js?v=b17"></script>
+  <script defer src="js/page-reviews.js?v=b18"></script>
 </head>
 <body class="inner-page reviews-page" data-route="reviews/">
   <a class="skip-link" href="reviews/#main">Skip to content</a>
@@ -91,6 +91,7 @@
           <span class="summary-scale" data-rating-scale hidden>/ 5</span>
           <span class="summary-stars" aria-hidden="true" hidden></span>
           <span class="summary-count"><strong data-rating-count>Loading review count…</strong></span>
+          <p class="summary-loading" id="summary-loading" role="status" hidden><span class="review-spinner" aria-hidden="true"></span><span>Loading rating summary…</span></p>
           <p class="summary-note">Average and breakdown are calculated from approved reviews stored on this site.</p>
         </div>
         <div class="summary-bars" id="summary-bars" hidden aria-hidden="true"></div>
@@ -104,7 +105,7 @@
         <p class="small-note" id="reviews-showing" hidden></p>
       </div>
       <p class="small-note reviews-mode-note" id="reviews-mode-note" hidden>Online reviews are not connected yet. Showing any reviews configured by the studio.</p>
-      <p class="reviews-loading small-note" id="reviews-loading" role="status" hidden>Loading reviews…</p>
+      <p class="reviews-loading small-note" id="reviews-loading" role="status" hidden><span class="review-spinner" aria-hidden="true"></span><span>Loading reviews…</span></p>
       <div class="reviews-error form-panel" id="reviews-error" hidden role="alert">
         <p data-error-text>We could not load the reviews just now.</p>
         <button class="button secondary" id="reviews-retry" type="button">Try again</button>
@@ -116,7 +117,7 @@
         <button class="button secondary" id="write-first-review" type="button">Write a review</button>
       </div>
       <div class="reviews-actions" id="reviews-actions" hidden>
-        <button class="button secondary" id="load-more-reviews" type="button"><span data-load-label>Load more reviews</span><span class="reviews-chevron" aria-hidden="true">⌄</span></button>
+        <button class="button secondary" id="load-more-reviews" type="button"><span class="review-spinner review-spinner-small" data-load-spinner aria-hidden="true" hidden></span><span data-load-label>Load more reviews</span><span class="reviews-chevron" aria-hidden="true">⌄</span></button>
         <p class="small-note" id="load-more-status" aria-live="polite"></p>
       </div>
     </section>
