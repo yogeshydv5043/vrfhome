@@ -21,7 +21,6 @@
   const metaLine = document.getElementById("review-meta");
   const avatar = document.getElementById("review-avatar");
   const dots = section.querySelector(".slider-dots");
-  const rotationToggle = document.getElementById("review-autoplay-toggle");
   const supabaseConfig = window.VRF_SUPABASE_CONFIG || {};
   const limit = 5;
 
@@ -149,21 +148,15 @@
     let rotationTimer = 0;
     let touchResumeTimer = 0;
     const motionPreference = window.matchMedia?.("(prefers-reduced-motion: reduce)");
-    let manuallyPaused = motionPreference?.matches === true;
+    let reducedMotion = motionPreference?.matches === true;
     let hovered = false;
     let focused = false;
     let touching = false;
 
-    function updateRotationToggle() {
-      if (!rotationToggle) return;
-      rotationToggle.textContent = manuallyPaused ? "Resume" : "Pause";
-      rotationToggle.setAttribute("aria-label", `${manuallyPaused ? "Resume" : "Pause"} automatic review rotation`);
-      rotationToggle.setAttribute("aria-pressed", String(manuallyPaused));
-    }
     function updateRotationTimer() {
       if (rotationTimer) window.clearInterval(rotationTimer);
       rotationTimer = 0;
-      if (manuallyPaused || hovered || focused || touching || document.hidden) return;
+      if (reducedMotion || hovered || focused || touching || document.hidden) return;
       rotationTimer = window.setInterval(() => show(active + 1, true), 6000);
     }
     function navigateTo(index) {
@@ -230,12 +223,6 @@
 
     show(0);
     if (reviews.length <= 1) return;
-    updateRotationToggle();
-    rotationToggle?.addEventListener("click", () => {
-      manuallyPaused = !manuallyPaused;
-      updateRotationToggle();
-      updateRotationTimer();
-    });
     section.querySelector(".testimonial-prev").addEventListener("click", () => navigateTo(active - 1));
     section.querySelector(".testimonial-next").addEventListener("click", () => navigateTo(active + 1));
     slider.addEventListener("keydown", (event) => {
@@ -254,8 +241,7 @@
     });
     document.addEventListener("visibilitychange", updateRotationTimer);
     motionPreference?.addEventListener?.("change", (event) => {
-      if (event.matches) manuallyPaused = true;
-      updateRotationToggle();
+      reducedMotion = event.matches;
       updateRotationTimer();
     });
 

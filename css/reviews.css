@@ -11,9 +11,6 @@
 #client-reviews .slider-controls { flex-wrap:wrap; gap:12px 20px; }
 #client-reviews .slider-dots { flex:1 1 160px; flex-wrap:wrap; min-width:0; }
 #client-reviews .review-nav { flex:0 0 auto; align-items:center; }
-#client-reviews .review-autoplay-toggle { padding:6px 10px; border:1px solid var(--border); border-radius:999px; background:var(--surface); color:var(--text); font:inherit; font-size:11px; cursor:pointer; }
-#client-reviews .review-autoplay-toggle:hover { border-color:var(--accent); color:var(--accent-ink); }
-#client-reviews .review-autoplay-toggle:focus-visible { outline:2px solid var(--accent-ink); outline-offset:3px; }
 #client-reviews #review-position { margin:0 8px 0 0; white-space:nowrap; }
 #client-reviews .slider-dot { flex:0 0 28px; }
 

@@ -326,40 +326,65 @@
   function createReviewCard(item, isNew = false) {
     const card = document.createElement("li");
     card.className = `review-entry${isNew ? " is-new" : ""}`;
-    const head = document.createElement("div");
-    head.className = "review-entry-head";
-    const person = document.createElement("strong");
-    person.className = "review-entry-name";
-    const reviewerName = clean(item.name) || "Unknown reviewer";
-    person.textContent = reviewerName;
-    const identity = document.createElement("div");
-    identity.className = "review-entry-person";
-    const avatar = document.createElement("span");
-    avatar.className = "review-entry-avatar";
-    avatar.setAttribute("aria-hidden", "true");
-    avatar.textContent = Array.from(clean(item.name))[0]?.toLocaleUpperCase("en") || "U";
-    const tone = Array.from(reviewerName.toLocaleLowerCase("en")).reduce((sum, char) => sum + char.codePointAt(0), 0) % 5;
-    avatar.classList.add(`avatar-tone-${tone}`);
-    identity.append(avatar, person);
-    const stars = document.createElement("span");
+    const quoteMark = document.createElement("span");
+    quoteMark.className = "review-entry-quote-mark";
+    quoteMark.setAttribute("aria-hidden", "true");
+    quoteMark.textContent = "“";
+
+    const rating = Number(item.rating);
+    const validRating = Number.isInteger(rating) && rating >= 1 && rating <= 5 ? rating : null;
+    const stars = document.createElement("div");
     stars.className = "review-entry-rating";
-    stars.setAttribute("role", "img");
-    stars.setAttribute("aria-label", `${item.rating} out of 5 stars, ${RATING_WORDS[item.rating] || "rated"}`);
-    for (let n = 1; n <= 5; n += 1) {
-      const star = document.createElement("span");
-      if (n > item.rating) star.className = "is-off";
-      star.textContent = "★";
-      stars.append(star);
+    stars.hidden = validRating === null;
+    if (validRating !== null) {
+      stars.setAttribute("role", "img");
+      stars.setAttribute("aria-label", `${validRating} out of 5 stars, ${RATING_WORDS[validRating] || "rated"}`);
+      const starGroup = document.createElement("span");
+      starGroup.className = "review-entry-stars";
+      starGroup.setAttribute("aria-hidden", "true");
+      for (let n = 1; n <= 5; n += 1) {
+        const star = document.createElement("span");
+        if (n > validRating) star.className = "is-off";
+        star.textContent = "★";
+        starGroup.append(star);
+      }
+      const ratingLabel = document.createElement("span");
+      ratingLabel.className = "review-entry-rating-value";
+      ratingLabel.setAttribute("aria-hidden", "true");
+      ratingLabel.textContent = `${validRating}/5`;
+      stars.append(starGroup, ratingLabel);
     }
-    head.append(identity, stars);
+
     const comment = document.createElement("p");
     comment.className = "review-entry-comment";
     comment.textContent = clean(item.comment);
+
+    const footer = document.createElement("footer");
+    footer.className = "review-entry-foot";
+    const identity = document.createElement("div");
+    identity.className = "review-entry-person";
+    const reviewerName = clean(item.name) || "Unknown reviewer";
+    const avatar = document.createElement("span");
+    avatar.className = "review-entry-avatar";
+    avatar.setAttribute("aria-hidden", "true");
+    avatar.textContent = reviewerName.split(/\s+/).filter(Boolean).slice(0, 2)
+      .map((word) => word[0]).join("").toLocaleUpperCase("en") || "U";
+    const tone = Array.from(reviewerName.toLocaleLowerCase("en")).reduce((sum, char) => sum + char.codePointAt(0), 0) % 5;
+    avatar.classList.add(`avatar-tone-${tone}`);
+    const details = document.createElement("div");
+    details.className = "review-entry-identity";
+    const person = document.createElement("strong");
+    person.className = "review-entry-name";
+    person.textContent = reviewerName;
+
     const meta = document.createElement("div");
     meta.className = "review-entry-meta";
-    const location = document.createElement("span");
-    location.textContent = clean(item.location);
-    meta.append(location);
+    const locationText = clean(item.location);
+    if (locationText) {
+      const location = document.createElement("span");
+      location.textContent = locationText;
+      meta.append(location);
+    }
     const dateText = formatDate(item.created_at);
     if (dateText) {
       const dot = document.createElement("span");
@@ -370,7 +395,11 @@
       time.textContent = dateText;
       meta.append(dot, time);
     }
-    card.append(head, comment, meta);
+    meta.hidden = !meta.childNodes.length;
+    details.append(person, meta);
+    identity.append(avatar, details);
+    footer.append(identity);
+    card.append(quoteMark, stars, comment, footer);
     return card;
   }
   function render() {
