@@ -884,6 +884,7 @@
         setStatus("Thank you. Your review has been saved and approved. It will appear publicly within 30 minutes.", "success");
         successMessageMs = performance.now() - successMessageStartedAt;
         form.reset();
+        for (const control of Object.values(fields)) if (control) control.value = "";
         selectedRating = 0;
         ratingGroup?.querySelectorAll("[role=radio]").forEach((radio, index) => { radio.setAttribute("aria-checked", "false"); radio.tabIndex = index === 0 ? 0 : -1; });
         paintStars(0);
