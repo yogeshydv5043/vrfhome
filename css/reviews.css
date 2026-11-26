@@ -4,10 +4,16 @@
 #client-reviews .testimonial-slider { min-width:0; }
 #client-reviews :is(blockquote,.testimonial-person,.small-note,#review-source) { overflow-wrap:anywhere; }
 #client-reviews blockquote { white-space:pre-line; }
+#client-reviews .review-card-rating { display:flex; align-items:center; gap:10px; margin:0 0 18px; }
+#client-reviews .review-rating-stars { color:var(--accent); font-size:16px; letter-spacing:3px; line-height:1; }
+#client-reviews .review-rating-value { color:var(--text-secondary-readable); font-size:12px; font-variant-numeric:tabular-nums; }
 #client-reviews #review-source { margin-top:10px; font-size:11px; white-space:normal; }
 #client-reviews .slider-controls { flex-wrap:wrap; gap:12px 20px; }
 #client-reviews .slider-dots { flex:1 1 160px; flex-wrap:wrap; min-width:0; }
 #client-reviews .review-nav { flex:0 0 auto; align-items:center; }
+#client-reviews .review-autoplay-toggle { padding:6px 10px; border:1px solid var(--border); border-radius:999px; background:var(--surface); color:var(--text); font:inherit; font-size:11px; cursor:pointer; }
+#client-reviews .review-autoplay-toggle:hover { border-color:var(--accent); color:var(--accent-ink); }
+#client-reviews .review-autoplay-toggle:focus-visible { outline:2px solid var(--accent-ink); outline-offset:3px; }
 #client-reviews #review-position { margin:0 8px 0 0; white-space:nowrap; }
 #client-reviews .slider-dot { flex:0 0 28px; }
 

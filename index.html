@@ -46,7 +46,7 @@
 <script defer="True" src="js/data.js?v=b117"></script>
   <script defer src="js/site-footer.js?v=b2"></script>
 <script defer="True" src="js/content.js?v=b114"></script>
-<script defer="" src="js/main.js?v=b91"></script><script defer="" src="js/reviews-config.js?v=b103"></script><script defer="" src="js/supabase-config.js?v=b5"></script><script defer="" src="js/reviews.js?v=b115"></script>
+<script defer="" src="js/main.js?v=b91"></script><script defer="" src="js/reviews-config.js?v=b103"></script><script defer="" src="js/supabase-config.js?v=b5"></script><script defer="" src="js/reviews.js?v=b117"></script>
 <script defer="" src="js/navigation.js?v=b117"></script>
 <script defer="" src="js/gallery.js?v=b60"></script>
 <script defer="" src="js/contact.js?v=b64"></script>
@@ -59,7 +59,7 @@
 <link href="css/social-icons.css?v=b103" rel="stylesheet"/>
 <link href="css/raised-depth.css?v=b60" rel="stylesheet"/>
 <link href="css/home-services-spacing.css?v=b60" rel="stylesheet"/>
-<link href="css/reviews.css?v=b65" rel="stylesheet"/><link href="css/site-ivory-theme.css?v=b60" rel="stylesheet"/>
+<link href="css/reviews.css?v=b67" rel="stylesheet"/><link href="css/site-ivory-theme.css?v=b60" rel="stylesheet"/>
 <script defer="" src="js/site-ivory-theme.js?v=b60"></script>
 <link href="css/home-hero-overlay.css?v=b60" rel="stylesheet"/>
 <link href="css/interaction-stability.css?v=b60" rel="stylesheet"/>
@@ -605,6 +605,7 @@
 <div aria-label="Latest customer reviews" aria-roledescription="carousel" class="testimonial-slider" role="region"><div aria-atomic="true" aria-live="polite" hidden="" id="testimonial-content" role="group">
 <article class="review-card">
 <span aria-hidden="true" class="quote-mark">“</span>
+<div class="review-card-rating" id="review-rating" role="img" hidden=""><span class="review-rating-stars" aria-hidden="true"></span><span class="review-rating-value" aria-hidden="true"></span></div>
 <blockquote id="testimonial-quote"></blockquote>
 <footer class="review-card-foot">
 <span aria-hidden="true" class="review-avatar" id="review-avatar"></span>
@@ -620,6 +621,7 @@
 <div class="slider-controls" hidden="">
 <div aria-label="Choose a review" class="slider-dots" role="group"></div>
 <div class="review-nav"><span class="review-position" id="review-position"></span>
+<button aria-label="Pause automatic review rotation" aria-pressed="false" class="review-autoplay-toggle" id="review-autoplay-toggle" type="button">Pause</button>
 <button aria-label="Previous review" class="icon-button testimonial-prev" type="button"><svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewbox="0 0 24 24"><path d="M20 12H4m6-6-6 6 6 6"></path></svg></button>
 <button aria-label="Next review" class="icon-button testimonial-next" type="button"><svg aria-hidden="true" class="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewbox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"></path></svg></button>
 </div></div></div>

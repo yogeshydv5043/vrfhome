@@ -12,12 +12,16 @@
   const controls = section.querySelector(".slider-controls");
   const note = document.getElementById("reviews-note");
   const quote = document.getElementById("testimonial-quote");
+  const ratingNode = document.getElementById("review-rating");
+  const ratingStars = ratingNode?.querySelector(".review-rating-stars");
+  const ratingValue = ratingNode?.querySelector(".review-rating-value");
   const person = document.getElementById("testimonial-person");
   const source = document.getElementById("review-source");
   const position = document.getElementById("review-position");
   const metaLine = document.getElementById("review-meta");
   const avatar = document.getElementById("review-avatar");
   const dots = section.querySelector(".slider-dots");
+  const rotationToggle = document.getElementById("review-autoplay-toggle");
   const supabaseConfig = window.VRF_SUPABASE_CONFIG || {};
   const limit = 5;
 
@@ -45,11 +49,13 @@
   function normalizeRow(row) {
     const name = clean(row?.name);
     const text = clean(row?.comment);
+    const rating = Number(row?.rating);
     if (!name || !text) return null;
     return {
       id: clean(String(row?.id ?? "")),
       name,
       quote: text,
+      rating: Number.isInteger(rating) && rating >= 1 && rating <= 5 ? rating : null,
       location: clean(row?.location),
       date: validDate(row?.created_at),
       sourceLabel: "",
@@ -64,6 +70,7 @@
           id: item.id,
           name: item.name,
           comment: item.quote,
+          rating: item.rating,
           location: [clean(item.projectType), clean(item.location)].filter(Boolean).join(" · "),
           created_at: item.date,
         });
@@ -82,7 +89,7 @@
     if (!endpoint || !key) throw new Error("review_service_unavailable");
 
     const url = new URL(`${endpoint}/rest/v1/approved_review_cache`);
-    url.searchParams.set("select", "id,name,comment,location,created_at");
+    url.searchParams.set("select", "id,name,rating,comment,location,created_at");
     url.searchParams.set("is_approved", "eq.true");
     url.searchParams.set("order", "created_at.desc,id.desc");
     url.searchParams.set("limit", String(limit));
@@ -134,18 +141,50 @@
       button.type = "button";
       button.className = "slider-dot";
       button.setAttribute("aria-label", `Show review ${index + 1}: ${item.name}`);
-      button.addEventListener("click", () => show(index));
+      button.addEventListener("click", () => navigateTo(index));
       return button;
     });
     dots.replaceChildren(...dotButtons);
 
-    function show(index) {
+    let rotationTimer = 0;
+    let touchResumeTimer = 0;
+    const motionPreference = window.matchMedia?.("(prefers-reduced-motion: reduce)");
+    let manuallyPaused = motionPreference?.matches === true;
+    let hovered = false;
+    let focused = false;
+    let touching = false;
+
+    function updateRotationToggle() {
+      if (!rotationToggle) return;
+      rotationToggle.textContent = manuallyPaused ? "Resume" : "Pause";
+      rotationToggle.setAttribute("aria-label", `${manuallyPaused ? "Resume" : "Pause"} automatic review rotation`);
+      rotationToggle.setAttribute("aria-pressed", String(manuallyPaused));
+    }
+    function updateRotationTimer() {
+      if (rotationTimer) window.clearInterval(rotationTimer);
+      rotationTimer = 0;
+      if (manuallyPaused || hovered || focused || touching || document.hidden) return;
+      rotationTimer = window.setInterval(() => show(active + 1, true), 6000);
+    }
+    function navigateTo(index) {
+      show(index);
+      updateRotationTimer();
+    }
+    function show(index, automatic = false) {
       active = (index + reviews.length) % reviews.length;
       const item = reviews[active];
       content.setAttribute("aria-busy", "true");
+      content.setAttribute("aria-live", automatic ? "off" : "polite");
       content.setAttribute("aria-label", `Review ${active + 1} of ${reviews.length}`);
       quote.textContent = item.quote;
       person.textContent = item.name;
+      if (ratingNode) {
+        ratingNode.hidden = item.rating === null;
+        ratingNode.removeAttribute("aria-label");
+        if (ratingStars) ratingStars.textContent = item.rating === null ? "" : "★".repeat(item.rating) + "☆".repeat(5 - item.rating);
+        if (ratingValue) ratingValue.textContent = item.rating === null ? "" : `${item.rating}/5`;
+        if (item.rating !== null) ratingNode.setAttribute("aria-label", `${item.rating} out of 5 stars`);
+      }
 
       if (avatar) {
         avatar.textContent = item.name.split(/\s+/).filter(Boolean).slice(0, 2)
@@ -191,28 +230,60 @@
 
     show(0);
     if (reviews.length <= 1) return;
-    section.querySelector(".testimonial-prev").addEventListener("click", () => show(active - 1));
-    section.querySelector(".testimonial-next").addEventListener("click", () => show(active + 1));
+    updateRotationToggle();
+    rotationToggle?.addEventListener("click", () => {
+      manuallyPaused = !manuallyPaused;
+      updateRotationToggle();
+      updateRotationTimer();
+    });
+    section.querySelector(".testimonial-prev").addEventListener("click", () => navigateTo(active - 1));
+    section.querySelector(".testimonial-next").addEventListener("click", () => navigateTo(active + 1));
     slider.addEventListener("keydown", (event) => {
       if (event.altKey || event.ctrlKey || event.metaKey) return;
       const indices = { ArrowLeft: active - 1, ArrowRight: active + 1, Home: 0, End: reviews.length - 1 };
       if (Object.prototype.hasOwnProperty.call(indices, event.key)) {
         event.preventDefault();
-        show(indices[event.key]);
+        navigateTo(indices[event.key]);
       }
     });
+    slider.addEventListener("mouseenter", () => { hovered = true; updateRotationTimer(); });
+    slider.addEventListener("mouseleave", () => { hovered = false; updateRotationTimer(); });
+    slider.addEventListener("focusin", () => { focused = true; updateRotationTimer(); });
+    slider.addEventListener("focusout", (event) => {
+      if (!slider.contains(event.relatedTarget)) { focused = false; updateRotationTimer(); }
+    });
+    document.addEventListener("visibilitychange", updateRotationTimer);
+    motionPreference?.addEventListener?.("change", (event) => {
+      if (event.matches) manuallyPaused = true;
+      updateRotationToggle();
+      updateRotationTimer();
+    });
+
     let start = null;
+    function pauseForTouch() {
+      touching = true;
+      updateRotationTimer();
+      if (touchResumeTimer) window.clearTimeout(touchResumeTimer);
+      touchResumeTimer = window.setTimeout(() => {
+        touching = false;
+        updateRotationTimer();
+      }, 2500);
+    }
     slider.addEventListener("touchstart", (event) => {
+      pauseForTouch();
       start = event.touches.length === 1 ? { x: event.touches[0].clientX, y: event.touches[0].clientY } : null;
     }, { passive: true });
-    slider.addEventListener("touchcancel", () => { start = null; }, { passive: true });
+    slider.addEventListener("touchcancel", () => { start = null; pauseForTouch(); }, { passive: true });
     slider.addEventListener("touchend", (event) => {
-      if (!start || event.changedTouches.length !== 1) { start = null; return; }
-      const dx = event.changedTouches[0].clientX - start.x;
-      const dy = event.changedTouches[0].clientY - start.y;
+      if (start && event.changedTouches.length === 1) {
+        const dx = event.changedTouches[0].clientX - start.x;
+        const dy = event.changedTouches[0].clientY - start.y;
+        if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.3) navigateTo(active + (dx < 0 ? 1 : -1));
+      }
       start = null;
-      if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.3) show(active + (dx < 0 ? 1 : -1));
+      pauseForTouch();
     }, { passive: true });
+    updateRotationTimer();
   }
 
   initialize();
