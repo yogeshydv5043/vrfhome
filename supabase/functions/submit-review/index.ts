@@ -72,7 +72,7 @@ function headersFor(origin: string | null, allow: Set<string>): Headers {
     headers.set("Access-Control-Allow-Origin", origin);
     headers.set("Access-Control-Allow-Methods", "POST, OPTIONS");
     headers.set("Access-Control-Allow-Headers", "authorization, apikey, content-type, x-client-info");
-    headers.set("Access-Control-Expose-Headers", "Retry-After");
+    headers.set("Access-Control-Expose-Headers", "Retry-After, Server-Timing");
     headers.set("Access-Control-Max-Age", "600");
   }
   return headers;
@@ -81,6 +81,16 @@ function response(status: number, payload: Record<string, unknown> | null, origi
   const headers = headersFor(origin, allow);
   for (const [name, value] of Object.entries(extras)) headers.set(name, value);
   return new Response(payload === null ? null : JSON.stringify(payload), { status, headers });
+}
+function serverTiming(startedAt: number, stages: Record<string, number>): string {
+  const parts = Object.entries(stages)
+    .filter(([, duration]) => Number.isFinite(duration) && duration >= 0)
+    .map(([name, duration]) => `${name};dur=${duration.toFixed(1)}`);
+  parts.push(`edge;dur=${(performance.now() - startedAt).toFixed(1)}`);
+  return parts.join(", ");
+}
+function timingHeaders(enabled: boolean, timing: string): Record<string, string> {
+  return enabled ? { "Server-Timing": timing } : {};
 }
 async function sha256(text: string): Promise<string> {
   const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
@@ -161,6 +171,8 @@ async function verifyTurnstile(token: string, address: string, origin: string | 
 }
 
 export async function handle(request: Request, env: Runtime = runtime): Promise<Response> {
+  const startedAt = performance.now();
+  const timingEnabled = new URL(request.url).searchParams.get("reviewTiming") === "1";
   const origin = request.headers.get("origin");
   const allow = allowedOrigins(env);
   if (origin && !allow.has(origin)) return response(403, { error: { code: "origin_not_allowed" } }, null, allow);
@@ -196,19 +208,28 @@ export async function handle(request: Request, env: Runtime = runtime): Promise<
   const address = clientAddress(request);
   if (!address) return response(400, { error: { code: "client_unidentified" } }, origin, allow);
   if (body.action === "device-token") {
+    const deviceTokenStartedAt = performance.now();
     try {
       const deviceToken = await issueDeviceToken(salt, env.now());
-      return response(200, { deviceToken }, origin, allow);
+      const timing = serverTiming(startedAt, { device_token: performance.now() - deviceTokenStartedAt });
+      return response(200, { deviceToken }, origin, allow, timingHeaders(timingEnabled, timing));
     } catch { return response(503, { error: { code: "not_configured" } }, origin, allow); }
   }
+  const deviceCheckStartedAt = performance.now();
   const deviceToken = typeof body.deviceToken === "string" ? body.deviceToken.trim() : "";
   const deviceNonce = await verifyDeviceToken(deviceToken, salt, env.now());
+  const deviceCheckMs = performance.now() - deviceCheckStartedAt;
   if (!deviceNonce) return response(400, { error: { code: "device_identifier_required" } }, origin, allow);
+  const validationStartedAt = performance.now();
   const errors = fieldErrors(body);
+  const validationMs = performance.now() - validationStartedAt;
   if (Object.keys(errors).length) return response(422, { error: { code: "validation_failed" }, fields: errors }, origin, allow);
+  const captchaStartedAt = performance.now();
   const captcha = await verifyTurnstile(clean(body.turnstileToken), address, origin, env);
-  if (captcha === "failed") return response(403, { error: { code: "captcha_failed" } }, origin, allow);
-  if (captcha === "unavailable") return response(503, { error: { code: "captcha_unavailable" } }, origin, allow);
+  const captchaMs = performance.now() - captchaStartedAt;
+  const captchaTiming = serverTiming(startedAt, { device: deviceCheckMs, validation: validationMs, siteverify: captchaMs });
+  if (captcha === "failed") return response(403, { error: { code: "captcha_failed" } }, origin, allow, timingHeaders(timingEnabled, captchaTiming));
+  if (captcha === "unavailable") return response(503, { error: { code: "captcha_unavailable" } }, origin, allow, timingHeaders(timingEnabled, captchaTiming));
 
   const cooldown = 300;
   let clientHash: string;
@@ -219,6 +240,7 @@ export async function handle(request: Request, env: Runtime = runtime): Promise<
   } catch { return response(503, { error: { code: "not_configured" } }, origin, allow); }
 
   const rpcUrl = `${supabaseUrl.replace(/\/+$/, "")}/rest/v1/rpc/submit_review`;
+  const databaseStartedAt = performance.now();
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 8000);
   try {
@@ -236,16 +258,40 @@ export async function handle(request: Request, env: Runtime = runtime): Promise<
       }),
       signal: controller.signal,
     });
-    if (!rpc.ok) return response(rpc.status === 429 ? 429 : 502, { error: { code: rpc.status === 429 ? "rate_limited" : "storage_failed" } }, origin, allow);
+    if (!rpc.ok) {
+      const timing = serverTiming(startedAt, {
+        device: deviceCheckMs,
+        validation: validationMs,
+        siteverify: captchaMs,
+        db_rpc: performance.now() - databaseStartedAt,
+      });
+      return response(rpc.status === 429 ? 429 : 502, { error: { code: rpc.status === 429 ? "rate_limited" : "storage_failed" } }, origin, allow, timingHeaders(timingEnabled, timing));
+    }
     const result = await rpc.json();
+    const databaseMs = performance.now() - databaseStartedAt;
+    const timingStages: Record<string, number> = {
+      device: deviceCheckMs,
+      validation: validationMs,
+      siteverify: captchaMs,
+      db_rpc: databaseMs,
+    };
+    const databaseInsertMs = Number(result?.timing?.db_insert_ms);
+    if (Number.isFinite(databaseInsertMs) && databaseInsertMs >= 0) timingStages.db_insert = databaseInsertMs;
+    const timing = serverTiming(startedAt, timingStages);
     if (result?.status === "rate_limited") {
       const retry = Math.max(1, Math.min(Number(result.retry_after) || cooldown, 86400));
-      return response(429, { error: { code: "rate_limited" }, retry_after: retry }, origin, allow, { "Retry-After": String(retry) });
+      return response(429, { error: { code: "rate_limited" }, retry_after: retry }, origin, allow, { "Retry-After": String(retry), ...timingHeaders(timingEnabled, timing) });
     }
-    if (result?.status !== "created" || !result.review) return response(502, { error: { code: "storage_failed" } }, origin, allow);
-    return response(201, { status: "created", review: result.review, cooldown_seconds: cooldown }, origin, allow);
+    if (result?.status !== "created" || !result.review) return response(502, { error: { code: "storage_failed" } }, origin, allow, timingHeaders(timingEnabled, timing));
+    return response(201, { status: "created", review: result.review, cooldown_seconds: cooldown }, origin, allow, timingHeaders(timingEnabled, timing));
   } catch {
-    return response(502, { error: { code: "storage_unavailable" } }, origin, allow);
+    const timing = serverTiming(startedAt, {
+      device: deviceCheckMs,
+      validation: validationMs,
+      siteverify: captchaMs,
+      db_rpc: performance.now() - databaseStartedAt,
+    });
+    return response(502, { error: { code: "storage_unavailable" } }, origin, allow, timingHeaders(timingEnabled, timing));
   } finally { clearTimeout(timer); }
 }
 

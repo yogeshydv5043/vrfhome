@@ -36,6 +36,10 @@
   const supabaseReady = !!(endpoint && publishableKey);
   const formReady = supabaseReady && !!(typeof config.turnstileSiteKey === "string" && config.turnstileSiteKey.trim());
   const timeoutMs = Number.isFinite(config.timeoutMs) ? Math.max(1000, Math.min(config.timeoutMs, 30000)) : 12000;
+  const reviewTimingEnabled = new URLSearchParams(window.location.search).get("reviewTiming") === "1";
+  function logReviewTiming(timings) {
+    if (reviewTimingEnabled) console.info("[Review timing]", timings);
+  }
 
   const list = document.getElementById("reviews-list");
   const loading = document.getElementById("reviews-loading");
@@ -90,6 +94,12 @@
   let toastHideTimer = 0;
   let deviceToken = readDeviceToken();
   let deviceTokenPromise = null;
+  let lastDeviceTokenMs = null;
+  let lastDeviceTokenServerTiming = null;
+  let turnstileApiLoadStartedAt = 0;
+  let turnstileCycleStartedAt = 0;
+  let lastTurnstileTokenMs = null;
+  let lastTurnstileMountToTokenMs = null;
   let formRevealed = config.revealFormAfterLoadMore !== true;
   let lastSnapshotWindow = -1;
   let snapshotRefreshInFlight = false;
@@ -126,13 +136,16 @@
     const functionName = typeof config.submitFunction === "string" && /^[a-z0-9-]+$/i.test(config.submitFunction)
       ? config.submitFunction
       : "submit-review";
-    return `${base}/${functionName}`;
+    const url = new URL(`${base}/${functionName}`);
+    if (reviewTimingEnabled) url.searchParams.set("reviewTiming", "1");
+    return url.href;
   }
   async function ensureDeviceToken() {
     if (deviceToken && DEVICE_TOKEN_PATTERN.test(deviceToken)) return true;
     if (!formReady) return false;
     if (deviceTokenPromise) return deviceTokenPromise;
     deviceTokenPromise = (async () => {
+      const deviceTokenStartedAt = performance.now();
       try {
         const response = await timedFetch(submissionUrl(), {
           method: "POST",
@@ -140,6 +153,7 @@
           body: JSON.stringify({ action: "device-token" }),
           cache: "no-store",
         });
+        lastDeviceTokenServerTiming = response.headers.get("server-timing") || null;
         const body = await response.json().catch(() => ({}));
         if (!response.ok || typeof body.deviceToken !== "string" || !DEVICE_TOKEN_PATTERN.test(body.deviceToken))
           throw new Error("device_token_unavailable");
@@ -150,6 +164,7 @@
         setStatus("We could not prepare the review security check. Please try again.", "error");
         return false;
       } finally {
+        lastDeviceTokenMs = performance.now() - deviceTokenStartedAt;
         deviceTokenPromise = null;
         updateSubmit();
       }
@@ -653,6 +668,7 @@
   function mountTurnstile() {
     const siteKey = typeof config.turnstileSiteKey === "string" ? config.turnstileSiteKey.trim() : "";
     if (!siteKey || !captchaHost || !formRevealed || turnstileWidget !== null || captchaLoad) return;
+    turnstileApiLoadStartedAt = performance.now();
     captchaHost.textContent = "Loading spam protection…";
     captchaLoad = new Promise((resolve, reject) => {
       if (window.turnstile) { resolve(window.turnstile); return; }
@@ -665,9 +681,13 @@
       document.head.append(script);
     }).then((turnstile) => {
       captchaHost.replaceChildren();
+      turnstileCycleStartedAt = performance.now();
       turnstileWidget = turnstile.render(captchaHost, {
         sitekey: siteKey,
         callback: (token) => {
+          const tokenReadyAt = performance.now();
+          lastTurnstileTokenMs = tokenReadyAt - turnstileCycleStartedAt;
+          lastTurnstileMountToTokenMs = tokenReadyAt - turnstileApiLoadStartedAt;
           captchaToken = token;
           if (!deviceToken && !deviceTokenPromise) ensureDeviceToken();
           updateSubmit();
@@ -687,6 +707,10 @@
   }
   function resetTurnstile() {
     captchaToken = "";
+    lastTurnstileTokenMs = null;
+    lastTurnstileMountToTokenMs = null;
+    turnstileCycleStartedAt = performance.now();
+    turnstileApiLoadStartedAt = turnstileCycleStartedAt;
     try { if (turnstileWidget !== null) window.turnstile?.reset(turnstileWidget); } catch (_) {}
   }
   function formatCountdown(seconds) {
@@ -746,6 +770,18 @@
   function responseCode(body) { return body?.error?.code || body?.code || body?.error || ""; }
   async function submit(event) {
     event.preventDefault();
+    const attemptStartedAt = performance.now();
+    const turnstileWidgetToTokenMs = lastTurnstileTokenMs;
+    const turnstileMountToTokenMs = lastTurnstileMountToTokenMs;
+    let validationMs = null;
+    let devicePreparationMs = null;
+    let requestStartedAt = null;
+    let responseReceivedAt = null;
+    let responseParseMs = null;
+    let responseServerTiming = "";
+    let responseStatus = null;
+    let outcome = "not_started";
+    let successMessageMs = null;
     if (busy) return;
     if (!formReady) {
       setStatus("Online review submission is not configured. Your review has not been sent.", "error");
@@ -756,25 +792,37 @@
       setStatus("Please wait for the cooldown to finish before submitting another review.", "error");
       return;
     }
-    if (!validateAll()) return;
+    const validationStartedAt = performance.now();
+    const fieldsValid = validateAll();
+    validationMs = performance.now() - validationStartedAt;
+    if (!fieldsValid) { outcome = "client_validation_failed"; logReviewTiming({ outcome, frontend_validation_ms: validationMs }); return; }
     if (!captchaToken) {
+      outcome = "turnstile_token_missing";
       setStatus("Please complete the spam check before submitting your review.", "error");
       captchaHost?.scrollIntoView({ behavior: "smooth", block: "center" });
-      return;
-    }
-    if (!deviceToken && !(await ensureDeviceToken())) return;
-    if (!deviceToken) {
-      setStatus("The review security check is not ready. Please try again.", "error");
+      logReviewTiming({ outcome, frontend_validation_ms: validationMs });
       return;
     }
     busy = true;
     updateSubmit();
     if (submitLabel) submitLabel.textContent = "Sending…";
     form.setAttribute("aria-busy", "true");
-    setStatus("Sending your review…");
+    setStatus(deviceToken ? "Sending your review…" : "Preparing the review security check…");
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
     try {
+      const devicePreparationStartedAt = performance.now();
+      if (!deviceToken && !(await ensureDeviceToken())) {
+        outcome = "device_token_unavailable";
+        return;
+      }
+      if (!deviceToken) {
+        outcome = "device_token_missing";
+        setStatus("The review security check is not ready. Please try again.", "error");
+        return;
+      }
+      devicePreparationMs = performance.now() - devicePreparationStartedAt;
+      requestStartedAt = performance.now();
       const response = await fetch(submissionUrl(), {
         method: "POST",
         headers: { apikey: publishableKey, Authorization: `Bearer ${publishableKey}`, "Content-Type": "application/json", Accept: "application/json" },
@@ -782,9 +830,18 @@
         signal: controller.signal,
         cache: "no-store",
       });
+      responseReceivedAt = performance.now();
+      responseStatus = response.status;
+      responseServerTiming = response.headers.get("server-timing") || "";
+      const responseParseStartedAt = performance.now();
       let body = {};
       try { body = await response.json(); } catch (_) {}
+      responseParseMs = performance.now() - responseParseStartedAt;
       if (response.status === 201 && body.status === "created" && body.review?.is_approved === true) {
+        outcome = "created";
+        const successMessageStartedAt = performance.now();
+        setStatus("Thank you. Your review has been saved and approved. It will appear publicly within 30 minutes.", "success");
+        successMessageMs = performance.now() - successMessageStartedAt;
         form.reset();
         selectedRating = 0;
         ratingGroup?.querySelectorAll("[role=radio]").forEach((radio, index) => { radio.setAttribute("aria-checked", "false"); radio.tabIndex = index === 0 ? 0 : -1; });
@@ -795,19 +852,21 @@
         markField("rating", "");
         updateCount();
         resetTurnstile();
-        setStatus("Thank you. Your review has been saved and approved. It will appear publicly within 30 minutes.", "success");
         startCooldown(300);
       } else if (response.status === 429) {
+        outcome = "rate_limited";
         const retry = Number(body.retry_after || response.headers.get("retry-after") || 300);
         setStatus("You have recently submitted a review. Please try again when the cooldown ends.", "error");
         startCooldown(retry);
         showRateLimitToast(retry);
         resetTurnstile();
       } else if (response.status === 400 && responseCode(body) === "device_identifier_required") {
+        outcome = "device_identifier_required";
         storeDeviceToken("");
         await ensureDeviceToken();
         setStatus("The review security check was refreshed. Please submit once more.", "error");
       } else if (response.status === 422) {
+        outcome = "server_validation_failed";
         const fieldErrors = body.fields || body.error?.fields || {};
         let invalid = [];
         for (const key of ["name", "location", "rating", "comment"]) {
@@ -818,11 +877,13 @@
         resetTurnstile();
       } else {
         const code = responseCode(body);
+        outcome = code || `http_${response.status}`;
         const message = code === "captcha_failed" ? "The spam check did not pass. Please complete it again." : code === "captcha_unavailable" ? "The spam check is temporarily unavailable. Please try again later." : code === "not_configured" ? "Review submission is temporarily unavailable." : "We could not save your review just now. Please try again later.";
         setStatus(message, "error");
         resetTurnstile();
       }
     } catch (error) {
+      outcome = error?.name === "AbortError" ? "request_timeout" : "network_error";
       setStatus(error?.name === "AbortError" ? "The request timed out. Please try again." : "We could not reach the review service. Check your connection and try again.", "error");
       resetTurnstile();
     } finally {
@@ -831,6 +892,22 @@
       form.removeAttribute("aria-busy");
       if (submitLabel) submitLabel.textContent = "Submit review";
       updateSubmit();
+      logReviewTiming({
+        outcome,
+        response_status: responseStatus,
+        frontend_validation_ms: validationMs,
+        turnstile_widget_to_token_ms: turnstileWidgetToTokenMs,
+        turnstile_mount_to_token_ms: turnstileMountToTokenMs,
+        device_token_request_ms: lastDeviceTokenMs,
+        device_token_server_timing: lastDeviceTokenServerTiming,
+        device_token_wait_ms: devicePreparationMs,
+        edge_request_round_trip_ms: requestStartedAt !== null && responseReceivedAt !== null ? responseReceivedAt - requestStartedAt : null,
+        edge_server_timing: responseServerTiming || null,
+        response_json_ms: responseParseMs,
+        success_message_set_ms: successMessageMs,
+        response_to_ui_complete_ms: responseReceivedAt !== null ? performance.now() - responseReceivedAt : null,
+        total_from_submit_ms: performance.now() - attemptStartedAt,
+      });
     }
   }
 
