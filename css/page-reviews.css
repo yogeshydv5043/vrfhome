@@ -98,7 +98,7 @@
 .form-status { flex:1 1 220px; margin:0; color:var(--text-secondary-readable); font-size:13px; }
 .form-status.success { color:var(--success); }
 .form-status.error { color:var(--danger); }
-.review-privacy-note { margin-top:14px; color:var(--text-secondary-readable); }
+.review-privacy-note { margin-top:14px; color:var(--text-secondary-readable); font-size:calc(var(--font-small) + 2px) !important; line-height:1.6; }
 .review-privacy-note a { color:var(--accent-ink); text-decoration:underline; text-underline-offset:3px; }
 .reviews-page [hidden] { display:none!important; }
 @keyframes review-entry-in { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
